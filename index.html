@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>教師行程管理系統 - 專業版</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <header>
+        <div class="header-container">
+            <div class="brand">
+                <span>教師上課管理系統</span>
+            </div>
+            
+            <div class="selectors">
+                <select id="yearSelect"></select>
+                <select id="monthSelect"></select>
+            </div>
+
+            <div class="header-actions">
+                <button id="showDayDetailBtn" class="btn-primary">顯示細節</button>
+                <button id="backToToday" class="btn-today">回今天</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div id="calendarWrapper" class="calendar-wrapper">
+            <div class="weekdays">
+                <div>週日</div><div>週一</div><div>週二</div><div>週三</div><div>週四</div><div>週五</div><div>週六</div>
+            </div>
+            <div id="calendarGrid" class="calendar-grid"></div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-container">
+            <div class="stat-item">
+                <i class="fas fa-calendar-check"></i>
+                <span>本月課程：<span id="monthCount">0</span> 堂</span>
+            </div>
+            <div class="stat-item">
+                <i class="fas fa-clock"></i>
+                <span>本月時數：<span id="monthHours">0</span> 小時</span>
+            </div>
+            <div class="stat-item">
+                <i class="fas fa-tasks"></i>
+                <span><span id="selectedDateLabel">今日</span>待辦：<span id="selectedDayCount">0</span> 堂</span>
+            </div>
+            <div class="stat-item">
+                <i class="fas fa-wallet"></i>
+                <span>目前收入：NT$ <span id="currentIncome">0</span></span>
+            </div>
+            <div class="stat-item">
+                <i class="fas fa-calculator"></i>
+                <span>預計總收入：NT$ <span id="estimatedIncome">0</span></span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 彈窗：當日詳情 -->
+    <div id="detailModal" class="modal">
+        <div class="modal-box fade-in">
+            <span class="close" onclick="closeModal('detailModal')">&times;</span>
+            <div class="modal-nav">
+                <i class="fas fa-chevron-left nav-arrow" onclick="changeDate(-1)"></i>
+                <h3 id="detailDateTitle">日期載入中...</h3>
+                <i class="fas fa-chevron-right nav-arrow" onclick="changeDate(1)"></i>
+            </div>
+            <div id="detailList" class="detail-scroll"></div>
+        </div>
+    </div>
+
+    <!-- 彈窗：新增/編輯行程 -->
+    <div id="addModal" class="modal">
+        <div class="modal-box slide-up">
+            <span class="close" onclick="closeModal('addModal')">&times;</span>
+            <div class="add-title" id="addModalDateTitle">新增排課</div>
+            <form id="scheduleForm">
+                <input type="hidden" id="editEventId">
+                <div class="form-item">
+                    <label>上課平台</label>
+                    <div class="flex-input">
+                        <select id="platformSelect">
+                            <option value="聯成外語">聯成外語</option>
+                            <option value="AmazingTalker">AmazingTalker</option>
+                            <option value="Preply">Preply</option>
+                            <option value="日本語學校">日本語學校</option>
+                            <option value="私人ZOOM">私人ZOOM</option>
+                        </select>
+                        <input type="text" id="platformInput" class="hidden" placeholder="自訂平台">
+                        <button type="button" class="tool-btn" onclick="toggleInput('platform')"><i class="fas fa-edit"></i></button>
+                    </div>
+                </div>
+
+                <div class="form-item">
+                    <label>費用 (台幣)</label>
+                    <input type="number" id="courseFee" placeholder="請輸入金額 (選填)">
+                </div>
+
+                <div class="form-item">
+                    <label>學生姓名 (選填)</label>
+                    <input type="text" id="studentName" placeholder="請輸入姓名">
+                </div>
+
+                <div class="form-item">
+                    <label>時間範圍</label>
+                    <div class="flex-input">
+                        <div id="timeSelectGroup" class="flex-input">
+                            <select id="startTimeSelect"></select>
+                            <span>~</span>
+                            <select id="endTimeSelect"></select>
+                        </div>
+                        <div id="timeInputGroup" class="flex-input hidden">
+                            <input type="text" id="startTimeInput" placeholder="09:00">
+                            <span>~</span>
+                            <input type="text" id="endTimeInput" placeholder="10:00">
+                        </div>
+                        <button type="button" class="tool-btn" onclick="toggleInput('time')"><i class="fas fa-clock"></i></button>
+                    </div>
+                </div>
+                <div class="form-item">
+                    <label>課程內容</label>
+                    <textarea id="courseContent" rows="3" placeholder="請輸入教材或進度..."></textarea>
+                </div>
+                <div class="form-btns">
+                    <button type="submit" id="submitBtn" class="btn-confirm">確認儲存</button>
+                    <button type="button" class="btn-cancel" onclick="closeModal('addModal')">取消</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 彈窗：刪除確認 -->
+    <div id="deleteModal" class="modal">
+        <div class="modal-box mini bounce-in">
+            <h4>確定要刪除這堂課嗎？</h4>
+            <div id="deleteTargetInfo" class="delete-info-box"></div>
+            <div class="form-btns">
+                <button id="confirmDelBtn" class="btn-del">刪除</button>
+                <button onclick="closeModal('deleteModal')" class="btn-cancel">保留</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

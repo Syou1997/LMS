@@ -1,0 +1,344 @@
+let currentSelectedDate = "";
+let events = JSON.parse(localStorage.getItem('teacherEvents')) || [];
+
+const yearSelect = document.getElementById('yearSelect');
+const monthSelect = document.getElementById('monthSelect');
+const calendarGrid = document.getElementById('calendarGrid');
+
+function init() {
+    const now = new Date();
+    currentSelectedDate = formatDate(now);
+
+    // 年份與月份下拉
+    for (let i = now.getFullYear() - 5; i <= now.getFullYear() + 5; i++) {
+        const opt = new Option(`${i}年`, i);
+        if (i === now.getFullYear()) opt.selected = true;
+        yearSelect.add(opt);
+    }
+    for (let i = 0; i < 12; i++) {
+        const opt = new Option(`${i + 1}月`, i);
+        if (i === now.getMonth()) opt.selected = true;
+        monthSelect.add(opt);
+    }
+
+    fillTimeOptions();
+    renderCalendar();
+    
+    yearSelect.onchange = renderCalendar;
+    monthSelect.onchange = renderCalendar;
+    document.getElementById('backToToday').onclick = goToday;
+
+    // 連動結束時間 (開始時間 + 50分)
+    document.getElementById('startTimeSelect').addEventListener('change', function() {
+        const startVal = this.value;
+        let [h, m] = startVal.split(':').map(Number);
+        let endM = m + 50;
+        let endH = h;
+        if (endM >= 60) { endH += 1; endM -= 60; }
+        if (endH >= 24) endH = 0;
+        const endVal = `${String(endH).padStart(2, '0')}:${String(endM).padStart(2, '0')}`;
+        
+        ensureTimeOptionExists('endTimeSelect', endVal);
+        document.getElementById('endTimeSelect').value = endVal;
+    });
+}
+
+function ensureTimeOptionExists(selectId, timeVal) {
+    const select = document.getElementById(selectId);
+    const exists = Array.from(select.options).some(opt => opt.value === timeVal);
+    if(!exists) {
+        select.add(new Option(timeVal, timeVal));
+    }
+}
+
+function formatDate(date) {
+    const d = new Date(date);
+    let month = '' + (d.getMonth() + 1), day = '' + d.getDate(), year = d.getFullYear();
+    if (month.length < 2) month = '0' + month;
+    if (day.length < 2) day = '0' + day;
+    return [year, month, day].join('-');
+}
+
+function fillTimeOptions() {
+    const starts = document.getElementById('startTimeSelect');
+    const ends = document.getElementById('endTimeSelect');
+    let html = "";
+    for (let h = 0; h < 24; h++) {
+        for (let m of ['00', '30']) {
+            const t = `${String(h).padStart(2, '0')}:${m}`;
+            html += `<option value="${t}">${t}</option>`;
+        }
+    }
+    starts.innerHTML = html;
+    ends.innerHTML = html;
+}
+
+// 根據平台名稱回傳 CSS Class
+function getPlatformClass(platform) {
+    switch (platform) {
+        case '聯成外語': return 'platform-lct';
+        case 'AmazingTalker': return 'platform-at';
+        case 'Preply': return 'platform-preply';
+        case '日本語學校': return 'platform-jp';
+        case '私人ZOOM': return 'platform-zoom';
+        default: return 'platform-default';
+    }
+}
+
+function renderCalendar() {
+    calendarGrid.innerHTML = '';
+    const year = parseInt(yearSelect.value);
+    const month = parseInt(monthSelect.value);
+
+    // 週日為 0，所以 startOffset 直接用 getDay() 即可實現週日開始
+    const firstDay = new Date(year, month, 1).getDay();
+    const startOffset = firstDay; 
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const todayStr = formatDate(new Date());
+
+    for (let i = 0; i < startOffset; i++) {
+        calendarGrid.appendChild(Object.assign(document.createElement('div'), { className: 'day-cell empty' }));
+    }
+
+    for (let d = 1; d <= daysInMonth; d++) {
+        const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+        const cell = document.createElement('div');
+        cell.className = `day-cell ${dateStr === todayStr ? 'is-today' : ''} ${dateStr === currentSelectedDate ? 'selected' : ''}`;
+        
+        let cellHTML = `<span class="day-num">${d}</span><div class="event-list-mini">`;
+        const dayEvents = events.filter(e => e.date === dateStr).sort((a, b) => a.start.localeCompare(b.start));
+
+        dayEvents.forEach(e => {
+            const pClass = getPlatformClass(e.platform);
+            cellHTML += `
+                <div class="event-tag-item ${pClass}">
+                    <span>${e.start}-${e.end}</span>
+                    <div class="event-tag-actions">
+                        <i class="fas fa-pen edit-icon-mini" onclick="openEditModal('${e.id}', event)"></i>
+                        <i class="fas fa-times del-icon-mini" onclick="openDeleteModal('${e.id}', event)"></i>
+                    </div>
+                </div>`;
+        });
+        cellHTML += `</div>`;
+        cell.innerHTML = cellHTML;
+
+        cell.onclick = () => {
+            currentSelectedDate = dateStr;
+            renderCalendar();
+        };
+        cell.ondblclick = () => openAddModal(dateStr);
+        calendarGrid.appendChild(cell);
+    }
+    updateFooterStats();
+}
+
+function toggleInput(type) {
+    if (type === 'platform') {
+        document.getElementById('platformSelect').classList.toggle('hidden');
+        document.getElementById('platformInput').classList.toggle('hidden');
+    } else {
+        document.getElementById('timeSelectGroup').classList.toggle('hidden');
+        document.getElementById('timeInputGroup').classList.toggle('hidden');
+    }
+}
+
+function openAddModal(dateStr) {
+    currentSelectedDate = dateStr;
+    document.getElementById('editEventId').value = "";
+    document.getElementById('addModalDateTitle').innerText = `新增排課：${dateStr}`;
+    document.getElementById('scheduleForm').reset();
+    document.getElementById('addModal').style.display = 'block';
+}
+
+function openEditModal(id, e) {
+    if(e) e.stopPropagation();
+    const target = events.find(ev => ev.id === id);
+    if(!target) return;
+
+    document.getElementById('editEventId').value = id;
+    document.getElementById('addModalDateTitle').innerText = `編輯課程：${target.date}`;
+    
+    const pSelect = document.getElementById('platformSelect');
+    const options = Array.from(pSelect.options).map(o => o.value);
+    if(options.includes(target.platform)) {
+        pSelect.value = target.platform;
+        pSelect.classList.remove('hidden');
+        document.getElementById('platformInput').classList.add('hidden');
+    } else {
+        document.getElementById('platformInput').value = target.platform;
+        document.getElementById('platformInput').classList.remove('hidden');
+        pSelect.classList.add('hidden');
+    }
+
+    document.getElementById('courseFee').value = target.fee;
+    document.getElementById('studentName').value = target.student;
+    
+    ensureTimeOptionExists('startTimeSelect', target.start);
+    ensureTimeOptionExists('endTimeSelect', target.end);
+    
+    document.getElementById('startTimeSelect').value = target.start;
+    document.getElementById('endTimeSelect').value = target.end;
+    document.getElementById('courseContent').value = target.content;
+
+    document.getElementById('addModal').style.display = 'block';
+}
+
+function closeModal(id) {
+    document.getElementById(id).style.display = 'none';
+}
+
+document.getElementById('scheduleForm').onsubmit = function(e) {
+    e.preventDefault();
+    const editId = document.getElementById('editEventId').value;
+    const platform = !document.getElementById('platformInput').classList.contains('hidden') ? 
+                      document.getElementById('platformInput').value : document.getElementById('platformSelect').value;
+    const start = !document.getElementById('timeInputGroup').classList.contains('hidden') ? 
+                   document.getElementById('startTimeInput').value : document.getElementById('startTimeSelect').value;
+    const end = !document.getElementById('timeInputGroup').classList.contains('hidden') ? 
+                 document.getElementById('endTimeInput').value : document.getElementById('endTimeSelect').value;
+
+    const eventData = {
+        platform,
+        fee: parseFloat(document.getElementById('courseFee').value) || 0,
+        student: document.getElementById('studentName').value || "未填寫",
+        start,
+        end,
+        content: document.getElementById('courseContent').value
+    };
+
+    if(editId) {
+        const index = events.findIndex(ev => ev.id === editId);
+        if(index !== -1) {
+            events[index] = { ...events[index], ...eventData };
+        }
+    } else {
+        const newEvent = {
+            id: Date.now().toString(),
+            date: currentSelectedDate,
+            ...eventData
+        };
+        events.push(newEvent);
+    }
+
+    saveData();
+    closeModal('addModal');
+    renderCalendar();
+};
+
+let delTargetId = null;
+function openDeleteModal(id, e) {
+    e.stopPropagation();
+    delTargetId = id;
+    const target = events.find(ev => ev.id === id);
+    const infoBox = document.getElementById('deleteTargetInfo');
+    
+    if(target) {
+        infoBox.innerHTML = `
+            <p><strong>日期：</strong>${target.date}</p>
+            <p><strong>平台：</strong>${target.platform}</p>
+            <p><strong>學生：</strong>${target.student}</p>
+            <p><strong>時間：</strong>${target.start} ~ ${target.end}</p>
+            <p><strong>費用：</strong>NT$ ${target.fee}</p>
+        `;
+    }
+    document.getElementById('deleteModal').style.display = 'block';
+}
+
+document.getElementById('confirmDelBtn').onclick = () => {
+    events = events.filter(e => e.id !== delTargetId);
+    saveData();
+    closeModal('deleteModal');
+    renderCalendar();
+};
+
+function updateFooterStats() {
+    const year = parseInt(yearSelect.value);
+    const month = parseInt(monthSelect.value);
+    const now = new Date();
+
+    const monthEvents = events.filter(e => {
+        const d = new Date(e.date);
+        return d.getFullYear() === year && d.getMonth() === month;
+    });
+    document.getElementById('monthCount').innerText = monthEvents.length;
+
+    let totalMinutes = 0;
+    monthEvents.forEach(e => {
+        const [sH, sM] = e.start.split(':').map(Number);
+        const [eH, eM] = e.end.split(':').map(Number);
+        const duration = (eH * 60 + eM) - (sH * 60 + sM);
+        if (duration > 0) totalMinutes += duration;
+    });
+    document.getElementById('monthHours').innerText = Math.floor(totalMinutes / 60);
+
+    const selectedDayEvents = events.filter(e => e.date === currentSelectedDate);
+    document.getElementById('selectedDateLabel').innerText = (currentSelectedDate === formatDate(now)) ? "今日" : currentSelectedDate.slice(5);
+    document.getElementById('selectedDayCount').innerText = selectedDayEvents.length;
+
+    let currentInc = 0;
+    let estimatedInc = 0;
+
+    monthEvents.forEach(e => {
+        const fee = e.fee || 0;
+        estimatedInc += fee;
+        const eventEndDateTime = new Date(`${e.date}T${e.end}`);
+        if (eventEndDateTime < now) currentInc += fee;
+    });
+
+    document.getElementById('currentIncome').innerText = currentInc.toLocaleString();
+    document.getElementById('estimatedIncome').innerText = estimatedInc.toLocaleString();
+}
+
+document.getElementById('showDayDetailBtn').onclick = () => {
+    if(!currentSelectedDate) return;
+    updateDetailModal();
+    document.getElementById('detailModal').style.display = 'block';
+}
+
+function updateDetailModal() {
+    document.getElementById('detailDateTitle').innerText = currentSelectedDate;
+    const list = document.getElementById('detailList');
+    list.innerHTML = '';
+    const dayEvents = events.filter(e => e.date === currentSelectedDate).sort((a,b) => a.start.localeCompare(b.start));
+    
+    if(dayEvents.length === 0) {
+        list.innerHTML = '<p style="text-align:center;color:#999;padding:20px;">無行程</p>';
+    } else {
+        dayEvents.forEach(e => {
+            list.innerHTML += `
+                <div style="padding:15px; border-bottom:1px solid #eee; position:relative;">
+                    <div style="position:absolute; right:15px; top:15px; display:flex; gap:10px;">
+                        <i class="fas fa-pen" style="cursor:pointer; color:#4a90e2;" onclick="openEditModal('${e.id}')"></i>
+                        <i class="fas fa-times" style="cursor:pointer; color:#e74c3c;" onclick="openDeleteModal('${e.id}', event)"></i>
+                    </div>
+                    <strong>${e.start}-${e.end} | ${e.platform}</strong><br>
+                    <small>學生：${e.student} | 費用：NT$ ${e.fee}</small><br>
+                    <p style="font-size:13px; color:#666; margin-top:5px;">${e.content || ''}</p>
+                </div>`;
+        });
+    }
+}
+
+function saveData() { localStorage.setItem('teacherEvents', JSON.stringify(events)); }
+
+function goToday() {
+    const now = new Date();
+    yearSelect.value = now.getFullYear();
+    monthSelect.value = now.getMonth();
+    currentSelectedDate = formatDate(now);
+    renderCalendar();
+}
+
+function changeDate(offset) {
+    let d = new Date(currentSelectedDate);
+    d.setDate(d.getDate() + offset);
+    currentSelectedDate = formatDate(d);
+    yearSelect.value = d.getFullYear();
+    monthSelect.value = d.getMonth();
+    renderCalendar();
+    if(document.getElementById('detailModal').style.display === 'block') {
+        updateDetailModal();
+    }
+}
+
+init();

@@ -1,0 +1,241 @@
+:root {
+    --primary: #4a90e2;
+    --secondary: #f5f7fa;
+    --accent: #e74c3c;
+    --text: #333;
+    --shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f0f2f5;
+    margin: 0;
+    color: var(--text);
+    padding-bottom: 80px; /* 避免 footer 擋住內容 */
+}
+
+.header-container {
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    color: white;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: var(--shadow);
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.selectors select {
+    padding: 8px 15px;
+    border-radius: 20px;
+    border: none;
+    margin-left: 10px;
+    font-weight: bold;
+}
+
+.calendar-wrapper {
+    max-width: 1200px;
+    margin: 20px auto;
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+}
+
+.weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    background: #f8f9fa;
+    text-align: center;
+    font-weight: bold;
+    padding: 15px 0;
+    border-bottom: 1px solid #ddd;
+}
+
+/* 週日與週六顏色區分 */
+.weekdays div:first-child { color: #e74c3c; }
+.weekdays div:last-child { color: #4a90e2; }
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    min-height: 600px;
+}
+
+.day-cell {
+    border: 0.5px solid #eee;
+    padding: 10px;
+    min-height: 120px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.day-cell:hover { background-color: #fcfcfc; }
+.day-cell.selected { background-color: #eef6ff; border: 2px solid var(--primary); }
+.day-cell.is-today { background-color: #fffde7; }
+.day-num { font-size: 1.1rem; font-weight: bold; color: #666; }
+
+.event-list-mini {
+    margin-top: 5px;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.event-tag-item {
+    color: white;
+    font-size: 11px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    white-space: nowrap;
+    font-weight: 500;
+    text-shadow: 0 1px 1px rgba(0,0,0,0.2);
+}
+
+/* 平台顏色定義 */
+.platform-lct { background-color: #f1c40f; color: #333; text-shadow: none; } /* 聯成黃 */
+.platform-at { background-color: #e74c3c; } /* AT紅 */
+.platform-preply { background-color: #8e44ad; } /* Preply紫 */
+.platform-jp { background-color: #27ae60; } /* 日語綠 */
+.platform-zoom { background-color: #2980b9; } /* Zoom藍 */
+.platform-default { background-color: #7f8c8d; } /* 預設灰 */
+
+.event-tag-actions {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+}
+
+.del-icon-mini, .edit-icon-mini {
+    font-size: 10px;
+    cursor: pointer;
+    opacity: 0.8;
+}
+.del-icon-mini:hover, .edit-icon-mini:hover { opacity: 1; }
+
+footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background: white;
+    padding: 15px 0;
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+}
+
+.footer-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+}
+
+.stat-item i { color: var(--primary); }
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5);
+}
+
+.modal-box {
+    background: white;
+    margin: 5% auto;
+    padding: 25px;
+    width: 90%;
+    max-width: 500px;
+    border-radius: 15px;
+    position: relative;
+}
+
+.detail-scroll {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.modal-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.nav-arrow {
+    cursor: pointer;
+    padding: 10px;
+    color: var(--primary);
+    transition: transform 0.2s;
+}
+.nav-arrow:hover { transform: scale(1.2); }
+
+.modal-box.mini { max-width: 300px; text-align: center; margin-top: 15%; }
+
+.close {
+    position: absolute;
+    right: 20px; top: 15px;
+    font-size: 24px;
+    cursor: pointer;
+    color: #999;
+}
+
+.form-item { margin-bottom: 15px; }
+.form-item label { display: block; margin-bottom: 5px; font-weight: bold; }
+.form-item input, .form-item select, .form-item textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-sizing: border-box;
+}
+
+.flex-input { display: flex; gap: 10px; align-items: center; }
+.hidden { display: none !important; }
+
+.btn-primary, .btn-confirm { background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; }
+.btn-today { background: #2ecc71; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; }
+.btn-cancel { background: #eee; color: #666; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; }
+.btn-del { background: var(--accent); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; }
+
+.tool-btn { background: none; border: 1px solid #ddd; padding: 8px; border-radius: 8px; cursor: pointer; color: #666; }
+
+.fade-in { animation: fadeIn 0.3s; }
+.slide-up { animation: slideUp 0.3s; }
+.bounce-in { animation: bounceIn 0.4s; }
+
+@keyframes fadeIn { from {opacity: 0;} to {opacity: 1;} }
+@keyframes slideUp { from {transform: translateY(20px); opacity: 0;} to {transform: translateY(0); opacity: 1;} }
+@keyframes bounceIn {
+    0% {transform: scale(0.8); opacity: 0;}
+    70% {transform: scale(1.05);}
+    100% {transform: scale(1); opacity: 1;}
+}
+
+.delete-info-box {
+    background: #fff5f5;
+    border: 1px solid #feb2b2;
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    text-align: left;
+    font-size: 14px;
+}
