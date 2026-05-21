@@ -3,16 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>教師行程管理系統 - 專業版</title>
+    <title>教師行程管理系統</title>
     <link rel="stylesheet" href="./style.css">
 </head>
 <body>
 
 <header>
     <div class="header-container">
-        <div class="brand">
-            <span>教師上課管理系統</span>
-        </div>
+        <div class="brand" id="brandTitle">教師上課管理系統</div>
 
         <div class="selectors">
             <button id="prevMonthBtn" class="icon-btn" title="上個月">‹</button>
@@ -23,54 +21,35 @@
 
         <div class="header-actions">
             <div class="timezone-picker">
-                <span id="timezoneFlag" class="timezone-flag">TW</span>
-                <select id="timezoneSelect">
-                    <option value="TW">台灣時區 (GMT+8)</option>
-                    <option value="JP">日本時區 (GMT+9)</option>
-                </select>
+                <span id="timezoneFlag" class="timezone-flag">TZ</span>
+                <select id="timezoneSelect"></select>
             </div>
 
-            <button id="exportCalendarBtn" class="btn btn-export" title="匯出本月行程至 Google 行事曆">
-                <span class="btn-icon">G</span> 匯出本月
-            </button>
-
-            <button id="exportImageBtn" class="btn btn-image" title="預覽並匯出給學生看的課表圖片">
-                <span class="btn-icon">▣</span> 匯出課表圖片
-            </button>
-
-            <button id="backupBtn" class="btn btn-backup" title="匯出 JSON 備份">
-                <span class="btn-icon">↓</span> 備份
-            </button>
-
-            <button id="importBackupBtn" class="btn btn-backup" title="匯入 JSON 備份">
-                <span class="btn-icon">↑</span> 匯入
-            </button>
+            <button id="exportCalendarBtn" class="btn btn-export">G 匯出本月</button>
+            <button id="exportImageBtn" class="btn btn-image">▣ 匯出課表圖片</button>
+            <button id="backupBtn" class="btn btn-backup">↓ 備份</button>
+            <button id="importBackupBtn" class="btn btn-backup">↑ 匯入</button>
             <input type="file" id="importBackupInput" accept="application/json,.json" class="hidden">
 
+            <button id="openSettingsBtn" class="btn btn-settings">⚙ 設定</button>
             <button id="showDayDetailBtn" class="btn btn-primary">顯示細節</button>
             <button id="backToToday" class="btn btn-today">回今天</button>
         </div>
     </div>
 </header>
 
-<main class="main-content">
+<main>
     <div class="toolbar">
         <div class="search-box">
-            <span class="search-icon">⌕</span>
+            <span>⌕</span>
             <input type="text" id="searchInput" placeholder="搜尋學生、平台或課程內容">
-            <button id="clearSearchBtn" class="clear-search hidden" title="清除搜尋">×</button>
+            <button id="clearSearchBtn" class="clear-search hidden">×</button>
         </div>
     </div>
 
-    <div id="calendarWrapper" class="calendar-wrapper">
+    <div class="calendar-wrapper">
         <div class="weekdays">
-            <div>週日</div>
-            <div>週一</div>
-            <div>週二</div>
-            <div>週三</div>
-            <div>週四</div>
-            <div>週五</div>
-            <div>週六</div>
+            <div>週日</div><div>週一</div><div>週二</div><div>週三</div><div>週四</div><div>週五</div><div>週六</div>
         </div>
         <div id="calendarGrid" class="calendar-grid"></div>
     </div>
@@ -78,31 +57,176 @@
 
 <footer>
     <div class="footer-container">
-        <div class="stat-item">
-            <span class="stat-icon">✓</span>
-            <span>本月課程：<span id="monthCount">0</span> 堂</span>
-        </div>
-        <div class="stat-item">
-            <span class="stat-icon">◷</span>
-            <span>本月時數：<span id="monthHours">0</span> 小時</span>
-        </div>
-        <div class="stat-item">
-            <span class="stat-icon">☷</span>
-            <span><span id="selectedDateLabel">今日</span>待辦：<span id="selectedDayCount">0</span> 堂</span>
-        </div>
+        <div class="stat-item">✓ 本月課程：<span id="monthCount">0</span> 堂</div>
+        <div class="stat-item">◷ 本月時數：<span id="monthHours">0</span> 小時</div>
+        <div class="stat-item">☷ <span id="selectedDateLabel">今日</span>待辦：<span id="selectedDayCount">0</span> 堂</div>
         <div class="stat-item completion-stat">
-            <span class="stat-icon">◔</span>
-            <span>本月完成率：<span id="monthCompletionRate">0%</span></span>
-            <div class="progress-bar">
-                <div id="completionProgress" class="progress-fill"></div>
-            </div>
+            ◔ 本月完成率：<span id="monthCompletionRate">0%</span>
+            <div class="progress-bar"><div id="completionProgress" class="progress-fill"></div></div>
         </div>
-        <div class="stat-item">
-            <span class="stat-icon">▦</span>
-            <span>預計總收入：NT$ <span id="estimatedIncome">0</span></span>
-        </div>
+        <div class="stat-item">▦ 預計總收入：<span id="currencyLabel">NT$</span> <span id="estimatedIncome">0</span></div>
     </div>
 </footer>
+
+<button id="mobileAddBtn" class="mobile-add-btn">＋</button>
+
+<div id="toast" class="toast hidden">
+    <span id="toastText"></span>
+    <button id="undoDeleteBtn" class="toast-action hidden">復原</button>
+</div>
+
+<div id="onboardingModal" class="modal onboarding-modal">
+    <div class="modal-box onboarding-box">
+        <div class="onboarding-progress">
+            <span id="onboardingStepText">1 / 4</span>
+            <div class="step-dots">
+                <span class="step-dot active"></span>
+                <span class="step-dot"></span>
+                <span class="step-dot"></span>
+                <span class="step-dot"></span>
+            </div>
+        </div>
+
+        <section class="onboarding-step active" data-step="1">
+            <h2>開始設定你的排課工具</h2>
+            <p>先設定顯示名稱，之後匯出圖片與備份都會使用這份設定。</p>
+            <div class="form-item">
+                <label>教師顯示名稱</label>
+                <input type="text" id="setupTeacherName" placeholder="例如：Syou">
+            </div>
+            <label class="check-row">
+                <input type="checkbox" id="setupShowTeacherName" checked>
+                匯出圖片時顯示教師名稱
+            </label>
+        </section>
+
+        <section class="onboarding-step" data-step="2">
+            <h2>設定時區</h2>
+            <p>你可以使用預設時區，也可以自行新增常用地點與時區。</p>
+            <div class="form-grid">
+                <div class="form-item">
+                    <label>主要時區</label>
+                    <select id="setupBaseTimezone"></select>
+                </div>
+                <div class="form-item">
+                    <label>預設顯示時區</label>
+                    <select id="setupDisplayTimezone"></select>
+                </div>
+            </div>
+
+            <div class="custom-timezone-box">
+                <strong>新增自訂時區</strong>
+                <div class="custom-timezone-grid">
+                    <input type="text" id="setupCustomTimezoneName" placeholder="地點名稱，例如：溫哥華">
+                    <select id="setupCustomTimezoneValue"></select>
+                    <button id="setupAddTimezoneBtn" type="button" class="btn btn-primary">新增</button>
+                </div>
+                <small class="hint">新增後會出現在主要時區與顯示時區選單中。</small>
+            </div>
+        </section>
+
+        <section class="onboarding-step" data-step="3">
+            <h2>設定上課平台</h2>
+            <p>前 10 個平台可以有不同顏色，第 11 個開始會統一灰色。</p>
+            <div class="platform-input-row">
+                <input type="text" id="setupPlatformInput" placeholder="輸入平台名稱">
+                <button id="setupAddPlatformBtn" type="button" class="btn btn-primary">新增</button>
+            </div>
+            <div id="setupPlatformList" class="platform-list"></div>
+        </section>
+
+        <section class="onboarding-step" data-step="4">
+            <h2>準備完成</h2>
+            <p>確認後就可以開始使用。之後也能從右上角「設定」修改。</p>
+            <div id="setupSummary" class="summary-card"></div>
+        </section>
+
+        <div class="onboarding-actions">
+            <button id="setupPrevBtn" class="btn btn-cancel" type="button">上一步</button>
+            <button id="setupNextBtn" class="btn btn-primary" type="button">下一步</button>
+            <button id="setupFinishBtn" class="btn btn-today hidden" type="button">開始使用</button>
+        </div>
+    </div>
+</div>
+
+<div id="settingsModal" class="modal">
+    <div class="modal-box settings-box slide-up">
+        <button class="close" onclick="closeModal('settingsModal')">×</button>
+        <h3>設定</h3>
+
+        <div class="form-item">
+            <label>教師顯示名稱</label>
+            <input type="text" id="settingsTeacherName">
+        </div>
+
+        <label class="check-row">
+            <input type="checkbox" id="settingsShowTeacherName">
+            匯出圖片時顯示教師名稱
+        </label>
+
+        <div class="form-grid">
+            <div class="form-item">
+                <label>主要時區</label>
+                <select id="settingsBaseTimezone"></select>
+            </div>
+            <div class="form-item">
+                <label>顯示時區</label>
+                <select id="settingsDisplayTimezone"></select>
+            </div>
+        </div>
+
+        <div class="custom-timezone-box">
+            <strong>新增自訂時區</strong>
+            <div class="custom-timezone-grid">
+                <input type="text" id="settingsCustomTimezoneName" placeholder="地點名稱，例如：溫哥華">
+                <select id="settingsCustomTimezoneValue"></select>
+                <button id="settingsAddTimezoneBtn" type="button" class="btn btn-primary">新增</button>
+            </div>
+        </div>
+
+        <div class="form-grid">
+            <div class="form-item">
+                <label>幣別</label>
+                <input type="text" id="settingsCurrency" placeholder="NT$">
+            </div>
+            <div class="form-item">
+                <label>預設課程長度（分鐘）</label>
+                <input type="number" id="settingsDefaultDuration" min="1" max="240">
+            </div>
+        </div>
+
+        <div class="form-item">
+            <label>上課平台與顏色</label>
+            <div id="settingsPlatformList" class="platform-edit-list"></div>
+            <div class="platform-input-row">
+                <input type="text" id="settingsPlatformInput" placeholder="新增平台名稱">
+                <button id="settingsAddPlatformBtn" type="button" class="btn btn-primary">新增平台</button>
+            </div>
+            <small class="hint">儲存時會檢查重複名稱。若改名，既有課程也會同步更新。</small>
+        </div>
+
+        <div class="form-btns settings-actions">
+            <button id="settingsResetBtn" class="btn btn-del" type="button">初始化</button>
+            <span class="settings-spacer"></span>
+            <button id="saveSettingsBtn" class="btn btn-confirm" type="button">儲存設定</button>
+            <button class="btn btn-cancel" type="button" onclick="closeModal('settingsModal')">取消</button>
+        </div>
+    </div>
+</div>
+
+<div id="resetConfirmModal" class="modal">
+    <div class="modal-box mini bounce-in">
+        <h3>確定要初始化嗎？</h3>
+        <div class="delete-info-box">
+            <p>初始化會清除目前所有課程資料與個人設定，並回到第一次使用設定畫面。</p>
+            <p><strong>重製前會自動下載一份備份檔。</strong></p>
+        </div>
+        <div class="form-btns">
+            <button id="confirmResetBtn" class="btn btn-del" type="button">確定初始化</button>
+            <button class="btn btn-cancel" type="button" onclick="closeModal('resetConfirmModal')">取消</button>
+        </div>
+    </div>
+</div>
 
 <div id="detailModal" class="modal">
     <div class="modal-box fade-in">
@@ -127,20 +251,14 @@
             <div class="form-item">
                 <label>上課平台</label>
                 <div class="flex-input">
-                    <select id="platformSelect">
-                        <option value="聯成外語">聯成外語</option>
-                        <option value="AmazingTalker">AmazingTalker</option>
-                        <option value="Preply">Preply</option>
-                        <option value="日本語學校">日本語學校</option>
-                        <option value="私人ZOOM">私人ZOOM</option>
-                    </select>
+                    <select id="platformSelect"></select>
                     <input type="text" id="platformInput" class="hidden" placeholder="自訂平台">
-                    <button type="button" class="tool-btn" onclick="toggleInput('platform')">編輯</button>
+                    <button type="button" class="tool-btn" onclick="toggleInput('platform')">自訂</button>
                 </div>
             </div>
 
             <div class="form-item">
-                <label>費用（台幣）</label>
+                <label>費用</label>
                 <input type="number" id="courseFee" placeholder="請輸入金額（選填）">
             </div>
 
@@ -167,12 +285,22 @@
             </div>
 
             <div class="form-item">
+                <label>重複排課</label>
+                <select id="repeatSelect">
+                    <option value="none">只新增這一天</option>
+                    <option value="4">每週重複 4 次</option>
+                    <option value="month">每週重複到本月底</option>
+                </select>
+                <small class="hint">編輯既有課程時不會套用重複排課。</small>
+            </div>
+
+            <div class="form-item">
                 <label>課程內容</label>
                 <textarea id="courseContent" rows="3" placeholder="請輸入教材或進度..."></textarea>
             </div>
 
             <div class="form-btns">
-                <button type="submit" id="submitBtn" class="btn btn-confirm">確認儲存</button>
+                <button type="submit" class="btn btn-confirm">確認儲存</button>
                 <button type="button" class="btn btn-cancel" onclick="closeModal('addModal')">取消</button>
             </div>
         </form>
@@ -194,13 +322,9 @@
     <div class="modal-box image-preview-box fade-in">
         <button class="close" onclick="closeModal('imagePreviewModal')">×</button>
         <h3>課表圖片預覽</h3>
-        <div class="preview-scroll">
-            <img id="schedulePreviewImage" alt="課表圖片預覽">
-        </div>
+        <div class="preview-scroll"><img id="schedulePreviewImage" alt="課表圖片預覽"></div>
         <div class="form-btns">
-            <button id="downloadPreviewImageBtn" class="btn btn-image">
-                <span class="btn-icon">↓</span> 下載圖片
-            </button>
+            <button id="downloadPreviewImageBtn" class="btn btn-image">↓ 下載圖片</button>
             <button type="button" class="btn btn-cancel" onclick="closeModal('imagePreviewModal')">取消</button>
         </div>
     </div>
