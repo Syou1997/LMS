@@ -4,6 +4,8 @@
     --accent: #e74c3c;
     --text: #333;
     --shadow: 0 4px 12px rgba(0,0,0,0.1);
+    --success: #2ecc71;
+    --google-blue: #4285f4;
 }
 
 body {
@@ -38,6 +40,62 @@ body {
     border: none;
     margin-left: 10px;
     font-weight: bold;
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* 新增：時區選取器樣式 */
+.timezone-picker {
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.15);
+    padding: 4px 12px;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.timezone-flag {
+    font-size: 1.2rem;
+    margin-right: 6px;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.timezone-picker select {
+    background: transparent;
+    color: white;
+    border: none;
+    font-weight: bold;
+    outline: none;
+    cursor: pointer;
+    padding: 4px 0;
+}
+
+.timezone-picker select option {
+    color: var(--text);
+}
+
+/* 新增：Google 匯出按鈕樣式 */
+.btn-export {
+    background-color: var(--google-blue);
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: background 0.2s;
+}
+
+.btn-export:hover {
+    background-color: #3367d6;
 }
 
 .calendar-wrapper {
@@ -212,7 +270,7 @@ footer {
 .hidden { display: none !important; }
 
 .btn-primary, .btn-confirm { background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; }
-.btn-today { background: #2ecc71; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; }
+.btn-today { background: var(--success); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; }
 .btn-cancel { background: #eee; color: #666; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; }
 .btn-del { background: var(--accent); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; }
 
