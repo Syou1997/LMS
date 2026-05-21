@@ -3,17 +3,19 @@
     --secondary: #f5f7fa;
     --accent: #e74c3c;
     --text: #333;
-    --shadow: 0 4px 12px rgba(0,0,0,0.1);
+    --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     --success: #2ecc71;
     --google-blue: #4285f4;
+    --image-green: #16a085;
+    --backup-purple: #6c5ce7;
 }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
     background-color: #f0f2f5;
     margin: 0;
     color: var(--text);
-    padding-bottom: 80px; /* 避免 footer 擋住內容 */
+    padding-bottom: 90px;
 }
 
 .header-container {
@@ -24,6 +26,7 @@ body {
     justify-content: space-between;
     align-items: center;
     box-shadow: var(--shadow);
+    gap: 16px;
 }
 
 .brand {
@@ -32,23 +35,47 @@ body {
     gap: 10px;
     font-size: 1.5rem;
     font-weight: bold;
+    white-space: nowrap;
+}
+
+.selectors {
+    display: flex;
+    gap: 10px;
+    align-items: center;
 }
 
 .selectors select {
     padding: 8px 15px;
     border-radius: 20px;
     border: none;
-    margin-left: 10px;
     font-weight: bold;
+}
+
+.icon-btn {
+    width: 36px;
+    height: 36px;
+    border: none;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.18);
+    color: white;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon-btn:hover {
+    background: rgba(255, 255, 255, 0.28);
 }
 
 .header-actions {
     display: flex;
     align-items: center;
     gap: 12px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
 }
 
-/* 新增：時區選取器樣式 */
 .timezone-picker {
     display: flex;
     align-items: center;
@@ -79,28 +106,112 @@ body {
     color: var(--text);
 }
 
-/* 新增：Google 匯出按鈕樣式 */
-.btn-export {
-    background-color: var(--google-blue);
+.btn-export,
+.btn-image,
+.btn-backup,
+.btn-primary,
+.btn-today,
+.btn-confirm,
+.btn-cancel,
+.btn-del {
     color: white;
     border: none;
     padding: 10px 16px;
     border-radius: 8px;
     cursor: pointer;
     font-weight: bold;
-    display: flex;
+    display: inline-flex;
     align-items: center;
     gap: 6px;
-    transition: background 0.2s;
+    transition: background 0.2s, transform 0.2s;
+    white-space: nowrap;
+}
+
+.btn-export {
+    background-color: var(--google-blue);
 }
 
 .btn-export:hover {
     background-color: #3367d6;
 }
 
+.btn-image {
+    background-color: var(--image-green);
+}
+
+.btn-image:hover {
+    background-color: #12816c;
+}
+
+.btn-backup {
+    background-color: var(--backup-purple);
+}
+
+.btn-backup:hover {
+    background-color: #5948d6;
+}
+
+.btn-primary,
+.btn-confirm {
+    background: var(--primary);
+}
+
+.btn-today {
+    background: var(--success);
+}
+
+.btn-cancel {
+    background: #eee;
+    color: #666;
+}
+
+.btn-del {
+    background: var(--accent);
+}
+
+.toolbar {
+    max-width: 1200px;
+    margin: 18px auto 0;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.search-box {
+    width: min(420px, calc(100% - 24px));
+    background: white;
+    border: 1px solid #dfe4ea;
+    border-radius: 999px;
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.search-box i {
+    color: #77808f;
+}
+
+.search-box input {
+    border: none;
+    outline: none;
+    flex: 1;
+    font-size: 15px;
+}
+
+.clear-search {
+    border: none;
+    background: #edf2f7;
+    color: #667085;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
 .calendar-wrapper {
     max-width: 1200px;
-    margin: 20px auto;
+    margin: 16px auto 20px;
     background: white;
     border-radius: 12px;
     overflow: hidden;
@@ -117,9 +228,13 @@ body {
     border-bottom: 1px solid #ddd;
 }
 
-/* 週日與週六顏色區分 */
-.weekdays div:first-child { color: #e74c3c; }
-.weekdays div:last-child { color: #4a90e2; }
+.weekdays div:first-child {
+    color: #e74c3c;
+}
+
+.weekdays div:last-child {
+    color: #4a90e2;
+}
 
 .calendar-grid {
     display: grid;
@@ -133,12 +248,63 @@ body {
     min-height: 120px;
     cursor: pointer;
     transition: background 0.2s;
+    box-sizing: border-box;
 }
 
-.day-cell:hover { background-color: #fcfcfc; }
-.day-cell.selected { background-color: #eef6ff; border: 2px solid var(--primary); }
-.day-cell.is-today { background-color: #fffde7; }
-.day-num { font-size: 1.1rem; font-weight: bold; color: #666; }
+.day-cell:hover {
+    background-color: #fcfcfc;
+}
+
+.day-cell.completed-day {
+    background-color: #f1f3f5;
+}
+
+.day-cell.completed-day:hover {
+    background-color: #e9ecef;
+}
+
+.day-cell.completed-day .day-num {
+    color: #495057;
+}
+
+.day-cell.selected {
+    background-color: #eef6ff;
+    border: 2px solid var(--primary);
+}
+
+.day-cell.selected.completed-day {
+    background-color: #e7edf5;
+}
+
+.day-cell.is-today {
+    background-color: #fffde7;
+}
+
+.day-cell.is-today.completed-day {
+    background-color: #f0f0e6;
+}
+
+.day-num-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+}
+
+.day-num {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #666;
+}
+
+.today-badge {
+    background: #ff9800;
+    color: white;
+    font-size: 11px;
+    padding: 2px 6px;
+    border-radius: 999px;
+    font-weight: bold;
+}
 
 .event-list-mini {
     margin-top: 5px;
@@ -157,16 +323,39 @@ body {
     align-items: center;
     white-space: nowrap;
     font-weight: 500;
-    text-shadow: 0 1px 1px rgba(0,0,0,0.2);
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
 }
 
-/* 平台顏色定義 */
-.platform-lct { background-color: #f1c40f; color: #333; text-shadow: none; } /* 聯成黃 */
-.platform-at { background-color: #e74c3c; } /* AT紅 */
-.platform-preply { background-color: #8e44ad; } /* Preply紫 */
-.platform-jp { background-color: #27ae60; } /* 日語綠 */
-.platform-zoom { background-color: #2980b9; } /* Zoom藍 */
-.platform-default { background-color: #7f8c8d; } /* 預設灰 */
+.event-tag-item.completed-event {
+    opacity: 0.45;
+    filter: grayscale(30%);
+}
+
+.platform-lct {
+    background-color: #f1c40f;
+    color: #333;
+    text-shadow: none;
+}
+
+.platform-at {
+    background-color: #e74c3c;
+}
+
+.platform-preply {
+    background-color: #8e44ad;
+}
+
+.platform-jp {
+    background-color: #27ae60;
+}
+
+.platform-zoom {
+    background-color: #2980b9;
+}
+
+.platform-default {
+    background-color: #7f8c8d;
+}
 
 .event-tag-actions {
     display: flex;
@@ -174,12 +363,17 @@ body {
     align-items: center;
 }
 
-.del-icon-mini, .edit-icon-mini {
+.del-icon-mini,
+.edit-icon-mini {
     font-size: 10px;
     cursor: pointer;
     opacity: 0.8;
 }
-.del-icon-mini:hover, .edit-icon-mini:hover { opacity: 1; }
+
+.del-icon-mini:hover,
+.edit-icon-mini:hover {
+    opacity: 1;
+}
 
 footer {
     position: fixed;
@@ -187,7 +381,7 @@ footer {
     width: 100%;
     background: white;
     padding: 15px 0;
-    box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
 }
 
 .footer-container {
@@ -196,6 +390,7 @@ footer {
     display: flex;
     justify-content: space-around;
     flex-wrap: wrap;
+    gap: 10px;
 }
 
 .stat-item {
@@ -205,15 +400,38 @@ footer {
     font-weight: 500;
 }
 
-.stat-item i { color: var(--primary); }
+.stat-item i {
+    color: var(--primary);
+}
+
+.completion-stat {
+    min-width: 220px;
+}
+
+.progress-bar {
+    width: 80px;
+    height: 8px;
+    background: #e9ecef;
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #4a90e2, #2ecc71);
+    transition: width 0.25s;
+}
 
 .modal {
     display: none;
     position: fixed;
     z-index: 1000;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: rgba(0,0,0,0.5);
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
 }
 
 .modal-box {
@@ -224,6 +442,25 @@ footer {
     max-width: 500px;
     border-radius: 15px;
     position: relative;
+}
+
+.image-preview-box {
+    max-width: 900px;
+}
+
+.preview-scroll {
+    max-height: 65vh;
+    overflow: auto;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    background: #f8fafc;
+    margin-bottom: 16px;
+}
+
+#schedulePreviewImage {
+    display: block;
+    width: 100%;
+    height: auto;
 }
 
 .detail-scroll {
@@ -244,21 +481,45 @@ footer {
     color: var(--primary);
     transition: transform 0.2s;
 }
-.nav-arrow:hover { transform: scale(1.2); }
 
-.modal-box.mini { max-width: 300px; text-align: center; margin-top: 15%; }
+.nav-arrow:hover {
+    transform: scale(1.2);
+}
+
+.modal-box.mini {
+    max-width: 300px;
+    text-align: center;
+    margin-top: 15%;
+}
 
 .close {
     position: absolute;
-    right: 20px; top: 15px;
+    right: 20px;
+    top: 15px;
     font-size: 24px;
     cursor: pointer;
     color: #999;
 }
 
-.form-item { margin-bottom: 15px; }
-.form-item label { display: block; margin-bottom: 5px; font-weight: bold; }
-.form-item input, .form-item select, .form-item textarea {
+.add-title {
+    font-size: 1.25rem;
+    font-weight: bold;
+    margin-bottom: 16px;
+}
+
+.form-item {
+    margin-bottom: 15px;
+}
+
+.form-item label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.form-item input,
+.form-item select,
+.form-item textarea {
     width: 100%;
     padding: 10px;
     border: 1px solid #ddd;
@@ -266,26 +527,77 @@ footer {
     box-sizing: border-box;
 }
 
-.flex-input { display: flex; gap: 10px; align-items: center; }
-.hidden { display: none !important; }
+#modalTimezoneHint {
+    font-weight: normal;
+    font-size: 12px;
+    color: #e74c3c;
+}
 
-.btn-primary, .btn-confirm { background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; }
-.btn-today { background: var(--success); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; }
-.btn-cancel { background: #eee; color: #666; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; }
-.btn-del { background: var(--accent); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; }
+.flex-input {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
 
-.tool-btn { background: none; border: 1px solid #ddd; padding: 8px; border-radius: 8px; cursor: pointer; color: #666; }
+.hidden {
+    display: none !important;
+}
 
-.fade-in { animation: fadeIn 0.3s; }
-.slide-up { animation: slideUp 0.3s; }
-.bounce-in { animation: bounceIn 0.4s; }
+.tool-btn {
+    background: none;
+    border: 1px solid #ddd;
+    padding: 8px;
+    border-radius: 8px;
+    cursor: pointer;
+    color: #666;
+}
 
-@keyframes fadeIn { from {opacity: 0;} to {opacity: 1;} }
-@keyframes slideUp { from {transform: translateY(20px); opacity: 0;} to {transform: translateY(0); opacity: 1;} }
+.form-btns {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+.fade-in {
+    animation: fadeIn 0.3s;
+}
+
+.slide-up {
+    animation: slideUp 0.3s;
+}
+
+.bounce-in {
+    animation: bounceIn 0.4s;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
 @keyframes bounceIn {
-    0% {transform: scale(0.8); opacity: 0;}
-    70% {transform: scale(1.05);}
-    100% {transform: scale(1); opacity: 1;}
+    0% {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+    70% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
 }
 
 .delete-info-box {
@@ -296,4 +608,42 @@ footer {
     margin-bottom: 15px;
     text-align: left;
     font-size: 14px;
+}
+
+@media (max-width: 900px) {
+    .header-container {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .brand,
+    .selectors,
+    .header-actions {
+        justify-content: center;
+    }
+
+    .toolbar {
+        justify-content: center;
+    }
+
+    .calendar-wrapper {
+        margin: 12px;
+    }
+
+    .day-cell {
+        min-height: 100px;
+        padding: 6px;
+    }
+
+    .event-tag-item {
+        font-size: 10px;
+    }
+
+    footer {
+        position: static;
+    }
+
+    body {
+        padding-bottom: 0;
+    }
 }
