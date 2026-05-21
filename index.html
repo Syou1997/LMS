@@ -4,8 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>教師行程管理系統 - 專業版</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="./style.css">
 </head>
 <body>
 
@@ -16,44 +15,40 @@
         </div>
 
         <div class="selectors">
-            <button id="prevMonthBtn" class="icon-btn" title="上個月">
-                <i class="fas fa-chevron-left"></i>
-            </button>
+            <button id="prevMonthBtn" class="icon-btn" title="上個月">‹</button>
             <select id="yearSelect"></select>
             <select id="monthSelect"></select>
-            <button id="nextMonthBtn" class="icon-btn" title="下個月">
-                <i class="fas fa-chevron-right"></i>
-            </button>
+            <button id="nextMonthBtn" class="icon-btn" title="下個月">›</button>
         </div>
 
         <div class="header-actions">
             <div class="timezone-picker">
-                <span id="timezoneFlag" class="timezone-flag">🇹🇼</span>
+                <span id="timezoneFlag" class="timezone-flag">TW</span>
                 <select id="timezoneSelect">
                     <option value="TW">台灣時區 (GMT+8)</option>
                     <option value="JP">日本時區 (GMT+9)</option>
                 </select>
             </div>
 
-            <button id="exportCalendarBtn" class="btn-export" title="匯出本月行程至 Google 行事曆">
-                <i class="fab fa-google"></i> 匯出本月
+            <button id="exportCalendarBtn" class="btn btn-export" title="匯出本月行程至 Google 行事曆">
+                <span class="btn-icon">G</span> 匯出本月
             </button>
 
-            <button id="exportImageBtn" class="btn-image" title="預覽並匯出給學生看的課表圖片">
-                <i class="fas fa-image"></i> 匯出課表圖片
+            <button id="exportImageBtn" class="btn btn-image" title="預覽並匯出給學生看的課表圖片">
+                <span class="btn-icon">▣</span> 匯出課表圖片
             </button>
 
-            <button id="backupBtn" class="btn-backup" title="匯出 JSON 備份">
-                <i class="fas fa-download"></i> 備份
+            <button id="backupBtn" class="btn btn-backup" title="匯出 JSON 備份">
+                <span class="btn-icon">↓</span> 備份
             </button>
 
-            <button id="importBackupBtn" class="btn-backup" title="匯入 JSON 備份">
-                <i class="fas fa-upload"></i> 匯入
+            <button id="importBackupBtn" class="btn btn-backup" title="匯入 JSON 備份">
+                <span class="btn-icon">↑</span> 匯入
             </button>
             <input type="file" id="importBackupInput" accept="application/json,.json" class="hidden">
 
-            <button id="showDayDetailBtn" class="btn-primary">顯示細節</button>
-            <button id="backToToday" class="btn-today">回今天</button>
+            <button id="showDayDetailBtn" class="btn btn-primary">顯示細節</button>
+            <button id="backToToday" class="btn btn-today">回今天</button>
         </div>
     </div>
 </header>
@@ -61,11 +56,9 @@
 <main class="main-content">
     <div class="toolbar">
         <div class="search-box">
-            <i class="fas fa-search"></i>
+            <span class="search-icon">⌕</span>
             <input type="text" id="searchInput" placeholder="搜尋學生、平台或課程內容">
-            <button id="clearSearchBtn" class="clear-search hidden" title="清除搜尋">
-                <i class="fas fa-times"></i>
-            </button>
+            <button id="clearSearchBtn" class="clear-search hidden" title="清除搜尋">×</button>
         </div>
     </div>
 
@@ -86,26 +79,26 @@
 <footer>
     <div class="footer-container">
         <div class="stat-item">
-            <i class="fas fa-calendar-check"></i>
+            <span class="stat-icon">✓</span>
             <span>本月課程：<span id="monthCount">0</span> 堂</span>
         </div>
         <div class="stat-item">
-            <i class="fas fa-clock"></i>
+            <span class="stat-icon">◷</span>
             <span>本月時數：<span id="monthHours">0</span> 小時</span>
         </div>
         <div class="stat-item">
-            <i class="fas fa-tasks"></i>
+            <span class="stat-icon">☷</span>
             <span><span id="selectedDateLabel">今日</span>待辦：<span id="selectedDayCount">0</span> 堂</span>
         </div>
         <div class="stat-item completion-stat">
-            <i class="fas fa-chart-pie"></i>
+            <span class="stat-icon">◔</span>
             <span>本月完成率：<span id="monthCompletionRate">0%</span></span>
             <div class="progress-bar">
                 <div id="completionProgress" class="progress-fill"></div>
             </div>
         </div>
         <div class="stat-item">
-            <i class="fas fa-calculator"></i>
+            <span class="stat-icon">▦</span>
             <span>預計總收入：NT$ <span id="estimatedIncome">0</span></span>
         </div>
     </div>
@@ -113,11 +106,11 @@
 
 <div id="detailModal" class="modal">
     <div class="modal-box fade-in">
-        <span class="close" onclick="closeModal('detailModal')">&times;</span>
+        <button class="close" onclick="closeModal('detailModal')">×</button>
         <div class="modal-nav">
-            <i class="fas fa-chevron-left nav-arrow" onclick="changeDate(-1)"></i>
+            <button class="nav-arrow" onclick="changeDate(-1)">‹</button>
             <h3 id="detailDateTitle">日期載入中...</h3>
-            <i class="fas fa-chevron-right nav-arrow" onclick="changeDate(1)"></i>
+            <button class="nav-arrow" onclick="changeDate(1)">›</button>
         </div>
         <div id="detailList" class="detail-scroll"></div>
     </div>
@@ -125,7 +118,7 @@
 
 <div id="addModal" class="modal">
     <div class="modal-box slide-up">
-        <span class="close" onclick="closeModal('addModal')">&times;</span>
+        <button class="close" onclick="closeModal('addModal')">×</button>
         <div class="add-title" id="addModalDateTitle">新增排課</div>
 
         <form id="scheduleForm">
@@ -142,9 +135,7 @@
                         <option value="私人ZOOM">私人ZOOM</option>
                     </select>
                     <input type="text" id="platformInput" class="hidden" placeholder="自訂平台">
-                    <button type="button" class="tool-btn" onclick="toggleInput('platform')">
-                        <i class="fas fa-edit"></i>
-                    </button>
+                    <button type="button" class="tool-btn" onclick="toggleInput('platform')">編輯</button>
                 </div>
             </div>
 
@@ -161,19 +152,17 @@
             <div class="form-item">
                 <label>時間範圍 <span id="modalTimezoneHint"></span></label>
                 <div class="flex-input">
-                    <div id="timeSelectGroup" class="flex-input">
+                    <div id="timeSelectGroup" class="flex-input time-group">
                         <select id="startTimeSelect"></select>
                         <span>～</span>
                         <select id="endTimeSelect"></select>
                     </div>
-                    <div id="timeInputGroup" class="flex-input hidden">
+                    <div id="timeInputGroup" class="flex-input time-group hidden">
                         <input type="text" id="startTimeInput" placeholder="09:00">
                         <span>～</span>
                         <input type="text" id="endTimeInput" placeholder="10:00">
                     </div>
-                    <button type="button" class="tool-btn" onclick="toggleInput('time')">
-                        <i class="fas fa-clock"></i>
-                    </button>
+                    <button type="button" class="tool-btn" onclick="toggleInput('time')">自訂</button>
                 </div>
             </div>
 
@@ -183,8 +172,8 @@
             </div>
 
             <div class="form-btns">
-                <button type="submit" id="submitBtn" class="btn-confirm">確認儲存</button>
-                <button type="button" class="btn-cancel" onclick="closeModal('addModal')">取消</button>
+                <button type="submit" id="submitBtn" class="btn btn-confirm">確認儲存</button>
+                <button type="button" class="btn btn-cancel" onclick="closeModal('addModal')">取消</button>
             </div>
         </form>
     </div>
@@ -195,28 +184,28 @@
         <h4>確定要刪除這堂課嗎？</h4>
         <div id="deleteTargetInfo" class="delete-info-box"></div>
         <div class="form-btns">
-            <button id="confirmDelBtn" class="btn-del">刪除</button>
-            <button onclick="closeModal('deleteModal')" class="btn-cancel">保留</button>
+            <button id="confirmDelBtn" class="btn btn-del">刪除</button>
+            <button onclick="closeModal('deleteModal')" class="btn btn-cancel">保留</button>
         </div>
     </div>
 </div>
 
 <div id="imagePreviewModal" class="modal">
     <div class="modal-box image-preview-box fade-in">
-        <span class="close" onclick="closeModal('imagePreviewModal')">&times;</span>
+        <button class="close" onclick="closeModal('imagePreviewModal')">×</button>
         <h3>課表圖片預覽</h3>
         <div class="preview-scroll">
             <img id="schedulePreviewImage" alt="課表圖片預覽">
         </div>
         <div class="form-btns">
-            <button id="downloadPreviewImageBtn" class="btn-image">
-                <i class="fas fa-download"></i> 下載圖片
+            <button id="downloadPreviewImageBtn" class="btn btn-image">
+                <span class="btn-icon">↓</span> 下載圖片
             </button>
-            <button type="button" class="btn-cancel" onclick="closeModal('imagePreviewModal')">取消</button>
+            <button type="button" class="btn btn-cancel" onclick="closeModal('imagePreviewModal')">取消</button>
         </div>
     </div>
 </div>
 
-<script src="script.js"></script>
+<script src="./script.js"></script>
 </body>
 </html>

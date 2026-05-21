@@ -29,8 +29,11 @@ function init() {
     }
 
     fillTimeOptions();
+    bindEvents();
     renderCalendar();
+}
 
+function bindEvents() {
     yearSelect.onchange = renderCalendar;
     monthSelect.onchange = renderCalendar;
 
@@ -67,7 +70,7 @@ function init() {
 
     timezoneSelect.onchange = function () {
         currentDisplayTimezone = this.value;
-        timezoneFlag.innerText = currentDisplayTimezone === "TW" ? "🇹🇼" : "🇯🇵";
+        timezoneFlag.innerText = currentDisplayTimezone === "TW" ? "TW" : "JP";
         renderCalendar();
 
         if (document.getElementById("detailModal").style.display === "block") {
@@ -279,8 +282,8 @@ function renderCalendar() {
                 <div class="event-tag-item ${pClass} ${completedEventClass}">
                     <span>${displayTime}</span>
                     <div class="event-tag-actions">
-                        <i class="fas fa-pen edit-icon-mini" onclick="openEditModal('${e.id}', event)"></i>
-                        <i class="fas fa-times del-icon-mini" onclick="openDeleteModal('${e.id}', event)"></i>
+                        <button class="event-action" onclick="openEditModal('${e.id}', event)" title="編輯">✎</button>
+                        <button class="event-action" onclick="openDeleteModal('${e.id}', event)" title="刪除">×</button>
                     </div>
                 </div>`;
         });
@@ -545,12 +548,13 @@ function updateDetailModal() {
     dayEvents.forEach(e => {
         const displayTime = getDisplayTimeRange(e);
         const completedText = isEventCompleted(e) ? "｜已完成" : "";
+        const completedClass = isEventCompleted(e) ? "completed" : "";
 
         list.innerHTML += `
-            <div style="padding:15px; border-bottom:1px solid #eee; position:relative; opacity:${isEventCompleted(e) ? "0.62" : "1"};">
-                <div style="position:absolute; right:15px; top:15px; display:flex; gap:10px;">
-                    <i class="fas fa-pen" style="cursor:pointer; color:#4a90e2;" onclick="openEditModal('${e.id}')"></i>
-                    <i class="fas fa-times" style="cursor:pointer; color:#e74c3c;" onclick="openDeleteModal('${e.id}', event)"></i>
+            <div class="detail-event ${completedClass}">
+                <div class="detail-actions">
+                    <button class="detail-action edit" onclick="openEditModal('${e.id}')">編輯</button>
+                    <button class="detail-action delete" onclick="openDeleteModal('${e.id}', event)">刪除</button>
                 </div>
                 <strong>${displayTime} ｜ ${e.platform}${completedText}</strong><br>
                 <small>學生：${e.student} ｜ 費用：NT$ ${e.fee}</small><br>
@@ -587,6 +591,8 @@ function changeMonth(offset) {
         year += 1;
     }
 
+    ensureYearOption(year);
+
     yearSelect.value = year;
     monthSelect.value = month;
 
@@ -598,11 +604,24 @@ function changeMonth(offset) {
     renderCalendar();
 }
 
+function ensureYearOption(year) {
+    const exists = Array.from(yearSelect.options).some(option => Number(option.value) === Number(year));
+
+    if (!exists) {
+        const opt = new Option(`${year}年`, year);
+        yearSelect.add(opt);
+        Array.from(yearSelect.options)
+            .sort((a, b) => Number(a.value) - Number(b.value))
+            .forEach(option => yearSelect.add(option));
+    }
+}
+
 function changeDate(offset) {
     let d = new Date(currentSelectedDate);
 
     d.setDate(d.getDate() + offset);
     currentSelectedDate = formatDate(d);
+    ensureYearOption(d.getFullYear());
     yearSelect.value = d.getFullYear();
     monthSelect.value = d.getMonth();
 
@@ -834,7 +853,7 @@ function createScheduleImageData() {
     ctx.fillStyle = "#667085";
     ctx.font = "18px Microsoft JhengHei, Arial";
     ctx.textAlign = "center";
-    ctx.fillText("圖片顯示的時間為已有排課的時間。", width / 2, height - 18);
+    ctx.fillText("圖片僅顯示不可預約的時間；其他時段請再與老師確認。", width / 2, height - 18);
 
     return {
         dataUrl: canvas.toDataURL("image/png"),
@@ -917,12 +936,15 @@ function importBackup(e) {
 
 function downloadBlob(blob, fileName) {
     const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
+    const url = URL.createObjectURL(blob);
+
+    link.href = url;
     link.download = fileName;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    URL.revokeObjectURL(link.href);
+
+    URL.revokeObjectURL(url);
 }
 
 function roundRect(ctx, x, y, width, height, radius, fill, stroke) {
