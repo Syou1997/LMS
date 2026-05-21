@@ -472,7 +472,7 @@ footer {
 
 .custom-timezone-grid {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr) auto;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr) auto;
     gap: 10px;
     margin-top: 10px;
 }
@@ -907,7 +907,7 @@ footer {
     .form-grid,
     .custom-timezone-grid {
         grid-template-columns: 1fr;
-        gap: 0;
+        gap: 10px;
     }
 
     .flex-input {

@@ -102,7 +102,7 @@
 
         <section class="onboarding-step" data-step="2">
             <h2>設定時區</h2>
-            <p>你可以使用預設時區，也可以自行新增常用地點與時區。</p>
+            <p>你可以使用預設時區，也可以自行新增國家／地點與 GMT 時差。</p>
             <div class="form-grid">
                 <div class="form-item">
                     <label>主要時區</label>
@@ -117,11 +117,11 @@
             <div class="custom-timezone-box">
                 <strong>新增自訂時區</strong>
                 <div class="custom-timezone-grid">
-                    <input type="text" id="setupCustomTimezoneName" placeholder="地點名稱，例如：溫哥華">
+                    <input type="text" id="setupCustomTimezoneName" placeholder="國家或地點，例如：韓國">
                     <select id="setupCustomTimezoneValue"></select>
                     <button id="setupAddTimezoneBtn" type="button" class="btn btn-primary">新增</button>
                 </div>
-                <small class="hint">新增後會出現在主要時區與顯示時區選單中。</small>
+                <small class="hint">例如輸入「韓國」並選擇「GMT+9」，新增後就能在主要時區與顯示時區中選取。</small>
             </div>
         </section>
 
@@ -178,7 +178,7 @@
         <div class="custom-timezone-box">
             <strong>新增自訂時區</strong>
             <div class="custom-timezone-grid">
-                <input type="text" id="settingsCustomTimezoneName" placeholder="地點名稱，例如：溫哥華">
+                <input type="text" id="settingsCustomTimezoneName" placeholder="國家或地點，例如：韓國">
                 <select id="settingsCustomTimezoneValue"></select>
                 <button id="settingsAddTimezoneBtn" type="button" class="btn btn-primary">新增</button>
             </div>

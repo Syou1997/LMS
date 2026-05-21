@@ -2,41 +2,70 @@ const EVENTS_KEY = "teacherEvents";
 const SETTINGS_KEY = "teacherAppSettings";
 
 const DEFAULT_TIMEZONES = [
-    { value: "Asia/Taipei", label: "台北（GMT+8）", short: "TPE" },
-    { value: "Asia/Tokyo", label: "東京（GMT+9）", short: "TYO" },
-    { value: "Asia/Seoul", label: "首爾（GMT+9）", short: "SEL" },
-    { value: "Asia/Shanghai", label: "上海（GMT+8）", short: "SHA" },
-    { value: "Asia/Hong_Kong", label: "香港（GMT+8）", short: "HKG" },
-    { value: "Asia/Singapore", label: "新加坡（GMT+8）", short: "SG" },
-    { value: "Asia/Bangkok", label: "曼谷（GMT+7）", short: "BKK" },
-    { value: "Asia/Ho_Chi_Minh", label: "胡志明市（GMT+7）", short: "SGN" },
-    { value: "Asia/Jakarta", label: "雅加達（GMT+7）", short: "JKT" },
-    { value: "Europe/London", label: "倫敦（GMT+0 / GMT+1）", short: "LDN" },
-    { value: "Europe/Paris", label: "巴黎（GMT+1 / GMT+2）", short: "PAR" },
-    { value: "Europe/Berlin", label: "柏林（GMT+1 / GMT+2）", short: "BER" },
-    { value: "Europe/Rome", label: "羅馬（GMT+1 / GMT+2）", short: "ROM" },
-    { value: "Europe/Madrid", label: "馬德里（GMT+1 / GMT+2）", short: "MAD" },
-    { value: "America/Los_Angeles", label: "洛杉磯（GMT-8 / GMT-7）", short: "LA" },
-    { value: "America/Vancouver", label: "溫哥華（GMT-8 / GMT-7）", short: "YVR" },
-    { value: "America/New_York", label: "紐約（GMT-5 / GMT-4）", short: "NY" },
-    { value: "America/Toronto", label: "多倫多（GMT-5 / GMT-4）", short: "TOR" },
-    { value: "America/Chicago", label: "芝加哥（GMT-6 / GMT-5）", short: "CHI" },
-    { value: "Pacific/Honolulu", label: "檀香山（GMT-10）", short: "HNL" },
-    { value: "Australia/Sydney", label: "雪梨（GMT+10 / GMT+11）", short: "SYD" },
-    { value: "Australia/Melbourne", label: "墨爾本（GMT+10 / GMT+11）", short: "MEL" },
-    { value: "Pacific/Auckland", label: "奧克蘭（GMT+12 / GMT+13）", short: "AKL" }
+    { value: "UTC+08:00", label: "台北（GMT+8）", short: "TPE" },
+    { value: "UTC+09:00", label: "東京（GMT+9）", short: "TYO" },
+    { value: "UTC+09:00", label: "首爾（GMT+9）", short: "SEL" },
+    { value: "UTC+08:00", label: "上海（GMT+8）", short: "SHA" },
+    { value: "UTC+08:00", label: "香港（GMT+8）", short: "HKG" },
+    { value: "UTC+08:00", label: "新加坡（GMT+8）", short: "SG" },
+    { value: "UTC+07:00", label: "曼谷（GMT+7）", short: "BKK" },
+    { value: "UTC+07:00", label: "胡志明市（GMT+7）", short: "SGN" },
+    { value: "UTC+07:00", label: "雅加達（GMT+7）", short: "JKT" },
+    { value: "UTC+00:00", label: "倫敦（GMT+0）", short: "LDN" },
+    { value: "UTC+01:00", label: "巴黎（GMT+1）", short: "PAR" },
+    { value: "UTC+01:00", label: "柏林（GMT+1）", short: "BER" },
+    { value: "UTC+01:00", label: "羅馬（GMT+1）", short: "ROM" },
+    { value: "UTC+01:00", label: "馬德里（GMT+1）", short: "MAD" },
+    { value: "UTC-08:00", label: "洛杉磯（GMT-8）", short: "LA" },
+    { value: "UTC-08:00", label: "溫哥華（GMT-8）", short: "YVR" },
+    { value: "UTC-05:00", label: "紐約（GMT-5）", short: "NY" },
+    { value: "UTC-05:00", label: "多倫多（GMT-5）", short: "TOR" },
+    { value: "UTC-06:00", label: "芝加哥（GMT-6）", short: "CHI" },
+    { value: "UTC-10:00", label: "檀香山（GMT-10）", short: "HNL" },
+    { value: "UTC+10:00", label: "雪梨（GMT+10）", short: "SYD" },
+    { value: "UTC+10:00", label: "墨爾本（GMT+10）", short: "MEL" },
+    { value: "UTC+12:00", label: "奧克蘭（GMT+12）", short: "AKL" }
 ];
 
-const CUSTOM_TIMEZONE_OPTIONS = [
-    "Asia/Taipei", "Asia/Tokyo", "Asia/Seoul", "Asia/Shanghai", "Asia/Hong_Kong", "Asia/Singapore",
-    "Asia/Bangkok", "Asia/Ho_Chi_Minh", "Asia/Jakarta", "Asia/Kuala_Lumpur", "Asia/Manila",
-    "Asia/Dubai", "Asia/Kolkata", "Europe/London", "Europe/Paris", "Europe/Berlin", "Europe/Rome",
-    "Europe/Madrid", "Europe/Amsterdam", "Europe/Zurich", "Europe/Vienna", "Europe/Prague",
-    "America/Los_Angeles", "America/Vancouver", "America/New_York", "America/Toronto",
-    "America/Chicago", "America/Denver", "America/Phoenix", "America/Mexico_City",
-    "America/Sao_Paulo", "America/Argentina/Buenos_Aires", "Pacific/Honolulu",
-    "Australia/Sydney", "Australia/Melbourne", "Australia/Brisbane", "Australia/Perth",
-    "Pacific/Auckland"
+const GMT_OFFSET_OPTIONS = [
+    ["UTC-12:00", "GMT-12"],
+    ["UTC-11:00", "GMT-11"],
+    ["UTC-10:00", "GMT-10"],
+    ["UTC-09:30", "GMT-9:30"],
+    ["UTC-09:00", "GMT-9"],
+    ["UTC-08:00", "GMT-8"],
+    ["UTC-07:00", "GMT-7"],
+    ["UTC-06:00", "GMT-6"],
+    ["UTC-05:00", "GMT-5"],
+    ["UTC-04:00", "GMT-4"],
+    ["UTC-03:30", "GMT-3:30"],
+    ["UTC-03:00", "GMT-3"],
+    ["UTC-02:00", "GMT-2"],
+    ["UTC-01:00", "GMT-1"],
+    ["UTC+00:00", "GMT+0"],
+    ["UTC+01:00", "GMT+1"],
+    ["UTC+02:00", "GMT+2"],
+    ["UTC+03:00", "GMT+3"],
+    ["UTC+03:30", "GMT+3:30"],
+    ["UTC+04:00", "GMT+4"],
+    ["UTC+04:30", "GMT+4:30"],
+    ["UTC+05:00", "GMT+5"],
+    ["UTC+05:30", "GMT+5:30"],
+    ["UTC+05:45", "GMT+5:45"],
+    ["UTC+06:00", "GMT+6"],
+    ["UTC+06:30", "GMT+6:30"],
+    ["UTC+07:00", "GMT+7"],
+    ["UTC+08:00", "GMT+8"],
+    ["UTC+08:45", "GMT+8:45"],
+    ["UTC+09:00", "GMT+9"],
+    ["UTC+09:30", "GMT+9:30"],
+    ["UTC+10:00", "GMT+10"],
+    ["UTC+10:30", "GMT+10:30"],
+    ["UTC+11:00", "GMT+11"],
+    ["UTC+12:00", "GMT+12"],
+    ["UTC+12:45", "GMT+12:45"],
+    ["UTC+13:00", "GMT+13"],
+    ["UTC+14:00", "GMT+14"]
 ];
 
 const PLATFORM_COLORS = [
@@ -56,8 +85,8 @@ const defaultSettings = {
     hasCompletedOnboarding: false,
     teacherName: "",
     showTeacherName: true,
-    baseTimeZone: "Asia/Taipei",
-    displayTimeZone: "Asia/Taipei",
+    baseTimeZone: "UTC+08:00",
+    displayTimeZone: "UTC+08:00",
     customTimeZones: [],
     currency: "NT$",
     defaultDuration: 50,
@@ -110,6 +139,10 @@ function normalizeSettings(raw) {
     const normalized = { ...defaultSettings, ...raw };
     normalized.customTimeZones = Array.isArray(normalized.customTimeZones) ? normalized.customTimeZones : [];
     normalized.platforms = normalizePlatforms(normalized.platforms);
+
+    if (normalized.baseTimeZone === "Asia/Taipei") normalized.baseTimeZone = "UTC+08:00";
+    if (normalized.displayTimeZone === "Asia/Taipei") normalized.displayTimeZone = "UTC+08:00";
+
     return normalized;
 }
 
@@ -174,7 +207,7 @@ function populateCustomTimezoneSelectors() {
         if (!select) return;
 
         select.innerHTML = "";
-        CUSTOM_TIMEZONE_OPTIONS.forEach(value => select.add(new Option(value, value)));
+        GMT_OFFSET_OPTIONS.forEach(([value, label]) => select.add(new Option(label, value)));
     });
 }
 
@@ -260,21 +293,17 @@ function addCustomTimezone(type) {
     const valueSelect = document.getElementById(type === "setup" ? "setupCustomTimezoneValue" : "settingsCustomTimezoneValue");
     const placeName = nameInput.value.trim();
     const value = valueSelect.value;
+    const gmtLabel = getGmtLabelByValue(value);
 
     if (!placeName) {
-        alert("請輸入地點名稱。");
+        alert("請輸入國家或地點名稱。");
         return;
     }
 
-    if (!isValidTimeZone(value)) {
-        alert("這個時區無法被瀏覽器支援，請選擇其他時區。");
-        return;
-    }
-
+    const label = `${placeName}（${gmtLabel}）`;
     const short = makeShortCode(placeName);
-    const label = `${placeName}（${value}）`;
 
-    const exists = getAllTimeZones().some(tz => tz.value === value && tz.label === label);
+    const exists = getAllTimeZones().some(tz => tz.label === label);
     if (exists) {
         alert("這個自訂時區已經存在。");
         return;
@@ -296,18 +325,13 @@ function addCustomTimezone(type) {
     showToast("自訂時區已新增。", false);
 }
 
+function getGmtLabelByValue(value) {
+    return GMT_OFFSET_OPTIONS.find(option => option[0] === value)?.[1] || value.replace("UTC", "GMT");
+}
+
 function makeShortCode(text) {
     const english = String(text).replace(/[^a-zA-Z]/g, "").slice(0, 3).toUpperCase();
     return english || "TZ";
-}
-
-function isValidTimeZone(timeZone) {
-    try {
-        new Intl.DateTimeFormat("en-US", { timeZone }).format(new Date());
-        return true;
-    } catch {
-        return false;
-    }
 }
 
 function openResetConfirmModal() {
@@ -628,7 +652,29 @@ function timeToMinutes(timeStr) {
     return h * 60 + m;
 }
 
+function isFixedOffsetZone(timeZone) {
+    return /^UTC[+-]\d{2}:\d{2}$/.test(timeZone);
+}
+
+function getOffsetMinutes(timeZone) {
+    if (!isFixedOffsetZone(timeZone)) return 0;
+    const sign = timeZone[3] === "+" ? 1 : -1;
+    const [hour, minute] = timeZone.slice(4).split(":").map(Number);
+    return sign * (hour * 60 + minute);
+}
+
 function getZonedParts(date, timeZone) {
+    if (isFixedOffsetZone(timeZone)) {
+        const shifted = new Date(date.getTime() + getOffsetMinutes(timeZone) * 60000);
+        return {
+            year: shifted.getUTCFullYear(),
+            month: shifted.getUTCMonth() + 1,
+            day: shifted.getUTCDate(),
+            hour: shifted.getUTCHours(),
+            minute: shifted.getUTCMinutes()
+        };
+    }
+
     const parts = new Intl.DateTimeFormat("en-CA", {
         timeZone,
         hourCycle: "h23",
@@ -649,6 +695,11 @@ function getZonedParts(date, timeZone) {
 function zonedTimeToUtc(dateStr, timeStr, timeZone) {
     const [year, month, day] = dateStr.split("-").map(Number);
     const [hour, minute] = timeStr.split(":").map(Number);
+
+    if (isFixedOffsetZone(timeZone)) {
+        return new Date(Date.UTC(year, month - 1, day, hour, minute) - getOffsetMinutes(timeZone) * 60000);
+    }
+
     const desired = Date.UTC(year, month - 1, day, hour, minute);
     let utc = new Date(desired);
 
@@ -1207,15 +1258,14 @@ function exportToGoogleCalendar() {
     ];
 
     monthEvents.forEach(e => {
-        const datePart = e.date.replace(/-/g, "");
-        const startPart = e.start.replace(/:/g, "") + "00";
-        const endPart = e.end.replace(/:/g, "") + "00";
+        const startUtc = zonedTimeToUtc(e.date, e.start, settings.baseTimeZone);
+        const endUtc = zonedTimeToUtc(e.date, e.end, settings.baseTimeZone);
 
         icsContent.push("BEGIN:VEVENT");
         icsContent.push(`UID:${e.id}@teacher-schedule.local`);
         icsContent.push(`DTSTAMP:${nowStamp}`);
-        icsContent.push(`DTSTART;TZID=${settings.baseTimeZone}:${datePart}T${startPart}`);
-        icsContent.push(`DTEND;TZID=${settings.baseTimeZone}:${datePart}T${endPart}`);
+        icsContent.push(`DTSTART:${makeIcsUtcStamp(startUtc)}`);
+        icsContent.push(`DTEND:${makeIcsUtcStamp(endUtc)}`);
         icsContent.push(`SUMMARY:${escapeIcs(`[${e.platform}] ${e.student} 課程`)}`);
 
         let description = `學生: ${e.student}\\n平台: ${e.platform}\\n費用: ${settings.currency} ${e.fee}`;
@@ -1496,11 +1546,11 @@ function roundRect(ctx, x, y, width, height, radius, fill, stroke) {
 }
 
 function getTimezoneLabelByValue(value) {
-    return getAllTimeZones().find(tz => tz.value === value)?.label || value;
+    return getAllTimeZones().find(tz => tz.value === value)?.label || value.replace("UTC", "GMT");
 }
 
 function getTimezoneShort(value) {
-    return getAllTimeZones().find(tz => tz.value === value)?.short || "TZ";
+    return getAllTimeZones().find(tz => tz.value === value)?.short || value.replace("UTC", "GMT");
 }
 
 function escapeHtml(value) {
