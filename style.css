@@ -257,9 +257,22 @@ body.mode-general .mode-pill {
 
 .day-cell:nth-child(7n) { border-right: 0; }
 .day-cell.empty { background: #f8fafc; }
-.day-cell.selected { outline: 3px solid rgba(79, 142, 232, .32); outline-offset: -3px; }
 .day-cell.is-today { background: #f7fbff; }
 .day-cell.completed-day { background: #f7fff9; }
+.day-cell.selected,
+.day-cell.selected.is-today,
+.day-cell.selected.completed-day {
+    background: #e8f1ff;
+    box-shadow: inset 0 0 0 3px rgba(37, 75, 132, .62);
+    z-index: 1;
+}
+
+body.mode-general .day-cell.selected,
+body.mode-general .day-cell.selected.is-today,
+body.mode-general .day-cell.selected.completed-day {
+    background: #dff4ed;
+    box-shadow: inset 0 0 0 3px rgba(15, 118, 110, .62);
+}
 
 .day-num-row {
     display: flex;
@@ -269,8 +282,24 @@ body.mode-general .mode-pill {
 }
 
 .day-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 24px;
+    height: 24px;
+    border-radius: 4px;
     font-weight: 900;
     font-size: 18px;
+}
+
+.day-cell.selected .day-num {
+    background: var(--teacher-header);
+    color: #ffffff;
+    padding: 0 5px;
+}
+
+body.mode-general .day-cell.selected .day-num {
+    background: var(--general-header);
 }
 
 .today-badge {
@@ -476,6 +505,12 @@ body.mode-general .mobile-add-btn { background: var(--general-header); }
     display: block;
     margin-bottom: 7px;
     color: #334155;
+    font-weight: 900;
+}
+
+#modalTimezoneHint {
+    margin-left: 6px;
+    color: #dc2626;
     font-weight: 900;
 }
 
@@ -739,11 +774,31 @@ body.mode-general .detail-event { border-left-color: var(--general-header); }
     align-items: center;
     gap: 10px;
     max-width: 360px;
-    padding: 12px 14px;
+    padding: 18px 34px 14px 14px;
     border-radius: var(--radius);
     background: #0f172a;
     color: #ffffff;
     box-shadow: var(--shadow);
+}
+
+.toast-close {
+    position: absolute;
+    top: 6px;
+    right: 7px;
+    width: 22px;
+    height: 22px;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: rgba(255, 255, 255, .82);
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.toast-close:hover {
+    background: rgba(255, 255, 255, .14);
+    color: #ffffff;
 }
 
 .toast-action {

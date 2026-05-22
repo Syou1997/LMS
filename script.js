@@ -32,7 +32,7 @@ const GMT_OFFSET_OPTIONS = [
 const PLATFORM_COLORS = ["#f1c40f", "#e74c3c", "#8e44ad", "#27ae60", "#2980b9", "#00897b", "#d81b60", "#3949ab", "#795548", "#455a64"];
 const EXTENDED_TIME_MAX_MINUTES = 29 * 60 + 30;
 const DEFAULT_PLATFORMS = [
-    { name: "聯成外語", color: "#f1c40f", textColor: "#222222" },
+    { name: "補習班", color: "#f1c40f", textColor: "#222222" },
     { name: "AmazingTalker", color: "#e74c3c", textColor: "#ffffff" },
     { name: "Preply", color: "#8e44ad", textColor: "#ffffff" },
     { name: "學校", color: "#27ae60", textColor: "#ffffff" },
@@ -169,6 +169,10 @@ function bindEvents() {
     $("settingsResetBtn").onclick = () => $("resetConfirmModal").style.display = "block";
     $("confirmResetBtn").onclick = resetApp;
     $("undoDeleteBtn").onclick = undoDelete;
+    $("closeToastBtn").onclick = () => {
+        lastDeletedEvent = null;
+        hideToast();
+    };
     $("setupPrevBtn").onclick = () => changeOnboardingStep(-1);
     $("setupNextBtn").onclick = () => changeOnboardingStep(1);
     $("setupFinishBtn").onclick = finishOnboarding;
@@ -221,7 +225,7 @@ function applySettingsToUI() {
     $("monthCountLabel").innerText = isTeacherMode() ? "本月課程" : "本月行程";
     $("monthCountUnit").innerText = isTeacherMode() ? "堂" : "筆";
     $("monthHoursLabel").innerText = isTeacherMode() ? "本月時數" : "本月安排時數";
-    $("selectedDayLabel").innerText = isTeacherMode() ? "待辦" : "事項";
+    $("selectedDayLabel").innerText = isTeacherMode() ? "課堂" : "待辦事項";
     $("selectedDayUnit").innerText = isTeacherMode() ? "堂" : "筆";
     $("moneyStatLabel").innerText = isTeacherMode() ? "預計總收入" : "目前本月總花費";
     populateItemSelects();
@@ -1073,10 +1077,10 @@ function createScheduleImageData() {
                         drawClippedText(ctx, getDisplayTimeRange(eventItem), x + 26, itemY + 17, cellWidth - 52);
                     } else {
                         ctx.font = "bold 15px Microsoft JhengHei, Arial";
-                        drawClippedText(ctx, `${hasTimeRange(eventItem) ? getDisplayTimeRange(eventItem) : "未設定"} ${eventItem.content}`, x + 26, itemY + 18, cellWidth - 52);
+                        drawClippedText(ctx, hasTimeRange(eventItem) ? getDisplayTimeRange(eventItem) : "未設定時間", x + 26, itemY + 18, cellWidth - 52);
                         ctx.font = "13px Microsoft JhengHei, Arial";
-                        ctx.fillStyle = "#64748b";
-                        drawClippedText(ctx, eventItem.location || eventItem.category || "", x + 26, itemY + 34, cellWidth - 52);
+                        ctx.fillStyle = "#334155";
+                        drawClippedText(ctx, eventItem.content || "未填寫內容", x + 26, itemY + 34, cellWidth - 52);
                     }
                 });
             }
@@ -1259,6 +1263,7 @@ function showToast(message, canUndo) {
 }
 
 function hideToast() {
+    clearTimeout(toastTimer);
     $("toast").classList.add("hidden");
     $("undoDeleteBtn").classList.add("hidden");
 }
