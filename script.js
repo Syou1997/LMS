@@ -985,6 +985,15 @@ function downloadPreviewImage() {
 
 function exportPublicScheduleData() {
     if (!isTeacherMode()) return alert("公開頁資料只支援教師排課模式。");
+    const publicEvents = events
+        .filter(item => (item.mode || "teacher") === "teacher" && item.start && item.end)
+        .map(item => ({
+            id: item.id,
+            date: item.date,
+            start: item.start,
+            end: item.end,
+            completed: Boolean(item.completed)
+        }));
     const publicData = {
         version: 1,
         updatedAt: new Date().toISOString(),
@@ -992,22 +1001,14 @@ function exportPublicScheduleData() {
             teacherName: settings.teacherName || "",
             showTeacherName: Boolean(settings.showTeacherName),
             baseTimeZone: settings.baseTimeZone,
-            displayTimeZone: settings.displayTimeZone,
+            displayTimeZone: "UTC+08:00",
             customTimeZones: settings.customTimeZones || []
         },
-        events: events
-            .filter(item => (item.mode || "teacher") === "teacher" && item.start && item.end)
-            .map(item => ({
-                id: item.id,
-                date: item.date,
-                start: item.start,
-                end: item.end,
-                completed: Boolean(item.completed)
-            }))
+        events: publicEvents
     };
     const js = `window.TEACHER_PUBLIC_SCHEDULE = ${JSON.stringify(publicData, null, 2)};\n`;
     downloadBlob(new Blob([js], { type: "text/javascript;charset=utf-8" }), "public-schedule-data.js");
-    showToast("公開頁資料已匯出，請將 public-schedule-data.js 放在專案資料夾後一起推送到 GitHub。", false);
+    showToast(`公開頁資料已匯出 ${publicEvents.length} 筆，請用新下載的 public-schedule-data.js 覆蓋專案同名檔案後推送到 GitHub。`, false);
 }
 
 function createScheduleImageData() {

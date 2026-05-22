@@ -63,27 +63,19 @@
             flex-wrap: wrap;
         }
 
-        select, button {
+        select {
             min-height: 40px;
             border: 1px solid rgba(255, 255, 255, .36);
             border-radius: 8px;
             font: inherit;
-        }
-
-        select {
-            min-width: 230px;
             padding: 8px 10px;
             color: #0f172a;
             background: #ffffff;
         }
 
-        button {
-            padding: 8px 13px;
-            color: var(--header);
-            background: #ffffff;
-            font-weight: 800;
-            cursor: pointer;
-        }
+        #yearSelect { min-width: 120px; }
+        #monthSelect { min-width: 100px; }
+        #timezoneSelect { min-width: 230px; }
 
         main {
             max-width: 1400px;
@@ -146,6 +138,10 @@
             line-height: 1.25;
         }
 
+        .slot.date-time {
+            font-size: 17px;
+        }
+
         .slot.completed {
             color: #697386;
             background: #eef1f4;
@@ -164,11 +160,24 @@
             font-size: 18px;
         }
 
+        .data-alert {
+            margin: 18px 0;
+            padding: 14px 16px;
+            border: 1px solid #f59e0b;
+            border-radius: 8px;
+            color: #7c2d12;
+            background: #fff7ed;
+            font-size: 17px;
+            font-weight: 800;
+        }
+
+        .data-alert.hidden { display: none; }
+
         @media (max-width: 700px) {
             .header-inner { padding: 24px 16px; }
             main { padding: 0 16px 22px; }
             .controls { justify-content: flex-start; }
-            select { width: 100%; min-width: 0; }
+            #yearSelect, #monthSelect, #timezoneSelect { width: 100%; min-width: 0; }
             .weekdays, .calendar-grid { min-width: 760px; }
         }
     </style>
@@ -184,15 +193,15 @@
             </div>
         </div>
         <div class="controls">
-            <button id="prevMonthBtn" type="button">‹</button>
+            <select id="yearSelect" aria-label="選擇年份"></select>
             <select id="monthSelect"></select>
-            <button id="nextMonthBtn" type="button">›</button>
             <select id="timezoneSelect" aria-label="選擇顯示時區"></select>
         </div>
     </div>
 </header>
 
 <main>
+    <div id="dataAlert" class="data-alert hidden"></div>
     <section class="calendar" aria-label="不可預約時間月曆">
         <div class="weekdays" id="weekdays"></div>
         <div class="calendar-grid" id="calendarGrid"></div>
@@ -200,7 +209,22 @@
     <div class="footnote">此頁僅顯示不可預約的時間；其他時段請再與老師確認。</div>
 </main>
 
-<script src="./public-schedule-data.js"></script>
-<script src="./availability.js"></script>
+<script>
+    const cacheKey = Date.now();
+    const dataScript = document.createElement("script");
+    dataScript.src = `./public-schedule-data.js?v=${cacheKey}`;
+    dataScript.onload = loadAvailabilityApp;
+    dataScript.onerror = () => {
+        window.TEACHER_PUBLIC_SCHEDULE = { settings: {}, events: [], loadError: true };
+        loadAvailabilityApp();
+    };
+    document.head.appendChild(dataScript);
+
+    function loadAvailabilityApp() {
+        const appScript = document.createElement("script");
+        appScript.src = `./availability.js?v=${cacheKey}`;
+        document.head.appendChild(appScript);
+    }
+</script>
 </body>
 </html>

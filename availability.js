@@ -31,121 +31,98 @@ const DEFAULT_TIMEZONES = [
     { value: "UTC+14:00", label: "基里巴斯（GMT+14）" }
 ];
 
+const $ = id => document.getElementById(id);
+const now = new Date();
 const state = {
-    displayTimeZone: PUBLIC_DATA.settings?.displayTimeZone || "UTC+09:00",
-    monthDate: getInitialMonthDate()
+    year: now.getFullYear(),
+    month: now.getMonth(),
+    displayTimeZone: "UTC+08:00"
 };
 
-const $ = id => document.getElementById(id);
-
 function init() {
+    populateYearSelect();
+    populateMonthSelect();
     populateTimezones();
-    populateMonths();
+    bindControls();
+    renderDataAlert();
+    render();
+}
+
+function populateYearSelect() {
+    const years = new Set([now.getFullYear() - 1, now.getFullYear(), now.getFullYear() + 1]);
+    getPublicEvents().forEach(item => {
+        const year = Number(item.date?.slice(0, 4));
+        if (year) years.add(year);
+    });
+    $("yearSelect").innerHTML = "";
+    Array.from(years).sort((a, b) => a - b).forEach(year => {
+        $("yearSelect").add(new Option(`${year} 年`, year));
+    });
+    $("yearSelect").value = state.year;
+}
+
+function populateMonthSelect() {
+    $("monthSelect").innerHTML = "";
+    for (let month = 0; month < 12; month++) {
+        $("monthSelect").add(new Option(`${month + 1} 月`, month));
+    }
+    $("monthSelect").value = state.month;
+}
+
+function populateTimezones() {
+    $("timezoneSelect").innerHTML = "";
+    getAllTimeZones().forEach(zone => $("timezoneSelect").add(new Option(zone.label, zone.value)));
     $("timezoneSelect").value = state.displayTimeZone;
+}
+
+function bindControls() {
+    $("yearSelect").onchange = () => {
+        state.year = Number($("yearSelect").value);
+        render();
+    };
+    $("monthSelect").onchange = () => {
+        state.month = Number($("monthSelect").value);
+        render();
+    };
     $("timezoneSelect").onchange = () => {
         state.displayTimeZone = $("timezoneSelect").value;
         render();
     };
-    $("monthSelect").onchange = () => {
-        const [year, month] = $("monthSelect").value.split("-").map(Number);
-        state.monthDate = new Date(year, month - 1, 1);
-        render();
-    };
-    $("prevMonthBtn").onclick = () => changeMonth(-1);
-    $("nextMonthBtn").onclick = () => changeMonth(1);
-    render();
-}
-
-function populateTimezones() {
-    const zones = getAllTimeZones();
-    $("timezoneSelect").innerHTML = "";
-    zones.forEach(zone => $("timezoneSelect").add(new Option(zone.label, zone.value)));
-}
-
-function getAllTimeZones() {
-    const zones = [...DEFAULT_TIMEZONES];
-    (PUBLIC_DATA.settings?.customTimeZones || []).forEach(zone => {
-        if (!zones.some(item => item.value === zone.value && item.label === zone.label)) zones.push(zone);
-    });
-    return zones;
-}
-
-function populateMonths() {
-    const monthSet = new Set((PUBLIC_DATA.events || []).map(item => item.date?.slice(0, 7)).filter(Boolean));
-    const now = new Date();
-    monthSet.add(`${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`);
-    $("monthSelect").innerHTML = "";
-    Array.from(monthSet).sort().forEach(value => {
-        const [year, month] = value.split("-");
-        $("monthSelect").add(new Option(`${year} 年 ${Number(month)} 月`, value));
-    });
-}
-
-function changeMonth(offset) {
-    state.monthDate = new Date(state.monthDate.getFullYear(), state.monthDate.getMonth() + offset, 1);
-    const value = `${state.monthDate.getFullYear()}-${String(state.monthDate.getMonth() + 1).padStart(2, "0")}`;
-    if (!Array.from($("monthSelect").options).some(option => option.value === value)) {
-        $("monthSelect").add(new Option(`${state.monthDate.getFullYear()} 年 ${state.monthDate.getMonth() + 1} 月`, value));
-        Array.from($("monthSelect").options)
-            .sort((a, b) => a.value.localeCompare(b.value))
-            .forEach(option => $("monthSelect").add(option));
-    }
-    render();
 }
 
 function render() {
-    const year = state.monthDate.getFullYear();
-    const month = state.monthDate.getMonth();
-    $("monthSelect").value = `${year}-${String(month + 1).padStart(2, "0")}`;
-    $("pageTitle").innerText = `${year} 年 ${month + 1} 月不可預約的時間`;
+    $("pageTitle").innerText = `${state.year} 年 ${state.month + 1} 月不可預約的時間`;
     $("timezoneLabel").innerText = `時區：${getTimezoneLabelByValue(state.displayTimeZone)}`;
     $("updatedAt").innerText = `最後更新：${formatUpdatedAt(PUBLIC_DATA.updatedAt)}`;
     renderWeekdays();
-    renderCalendar(year, month);
+    renderCalendar();
 }
 
-function renderWeekdays() {
-    $("weekdays").innerHTML = ["週日", "週一", "週二", "週三", "週四", "週五", "週六"]
-        .map(day => `<div class="weekday">${day}</div>`)
-        .join("");
-}
-
-function renderCalendar(year, month) {
+function renderCalendar() {
     const grid = $("calendarGrid");
-    const daysInMonth = new Date(year, month + 1, 0).getDate();
-    const firstDay = new Date(year, month, 1).getDay();
-    const eventsByDate = {};
-    for (let day = 1; day <= daysInMonth; day++) {
-        const date = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-        eventsByDate[date] = (PUBLIC_DATA.events || [])
-            .filter(item => item.date === date)
-            .sort((a, b) => `${a.start}-${a.end}`.localeCompare(`${b.start}-${b.end}`));
-    }
+    const daysInMonth = new Date(state.year, state.month + 1, 0).getDate();
+    const firstDay = new Date(state.year, state.month, 1).getDay();
 
     let html = "";
     for (let i = 0; i < firstDay; i++) html += '<div class="day empty"></div>';
     for (let day = 1; day <= daysInMonth; day++) {
-        const date = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-        const slots = eventsByDate[date];
+        const date = `${state.year}-${String(state.month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+        const slots = getPublicEvents()
+            .filter(item => item.date === date)
+            .sort((a, b) => `${a.start}-${a.end}`.localeCompare(`${b.start}-${b.end}`));
         html += `
             <div class="day">
                 <span class="day-num">${day}</span>
-                ${slots.length ? slots.map(item => `<div class="slot ${item.completed ? "completed" : ""}">${getDisplayTimeRange(item)}</div>`).join("") : '<div class="none">無</div>'}
+                ${slots.length ? slots.map(renderSlot).join("") : '<div class="none">無</div>'}
             </div>
         `;
     }
     grid.innerHTML = html;
 }
 
-function getInitialMonthDate() {
-    const events = PUBLIC_DATA.events || [];
-    const firstEvent = events.find(item => item.date);
-    if (firstEvent) {
-        const [year, month] = firstEvent.date.split("-").map(Number);
-        return new Date(year, month - 1, 1);
-    }
-    const now = new Date();
-    return new Date(now.getFullYear(), now.getMonth(), 1);
+function renderSlot(item) {
+    const range = getDisplayTimeRange(item);
+    return `<div class="slot ${item.completed ? "completed" : ""} ${range.includes("/") ? "date-time" : ""}">${range}</div>`;
 }
 
 function getDisplayTimeRange(eventItem) {
@@ -154,9 +131,45 @@ function getDisplayTimeRange(eventItem) {
     const endUtc = zonedTimeToUtc(eventItem.date, eventItem.end, baseTimeZone);
     const start = getDisplayTimeInfo(eventItem.date, startUtc, state.displayTimeZone);
     const end = getDisplayTimeInfo(eventItem.date, endUtc, state.displayTimeZone);
+
     if (start.useExtended && end.useExtended) return `${start.extendedTime}-${end.extendedTime}`;
     if (start.dateLabel === end.dateLabel) return `${start.dateLabel} ${start.time}-${end.time}`;
     return `${start.fullLabel}-${end.fullLabel}`;
+}
+
+function renderWeekdays() {
+    $("weekdays").innerHTML = ["週日", "週一", "週二", "週三", "週四", "週五", "週六"]
+        .map(day => `<div class="weekday">${day}</div>`)
+        .join("");
+}
+
+function renderDataAlert() {
+    const alert = $("dataAlert");
+    const eventCount = getPublicEvents().length;
+    if (!alert) return;
+    if (PUBLIC_DATA.loadError) {
+        alert.innerText = "找不到 public-schedule-data.js。請確認這個資料檔已放在 availability.html 同一層，並且已推送到 GitHub。";
+        alert.classList.remove("hidden");
+        return;
+    }
+    if (!PUBLIC_DATA.updatedAt || eventCount === 0) {
+        alert.innerText = "目前讀到的 public-schedule-data.js 還沒有課程資料。請在教師模式按「公開頁資料」，把下載的新 public-schedule-data.js 覆蓋專案內的同名檔案後，再推送到 GitHub。";
+        alert.classList.remove("hidden");
+        return;
+    }
+    alert.classList.add("hidden");
+}
+
+function getPublicEvents() {
+    return Array.isArray(PUBLIC_DATA.events) ? PUBLIC_DATA.events : [];
+}
+
+function getAllTimeZones() {
+    const zones = [...DEFAULT_TIMEZONES];
+    (PUBLIC_DATA.settings?.customTimeZones || []).forEach(zone => {
+        if (!zones.some(item => item.value === zone.value && item.label === zone.label)) zones.push(zone);
+    });
+    return zones;
 }
 
 function zonedTimeToUtc(dateStr, timeStr, timeZone) {
@@ -176,6 +189,7 @@ function getDisplayTimeInfo(baseDate, date, timeZone) {
     const dateLabel = `${month}/${day}`;
     const time = `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`;
     const extendedMinutes = getDateDiff(baseDate, displayDate) * 1440 + hour * 60 + minute;
+
     return {
         dateLabel,
         time,
