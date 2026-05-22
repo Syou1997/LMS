@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>可預約時段查詢</title>
+    <style>
+        :root {
+            --header: #254b84;
+            --bg: #f4f7fb;
+            --ink: #223041;
+            --muted: #697386;
+            --line: #dbe3ef;
+            --busy: #e9f3ff;
+            --busy-text: #1f5f99;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            color: var(--ink);
+            background: var(--bg);
+            font-family: "Microsoft JhengHei", "Noto Sans TC", Arial, sans-serif;
+        }
+
+        header {
+            color: #ffffff;
+            background: var(--header);
+        }
+
+        .header-inner {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px 28px;
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        h1 {
+            margin: 0 0 12px;
+            font-size: clamp(30px, 5vw, 48px);
+            line-height: 1.15;
+            letter-spacing: 0;
+        }
+
+        .meta {
+            display: grid;
+            gap: 8px;
+            color: rgba(255, 255, 255, .9);
+            font-size: clamp(18px, 2.4vw, 24px);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        select, button {
+            min-height: 40px;
+            border: 1px solid rgba(255, 255, 255, .36);
+            border-radius: 8px;
+            font: inherit;
+        }
+
+        select {
+            min-width: 230px;
+            padding: 8px 10px;
+            color: #0f172a;
+            background: #ffffff;
+        }
+
+        button {
+            padding: 8px 13px;
+            color: var(--header);
+            background: #ffffff;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        main {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 28px 28px;
+        }
+
+        .calendar {
+            overflow-x: auto;
+            background: #ffffff;
+            border: 1px solid var(--line);
+            border-top: 0;
+        }
+
+        .weekdays, .calendar-grid {
+            min-width: 900px;
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+        }
+
+        .weekday {
+            padding: 16px;
+            background: #f4f7fb;
+            border-right: 1px solid var(--line);
+            border-bottom: 1px solid var(--line);
+            text-align: center;
+            font-size: 22px;
+            font-weight: 900;
+        }
+
+        .weekday:first-child { color: #d64545; }
+        .weekday:last-child { color: #2f80ed; border-right: 0; }
+
+        .day {
+            min-height: 150px;
+            padding: 16px;
+            border-right: 1px solid var(--line);
+            border-bottom: 1px solid var(--line);
+            background: #ffffff;
+        }
+
+        .day:nth-child(7n) { border-right: 0; }
+        .day.empty { background: #f8fafc; }
+
+        .day-num {
+            display: block;
+            margin-bottom: 14px;
+            font-size: 26px;
+            font-weight: 900;
+        }
+
+        .slot {
+            margin-top: 7px;
+            padding: 4px 12px;
+            border-radius: 8px;
+            color: var(--busy-text);
+            background: var(--busy);
+            font-size: 20px;
+            font-weight: 800;
+            line-height: 1.25;
+        }
+
+        .slot.completed {
+            color: #697386;
+            background: #eef1f4;
+        }
+
+        .none {
+            color: #a0a7b4;
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .footnote {
+            padding: 20px 0 0;
+            color: var(--muted);
+            text-align: center;
+            font-size: 18px;
+        }
+
+        @media (max-width: 700px) {
+            .header-inner { padding: 24px 16px; }
+            main { padding: 0 16px 22px; }
+            .controls { justify-content: flex-start; }
+            select { width: 100%; min-width: 0; }
+            .weekdays, .calendar-grid { min-width: 760px; }
+        }
+    </style>
+</head>
+<body>
+<header>
+    <div class="header-inner">
+        <div>
+            <h1 id="pageTitle">不可預約的時間</h1>
+            <div class="meta">
+                <div id="timezoneLabel">時區：</div>
+                <div id="updatedAt">最後更新：</div>
+            </div>
+        </div>
+        <div class="controls">
+            <button id="prevMonthBtn" type="button">‹</button>
+            <select id="monthSelect"></select>
+            <button id="nextMonthBtn" type="button">›</button>
+            <select id="timezoneSelect" aria-label="選擇顯示時區"></select>
+        </div>
+    </div>
+</header>
+
+<main>
+    <section class="calendar" aria-label="不可預約時間月曆">
+        <div class="weekdays" id="weekdays"></div>
+        <div class="calendar-grid" id="calendarGrid"></div>
+    </section>
+    <div class="footnote">此頁僅顯示不可預約的時間；其他時段請再與老師確認。</div>
+</main>
+
+<script src="./public-schedule-data.js"></script>
+<script src="./availability.js"></script>
+</body>
+</html>

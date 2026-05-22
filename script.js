@@ -158,6 +158,7 @@ function bindEvents() {
     $("backToToday").onclick = goToday;
     $("exportCalendarBtn").onclick = exportToCalendar;
     $("exportImageBtn").onclick = openScheduleImagePreview;
+    $("exportPublicPageBtn").onclick = exportPublicScheduleData;
     $("downloadPreviewImageBtn").onclick = downloadPreviewImage;
     $("backupBtn").onclick = exportBackup;
     $("importBackupBtn").onclick = () => $("importBackupInput").click();
@@ -199,6 +200,7 @@ function bindEvents() {
         settings.displayTimeZone = $("timezoneSelect").value;
         saveSettings();
         applySettingsToUI();
+        updateModalTimezoneHint();
         renderCalendar();
     };
     $("startTimeSelect").onchange = () => {
@@ -222,6 +224,7 @@ function applySettingsToUI() {
         : isTeacherMode() ? "教師上課管理系統" : "個人行事曆";
     $("searchInput").placeholder = isTeacherMode() ? "搜尋學生、平台或課程內容" : "搜尋分類、對象、地點、內容或備註";
     $("exportImageBtn").innerText = isTeacherMode() ? "▣ 匯出課表圖片" : "▣ 匯出行程圖片";
+    $("exportPublicPageBtn").classList.toggle("hidden", !isTeacherMode());
     $("monthCountLabel").innerText = isTeacherMode() ? "本月課程" : "本月行程";
     $("monthCountUnit").innerText = isTeacherMode() ? "堂" : "筆";
     $("monthHoursLabel").innerText = isTeacherMode() ? "本月時數" : "本月安排時數";
@@ -591,7 +594,7 @@ function openAddModal(dateStr) {
     if (!isTeacherMode()) addExpenseRow();
     setAddModalModeUI();
     $("addModalDateTitle").innerText = `${isTeacherMode() ? "新增排課" : "新增行程"}：${dateStr}`;
-    $("modalTimezoneHint").innerText = `（目前使用：${getTimezoneLabelByValue(settings.baseTimeZone)}）`;
+    updateModalTimezoneHint();
     $("addModal").style.display = "block";
 }
 
@@ -608,7 +611,7 @@ function openEditModal(id, e) {
     $("repeatSelect").value = "none";
     $("repeatSelect").disabled = true;
     $("addModalDateTitle").innerText = `${isTeacherMode() ? "編輯課程" : "編輯行程"}：${target.date}`;
-    $("modalTimezoneHint").innerText = `（目前使用：${getTimezoneLabelByValue(settings.baseTimeZone)}）`;
+    updateModalTimezoneHint();
     if (isTeacherMode()) {
         setSelectOrCustom("platformSelect", "platformInput", target.platform);
         $("courseFee").value = target.fee || "";
@@ -639,6 +642,12 @@ function setAddModalModeUI() {
     $("courseContent").placeholder = isTeacherMode() ? "請輸入教材或進度..." : "請輸入行程內容...";
     $("timeFieldLabel").innerText = isTeacherMode() ? "時間範圍" : "時間（選填）";
     $("repeatText").innerText = isTeacherMode() ? "排課" : "行程";
+}
+
+function updateModalTimezoneHint() {
+    const hint = $("modalTimezoneHint");
+    if (!hint) return;
+    hint.innerText = `（目前使用：${getTimezoneLabelByValue(settings.displayTimeZone)}）`;
 }
 
 function resetInputToggles() {
@@ -972,6 +981,33 @@ function downloadPreviewImage() {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+}
+
+function exportPublicScheduleData() {
+    if (!isTeacherMode()) return alert("公開頁資料只支援教師排課模式。");
+    const publicData = {
+        version: 1,
+        updatedAt: new Date().toISOString(),
+        settings: {
+            teacherName: settings.teacherName || "",
+            showTeacherName: Boolean(settings.showTeacherName),
+            baseTimeZone: settings.baseTimeZone,
+            displayTimeZone: settings.displayTimeZone,
+            customTimeZones: settings.customTimeZones || []
+        },
+        events: events
+            .filter(item => (item.mode || "teacher") === "teacher" && item.start && item.end)
+            .map(item => ({
+                id: item.id,
+                date: item.date,
+                start: item.start,
+                end: item.end,
+                completed: Boolean(item.completed)
+            }))
+    };
+    const js = `window.TEACHER_PUBLIC_SCHEDULE = ${JSON.stringify(publicData, null, 2)};\n`;
+    downloadBlob(new Blob([js], { type: "text/javascript;charset=utf-8" }), "public-schedule-data.js");
+    showToast("公開頁資料已匯出，請將 public-schedule-data.js 放在專案資料夾後一起推送到 GitHub。", false);
 }
 
 function createScheduleImageData() {

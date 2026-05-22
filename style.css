@@ -129,6 +129,7 @@ body.mode-general .icon-btn { color: var(--general-header); }
 .btn-primary:hover, .btn-confirm:hover { background: var(--primary-dark); }
 .btn-export { background: #3f7ee8; }
 .btn-image { background: #14b8a6; }
+.btn-public { background: #475569; }
 .btn-backup { background: var(--purple); }
 .btn-settings { background: #f59e0b; color: #ffffff; }
 .btn-today { background: #22c55e; }
