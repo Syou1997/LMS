@@ -1276,12 +1276,13 @@ function getRepeatDates(startDate, repeatMode) {
         }
     }
     if (repeatMode === "nextMonth") {
-        const endOfNextMonth = new Date(start.getFullYear(), start.getMonth() + 2, 0);
+        const endOfMonth = new Date(start.getFullYear(), start.getMonth() + 1, 0);
         const next = new Date(start);
-        next.setDate(next.getDate() + 7);
-        while (next <= endOfNextMonth) {
-            dates.push(formatDate(next));
-            next.setDate(next.getDate() + 7);
+        next.setDate(next.getDate() + 1);
+        while (next <= endOfMonth) {
+            const day = next.getDay();
+            if (day !== 0 && day !== 6) dates.push(formatDate(next));
+            next.setDate(next.getDate() + 1);
         }
     }
     return dates;
