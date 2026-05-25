@@ -207,7 +207,37 @@
             main { padding: 0 16px 22px; }
             .controls { justify-content: flex-start; }
             #yearSelect, #monthSelect, #timezoneSelect { width: 100%; min-width: 0; }
-            .weekdays, .calendar-grid { min-width: 760px; }
+            .calendar {
+                overflow-x: visible;
+                border-top: 1px solid var(--line);
+            }
+            .weekdays {
+                display: none;
+            }
+            .calendar-grid {
+                min-width: 0;
+                display: block;
+            }
+            .day {
+                min-height: 0;
+                padding: 14px 16px 16px;
+                border-right: 0;
+            }
+            .day.empty {
+                display: none;
+            }
+            .day-num {
+                margin-bottom: 10px;
+                font-size: 24px;
+            }
+            .slot {
+                width: 100%;
+                max-width: 260px;
+                font-size: 18px;
+            }
+            .slot.date-time {
+                font-size: 16px;
+            }
         }
     </style>
 </head>
