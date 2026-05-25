@@ -1042,18 +1042,18 @@ function createScheduleImageData() {
     const footerHeight = 56;
     const cellWidth = (width - padding * 2) / 7;
     const baseCellHeight = 120;
-    const itemHeight = 30;
     const rowHeights = [];
     for (let week = 0; week < weekCount; week++) {
-        let maxItems = 0;
+        let maxItemsHeight = 0;
         for (let dayIndex = 0; dayIndex < 7; dayIndex++) {
             const dayNum = week * 7 + dayIndex - firstDay + 1;
             if (dayNum >= 1 && dayNum <= daysInMonth) {
                 const dateStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(dayNum).padStart(2, "0")}`;
-                maxItems = Math.max(maxItems, monthEventsByDate[dateStr].length);
+                const itemsHeight = monthEventsByDate[dateStr].reduce((sum, item) => sum + getScheduleImageEventHeight(item), 0);
+                maxItemsHeight = Math.max(maxItemsHeight, itemsHeight);
             }
         }
-        rowHeights.push(Math.max(baseCellHeight, 74 + maxItems * itemHeight));
+        rowHeights.push(Math.max(baseCellHeight, 74 + maxItemsHeight));
     }
     const height = padding + titleHeight + weekdayHeight + rowHeights.reduce((sum, h) => sum + h, 0) + footerHeight;
     canvas.width = width * scale;
@@ -1113,14 +1113,17 @@ function createScheduleImageData() {
                 ctx.font = "18px Microsoft JhengHei, Arial";
                 ctx.fillText("無", x + 16, y + 68);
             } else {
+                let itemOffset = 0;
                 dayEvents.forEach((eventItem, eventIndex) => {
-                    const itemY = y + 52 + eventIndex * itemHeight;
+                    const eventHeight = getScheduleImageEventHeight(eventItem);
+                    const itemY = y + 52 + itemOffset;
                     const style = getScheduleImageItemStyle(eventItem);
                     ctx.fillStyle = style.background;
-                    roundRect(ctx, x + 14, itemY, cellWidth - 28, itemHeight - 6, 8, true, false);
+                    roundRect(ctx, x + 14, itemY, cellWidth - 28, eventHeight - 6, 8, true, false);
                     ctx.fillStyle = style.text;
                     ctx.font = "bold 17px Microsoft JhengHei, Arial";
-                    drawClippedText(ctx, getScheduleImageEventText(eventItem), x + 26, itemY + 17, cellWidth - 52);
+                    drawScheduleImageEventText(ctx, eventItem, x + 26, itemY, cellWidth - 52);
+                    itemOffset += eventHeight;
                 });
             }
         }
@@ -1149,6 +1152,24 @@ function getScheduleImageEvents(dateStr) {
 function getScheduleImageEventText(eventItem) {
     if (eventItem.untimedNotice) return "本日有未定時間的行程";
     return getDisplayTimeRange(eventItem);
+}
+
+function getScheduleImageEventHeight(eventItem) {
+    return eventItem.untimedNotice ? 48 : 30;
+}
+
+function drawScheduleImageEventText(ctx, eventItem, x, itemY, maxWidth) {
+    if (!eventItem.untimedNotice) {
+        drawClippedText(ctx, getScheduleImageEventText(eventItem), x, itemY + 17, maxWidth);
+        return;
+    }
+    const text = getScheduleImageEventText(eventItem);
+    if (ctx.measureText(text).width <= maxWidth) {
+        ctx.fillText(text, x, itemY + 25);
+        return;
+    }
+    drawClippedText(ctx, "本日有未定時間的", x, itemY + 19, maxWidth);
+    drawClippedText(ctx, "行程", x, itemY + 37, maxWidth);
 }
 
 function getScheduleImageItemStyle(eventItem) {
