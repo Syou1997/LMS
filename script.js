@@ -1118,7 +1118,7 @@ function exportPublicScheduleData() {
     };
     const js = `window.TEACHER_PUBLIC_SCHEDULE = ${JSON.stringify(publicData, null, 2)};\n`;
     downloadBlob(new Blob([js], { type: "text/javascript;charset=utf-8" }), "public-schedule-data.js");
-    showToast(`公開頁資料已匯出 ${publicEvents.length} 筆，請用新下載的 public-schedule-data.js 覆蓋專案同名檔案後推送到 GitHub。`, false);
+    showToast(`公開頁資料已匯出 ${publicEvents.length} 筆排課與一般行程，請用新下載的 public-schedule-data.js 覆蓋專案同名檔案後推送到 GitHub。`, false);
 }
 
 function createScheduleImageData() {
