@@ -106,6 +106,7 @@ function renderCalendar() {
     const grid = $("calendarGrid");
     const daysInMonth = new Date(state.year, state.month + 1, 0).getDate();
     const firstDay = new Date(state.year, state.month, 1).getDay();
+    const today = getTodayInDisplayTimeZone();
 
     let html = "";
     for (let i = 0; i < firstDay; i++) html += '<div class="day empty"></div>';
@@ -118,7 +119,7 @@ function renderCalendar() {
             slots.push({ date, mode: "general", untimedNotice: true });
         }
         html += `
-            <div class="day">
+            <div class="day ${date < today ? "past-day" : ""}">
                 <span class="day-num">${day}</span>
                 ${slots.length ? slots.map(renderSlot).join("") : '<div class="none">無</div>'}
             </div>
@@ -225,6 +226,11 @@ function getOffsetMinutes(timeZone) {
     const sign = timeZone[3] === "+" ? 1 : -1;
     const [hour, minute] = timeZone.slice(4).split(":").map(Number);
     return sign * (hour * 60 + minute);
+}
+
+function getTodayInDisplayTimeZone() {
+    const shifted = new Date(Date.now() + getOffsetMinutes(state.displayTimeZone) * 60000);
+    return `${shifted.getUTCFullYear()}-${String(shifted.getUTCMonth() + 1).padStart(2, "0")}-${String(shifted.getUTCDate()).padStart(2, "0")}`;
 }
 
 function getDateDiff(baseDate, displayDate) {

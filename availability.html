@@ -121,6 +121,15 @@
 
         .day:nth-child(7n) { border-right: 0; }
         .day.empty { background: #f8fafc; }
+        .day.past-day { background: #f8fafc; }
+        .day.past-day .day-num,
+        .day.past-day .none {
+            color: #a0a7b4;
+        }
+        .day.past-day .slot {
+            color: #697386;
+            background: #eef1f4;
+        }
 
         .day-num {
             display: block;
