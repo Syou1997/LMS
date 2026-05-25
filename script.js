@@ -53,7 +53,9 @@ const defaultSettings = {
     teacherName: "",
     showTeacherName: true,
     baseTimeZone: "UTC+08:00",
+    baseTimeZoneLabel: "台北（GMT+8）",
     displayTimeZone: "UTC+08:00",
+    displayTimeZoneLabel: "台北（GMT+8）",
     customTimeZones: [],
     currency: "NT$",
     defaultDuration: 50,
@@ -103,6 +105,9 @@ function normalizeSettings(raw) {
     normalized.categories = normalizeItems(normalized.categories, DEFAULT_CATEGORIES);
     if (normalized.baseTimeZone === "Asia/Taipei") normalized.baseTimeZone = "UTC+08:00";
     if (normalized.displayTimeZone === "Asia/Taipei") normalized.displayTimeZone = "UTC+08:00";
+    normalized.baseTimeZone = normalized.displayTimeZone;
+    normalized.displayTimeZoneLabel = normalized.displayTimeZoneLabel || [...DEFAULT_TIMEZONES, ...normalized.customTimeZones].find(zone => zone.value === normalized.displayTimeZone)?.label || normalized.displayTimeZone.replace("UTC", "GMT");
+    normalized.baseTimeZoneLabel = normalized.displayTimeZoneLabel;
     return normalized;
 }
 
@@ -182,6 +187,10 @@ function bindEvents() {
     $("setupAddTimezoneBtn").onclick = () => addCustomTimezone("setup");
     $("settingsAddTimezoneBtn").onclick = () => addCustomTimezone("settings");
     $("settingsAppMode").onchange = syncSettingsModeUI;
+    $("setupDisplayTimezone").onchange = () => syncTimezoneSelectPair("setupDisplayTimezone", "setupBaseTimezone");
+    $("settingsDisplayTimezone").onchange = () => syncTimezoneSelectPair("settingsDisplayTimezone", "settingsBaseTimezone");
+    $("setupBaseTimezone").onchange = () => syncTimezoneSelectPair("setupBaseTimezone", "setupDisplayTimezone");
+    $("settingsBaseTimezone").onchange = () => syncTimezoneSelectPair("settingsBaseTimezone", "settingsDisplayTimezone");
     $("addExpenseBtn").onclick = () => addExpenseRow();
     $("scheduleForm").onsubmit = submitScheduleForm;
     $("confirmDelBtn").onclick = confirmDelete;
@@ -197,9 +206,11 @@ function bindEvents() {
         renderCalendar();
     };
     $("timezoneSelect").onchange = () => {
-        const selectedTimeZone = $("timezoneSelect").value;
-        settings.displayTimeZone = selectedTimeZone;
-        settings.baseTimeZone = selectedTimeZone;
+        const selectedTimeZone = readTimezoneSelection("timezoneSelect");
+        settings.displayTimeZone = selectedTimeZone.value;
+        settings.displayTimeZoneLabel = selectedTimeZone.label;
+        settings.baseTimeZone = selectedTimeZone.value;
+        settings.baseTimeZoneLabel = selectedTimeZone.label;
         saveSettings();
         applySettingsToUI();
         updateModalTimezoneHint();
@@ -217,8 +228,8 @@ function applySettingsToUI() {
     document.body.classList.toggle("mode-general", !isTeacherMode());
     document.body.classList.toggle("mode-teacher", isTeacherMode());
     populateTimezoneSelects();
-    $("timezoneSelect").value = settings.displayTimeZone;
-    $("timezoneFlag").innerText = getTimezoneShort(settings.displayTimeZone);
+    setTimezoneSelectValue("timezoneSelect", settings.displayTimeZone, settings.displayTimeZoneLabel);
+    $("timezoneFlag").innerText = getTimezoneShort(settings.displayTimeZone, settings.displayTimeZoneLabel);
     $("currencyLabel").innerText = settings.currency || "";
     $("modePill").innerText = isTeacherMode() ? "教師排課模式" : "一般行事曆模式";
     $("brandTitle").innerText = settings.teacherName
@@ -249,9 +260,14 @@ function populateTimezoneSelects() {
         const select = $(id);
         if (!select) return;
         const oldValue = select.value;
+        const oldLabel = select.selectedOptions[0]?.dataset.label;
         select.innerHTML = "";
-        zones.forEach(zone => select.add(new Option(zone.label, zone.value)));
-        if (oldValue) select.value = oldValue;
+        zones.forEach(zone => {
+            const option = new Option(zone.label, zone.value);
+            option.dataset.label = zone.label;
+            select.add(option);
+        });
+        if (oldValue) setTimezoneSelectValue(id, oldValue, oldLabel);
     });
 }
 
@@ -271,6 +287,28 @@ function getAllTimeZones() {
     return zones;
 }
 
+function readTimezoneSelection(selectId) {
+    const select = $(selectId);
+    const option = select.selectedOptions[0];
+    return {
+        value: select.value,
+        label: option?.dataset.label || option?.text || getTimezoneLabelByValue(select.value)
+    };
+}
+
+function setTimezoneSelectValue(selectId, value, label) {
+    const select = $(selectId);
+    if (!select) return;
+    const options = Array.from(select.options);
+    const index = options.findIndex(option => option.value === value && (!label || option.dataset.label === label));
+    select.selectedIndex = index >= 0 ? index : options.findIndex(option => option.value === value);
+}
+
+function syncTimezoneSelectPair(sourceId, targetId) {
+    const selectedTimeZone = readTimezoneSelection(sourceId);
+    setTimezoneSelectValue(targetId, selectedTimeZone.value, selectedTimeZone.label);
+}
+
 function addCustomTimezone(type) {
     const nameInput = $(type === "setup" ? "setupCustomTimezoneName" : "settingsCustomTimezoneName");
     const valueSelect = $(type === "setup" ? "setupCustomTimezoneValue" : "settingsCustomTimezoneValue");
@@ -281,8 +319,8 @@ function addCustomTimezone(type) {
     settings.customTimeZones.push({ value: valueSelect.value, label, short: makeShortCode(name) });
     saveSettings();
     populateTimezoneSelects();
-    $(type === "setup" ? "setupBaseTimezone" : "settingsBaseTimezone").value = valueSelect.value;
-    $(type === "setup" ? "setupDisplayTimezone" : "settingsDisplayTimezone").value = valueSelect.value;
+    setTimezoneSelectValue(type === "setup" ? "setupBaseTimezone" : "settingsBaseTimezone", valueSelect.value, label);
+    setTimezoneSelectValue(type === "setup" ? "setupDisplayTimezone" : "settingsDisplayTimezone", valueSelect.value, label);
     nameInput.value = "";
 }
 
@@ -290,8 +328,8 @@ function openOnboarding() {
     document.querySelector(`input[name='setupAppMode'][value='${settings.appMode}']`).checked = true;
     $("setupTeacherName").value = settings.teacherName || "";
     $("setupShowTeacherName").checked = settings.showTeacherName;
-    $("setupBaseTimezone").value = settings.baseTimeZone;
-    $("setupDisplayTimezone").value = settings.displayTimeZone;
+    setTimezoneSelectValue("setupBaseTimezone", settings.baseTimeZone, settings.baseTimeZoneLabel);
+    setTimezoneSelectValue("setupDisplayTimezone", settings.displayTimeZone, settings.displayTimeZoneLabel);
     onboardingStep = 1;
     syncOnboardingModeUI();
     renderOnboardingStep();
@@ -338,8 +376,8 @@ function renderSetupSummary() {
     $("setupSummary").innerHTML = `
         <strong>使用模式：</strong>${mode}<br>
         <strong>顯示名稱：</strong>${escapeHtml($("setupTeacherName").value.trim())}<br>
-        <strong>主要時區：</strong>${escapeHtml(getTimezoneLabelByValue($("setupBaseTimezone").value))}<br>
-        <strong>顯示時區：</strong>${escapeHtml(getTimezoneLabelByValue($("setupDisplayTimezone").value))}<br>
+        <strong>主要時區：</strong>${escapeHtml(readTimezoneSelection("setupBaseTimezone").label)}<br>
+        <strong>顯示時區：</strong>${escapeHtml(readTimezoneSelection("setupDisplayTimezone").label)}<br>
         <strong>${getSetupMode() === "teacher" ? "平台" : "分類"}：</strong>${setupItems.map(item => escapeHtml(item.name)).join("、")}
     `;
 }
@@ -347,14 +385,17 @@ function renderSetupSummary() {
 function finishOnboarding() {
     if (!validateOnboardingStep()) return;
     const appMode = getSetupMode();
+    const selectedTimeZone = readTimezoneSelection("setupDisplayTimezone");
     settings = {
         ...settings,
         hasCompletedOnboarding: true,
         appMode,
         teacherName: $("setupTeacherName").value.trim(),
         showTeacherName: $("setupShowTeacherName").checked,
-        baseTimeZone: $("setupBaseTimezone").value,
-        displayTimeZone: $("setupDisplayTimezone").value,
+        baseTimeZone: selectedTimeZone.value,
+        baseTimeZoneLabel: selectedTimeZone.label,
+        displayTimeZone: selectedTimeZone.value,
+        displayTimeZoneLabel: selectedTimeZone.label,
         platforms: appMode === "teacher" ? cloneItems(setupItems) : settings.platforms,
         categories: appMode === "general" ? cloneItems(setupItems) : settings.categories
     };
@@ -369,8 +410,8 @@ function openSettingsModal() {
     $("settingsAppMode").value = settings.appMode;
     $("settingsTeacherName").value = settings.teacherName;
     $("settingsShowTeacherName").checked = settings.showTeacherName;
-    $("settingsBaseTimezone").value = settings.baseTimeZone;
-    $("settingsDisplayTimezone").value = settings.displayTimeZone;
+    setTimezoneSelectValue("settingsBaseTimezone", settings.displayTimeZone, settings.displayTimeZoneLabel);
+    setTimezoneSelectValue("settingsDisplayTimezone", settings.displayTimeZone, settings.displayTimeZoneLabel);
     $("settingsCurrency").value = settings.currency;
     $("settingsDefaultDuration").value = settings.defaultDuration;
     syncSettingsModeUI();
@@ -404,14 +445,17 @@ function saveSettingsFromModal() {
         });
     });
 
+    const selectedTimeZone = readTimezoneSelection("settingsDisplayTimezone");
     settings = {
         ...settings,
         hasCompletedOnboarding: true,
         appMode,
         teacherName,
         showTeacherName: $("settingsShowTeacherName").checked,
-        baseTimeZone: $("settingsBaseTimezone").value,
-        displayTimeZone: $("settingsDisplayTimezone").value,
+        baseTimeZone: selectedTimeZone.value,
+        baseTimeZoneLabel: selectedTimeZone.label,
+        displayTimeZone: selectedTimeZone.value,
+        displayTimeZoneLabel: selectedTimeZone.label,
         currency: $("settingsCurrency").value.trim() || "",
         defaultDuration: Number($("settingsDefaultDuration").value) || 50,
         platforms: appMode === "teacher" ? normalizedItems : settings.platforms,
@@ -653,7 +697,7 @@ function setAddModalModeUI() {
 function updateModalTimezoneHint() {
     const hint = $("modalTimezoneHint");
     if (!hint) return;
-    hint.innerText = `（目前使用：${getTimezoneLabelByValue(settings.baseTimeZone)}）`;
+    hint.innerText = `（目前使用：${getTimezoneLabelByValue(settings.baseTimeZone, settings.baseTimeZoneLabel)}）`;
 }
 
 function resetInputToggles() {
@@ -870,7 +914,7 @@ function openDetailModal() {
 }
 
 function updateDetailModal() {
-    $("detailDateTitle").innerText = `${currentSelectedDate}（${getTimezoneLabelByValue(settings.displayTimeZone)}）`;
+    $("detailDateTitle").innerText = `${currentSelectedDate}（${getTimezoneLabelByValue(settings.displayTimeZone, settings.displayTimeZoneLabel)}）`;
     const dayEvents = events.filter(item => item.date === currentSelectedDate && eventBelongsToCurrentMode(item)).filter(eventMatchesSearch).sort(compareEvents);
     $("detailList").innerHTML = dayEvents.length ? dayEvents.map(renderDetailEvent).join("") : '<p style="text-align:center;color:#999;padding:20px;">無行程</p>';
 }
@@ -1011,7 +1055,9 @@ function exportPublicScheduleData() {
             teacherName: settings.teacherName || "",
             showTeacherName: Boolean(settings.showTeacherName),
             baseTimeZone: settings.baseTimeZone,
-            displayTimeZone: "UTC+08:00",
+            baseTimeZoneLabel: settings.baseTimeZoneLabel,
+            displayTimeZone: settings.displayTimeZone,
+            displayTimeZoneLabel: settings.displayTimeZoneLabel,
             customTimeZones: settings.customTimeZones || []
         },
         events: publicEvents,
@@ -1069,7 +1115,7 @@ function createScheduleImageData() {
     ctx.font = "bold 40px Microsoft JhengHei, Arial";
     ctx.fillText(isTeacherMode() ? `${year} 年 ${month + 1} 月不可預約的時間` : `${year} 年 ${month + 1} 月行程表`, padding, 76);
     ctx.font = "22px Microsoft JhengHei, Arial";
-    ctx.fillText(`時區：${getTimezoneLabelByValue(settings.displayTimeZone)}`, padding, 112);
+    ctx.fillText(`時區：${getTimezoneLabelByValue(settings.displayTimeZone, settings.displayTimeZoneLabel)}`, padding, 112);
     ctx.fillText(`最後更新：${formatDisplayDateTime(new Date())}`, padding, 146);
     if (settings.showTeacherName && settings.teacherName) {
         ctx.textAlign = "right";
@@ -1522,12 +1568,14 @@ function makeShortCode(text) {
     return english || "TZ";
 }
 
-function getTimezoneLabelByValue(value) {
+function getTimezoneLabelByValue(value, label) {
+    if (label) return label;
     return getAllTimeZones().find(zone => zone.value === value)?.label || value.replace("UTC", "GMT");
 }
 
-function getTimezoneShort(value) {
-    return getAllTimeZones().find(zone => zone.value === value)?.short || value.replace("UTC", "GMT");
+function getTimezoneShort(value, label) {
+    const zones = getAllTimeZones();
+    return zones.find(zone => zone.value === value && (!label || zone.label === label))?.short || zones.find(zone => zone.value === value)?.short || value.replace("UTC", "GMT");
 }
 
 function getItemColor(item, index) {

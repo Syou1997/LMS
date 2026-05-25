@@ -36,7 +36,8 @@ const now = new Date();
 const state = {
     year: now.getFullYear(),
     month: now.getMonth(),
-    displayTimeZone: "UTC+08:00"
+    displayTimeZone: PUBLIC_DATA.settings?.displayTimeZone || "UTC+08:00",
+    displayTimeZoneLabel: PUBLIC_DATA.settings?.displayTimeZoneLabel || ""
 };
 
 function init() {
@@ -75,8 +76,13 @@ function populateMonthSelect() {
 
 function populateTimezones() {
     $("timezoneSelect").innerHTML = "";
-    getAllTimeZones().forEach(zone => $("timezoneSelect").add(new Option(zone.label, zone.value)));
-    $("timezoneSelect").value = state.displayTimeZone;
+    getAllTimeZones().forEach(zone => {
+        const option = new Option(zone.label, zone.value);
+        option.dataset.label = zone.label;
+        $("timezoneSelect").add(option);
+    });
+    setTimezoneSelectValue("timezoneSelect", state.displayTimeZone, state.displayTimeZoneLabel);
+    state.displayTimeZoneLabel = readTimezoneSelection("timezoneSelect").label;
 }
 
 function bindControls() {
@@ -89,14 +95,16 @@ function bindControls() {
         render();
     };
     $("timezoneSelect").onchange = () => {
-        state.displayTimeZone = $("timezoneSelect").value;
+        const selectedTimeZone = readTimezoneSelection("timezoneSelect");
+        state.displayTimeZone = selectedTimeZone.value;
+        state.displayTimeZoneLabel = selectedTimeZone.label;
         render();
     };
 }
 
 function render() {
     $("pageTitle").innerText = `${state.year} 年 ${state.month + 1} 月不可預約的時間`;
-    $("timezoneLabel").innerText = `時區：${getTimezoneLabelByValue(state.displayTimeZone)}`;
+    $("timezoneLabel").innerText = `時區：${getTimezoneLabelByValue(state.displayTimeZone, state.displayTimeZoneLabel)}`;
     $("updatedAt").innerText = `最後更新：${formatUpdatedAt(PUBLIC_DATA.updatedAt)}`;
     renderWeekdays();
     renderCalendar();
@@ -194,6 +202,22 @@ function getAllTimeZones() {
     return zones;
 }
 
+function readTimezoneSelection(selectId) {
+    const select = $(selectId);
+    const option = select.selectedOptions[0];
+    return {
+        value: select.value,
+        label: option?.dataset.label || option?.text || getTimezoneLabelByValue(select.value)
+    };
+}
+
+function setTimezoneSelectValue(selectId, value, label) {
+    const select = $(selectId);
+    const options = Array.from(select.options);
+    const index = options.findIndex(option => option.value === value && (!label || option.dataset.label === label));
+    select.selectedIndex = index >= 0 ? index : options.findIndex(option => option.value === value);
+}
+
 function zonedTimeToUtc(dateStr, timeStr, timeZone) {
     const [year, month, day] = dateStr.split("-").map(Number);
     const [hour, minute] = timeStr.split(":").map(Number);
@@ -250,7 +274,8 @@ function formatUpdatedAt(value) {
     return `${date.getFullYear()}/${String(date.getMonth() + 1).padStart(2, "0")}/${String(date.getDate()).padStart(2, "0")} ${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
 }
 
-function getTimezoneLabelByValue(value) {
+function getTimezoneLabelByValue(value, label) {
+    if (label) return label;
     return getAllTimeZones().find(zone => zone.value === value)?.label || value.replace("UTC", "GMT");
 }
 
