@@ -119,9 +119,8 @@ function normalizeSettings(raw) {
     normalized.categories = normalizeItems(normalized.categories, DEFAULT_CATEGORIES);
     if (normalized.baseTimeZone === "Asia/Taipei") normalized.baseTimeZone = "UTC+08:00";
     if (normalized.displayTimeZone === "Asia/Taipei") normalized.displayTimeZone = "UTC+08:00";
-    normalized.baseTimeZone = normalized.displayTimeZone;
     normalized.displayTimeZoneLabel = normalized.displayTimeZoneLabel || [...DEFAULT_TIMEZONES, ...normalized.customTimeZones].find(zone => zone.value === normalized.displayTimeZone)?.label || normalized.displayTimeZone.replace("UTC", "GMT");
-    normalized.baseTimeZoneLabel = normalized.displayTimeZoneLabel;
+    normalized.baseTimeZoneLabel = normalized.baseTimeZoneLabel || [...DEFAULT_TIMEZONES, ...normalized.customTimeZones].find(zone => zone.value === normalized.baseTimeZone)?.label || normalized.baseTimeZone.replace("UTC", "GMT");
     return normalized;
 }
 
@@ -183,6 +182,7 @@ function bindEvents() {
     $("importBackupBtn").onclick = () => $("importBackupInput").click();
     $("importBackupInput").onchange = importBackup;
     $("mobileAddBtn").onclick = () => openAddModal(currentSelectedDate);
+    $("statsFooter").ondblclick = toggleFooter;
     $("showDayDetailBtn").onclick = openDetailModal;
     $("openSettingsBtn").onclick = openSettingsModal;
     $("saveSettingsBtn").onclick = saveSettingsFromModal;
@@ -201,10 +201,6 @@ function bindEvents() {
     $("setupAddTimezoneBtn").onclick = () => addCustomTimezone("setup");
     $("settingsAddTimezoneBtn").onclick = () => addCustomTimezone("settings");
     $("settingsAppMode").onchange = syncSettingsModeUI;
-    $("setupDisplayTimezone").onchange = () => syncTimezoneSelectPair("setupDisplayTimezone", "setupBaseTimezone");
-    $("settingsDisplayTimezone").onchange = () => syncTimezoneSelectPair("settingsDisplayTimezone", "settingsBaseTimezone");
-    $("setupBaseTimezone").onchange = () => syncTimezoneSelectPair("setupBaseTimezone", "setupDisplayTimezone");
-    $("settingsBaseTimezone").onchange = () => syncTimezoneSelectPair("settingsBaseTimezone", "settingsDisplayTimezone");
     $("addExpenseBtn").onclick = () => addExpenseRow();
     $("scheduleForm").onsubmit = submitScheduleForm;
     $("confirmDelBtn").onclick = confirmDelete;
@@ -223,8 +219,6 @@ function bindEvents() {
         const selectedTimeZone = readTimezoneSelection("timezoneSelect");
         settings.displayTimeZone = selectedTimeZone.value;
         settings.displayTimeZoneLabel = selectedTimeZone.label;
-        settings.baseTimeZone = selectedTimeZone.value;
-        settings.baseTimeZoneLabel = selectedTimeZone.label;
         saveSettings();
         applySettingsToUI();
         updateModalTimezoneHint();
@@ -236,6 +230,12 @@ function bindEvents() {
         ensureTimeOptionExists("endTimeSelect", endVal);
         $("endTimeSelect").value = endVal;
     };
+}
+
+function toggleFooter() {
+    const footer = $("statsFooter");
+    const collapsed = footer.classList.toggle("collapsed");
+    document.body.classList.toggle("footer-collapsed", collapsed);
 }
 
 function applySettingsToUI() {
@@ -318,11 +318,6 @@ function setTimezoneSelectValue(selectId, value, label) {
     select.selectedIndex = index >= 0 ? index : options.findIndex(option => option.value === value);
 }
 
-function syncTimezoneSelectPair(sourceId, targetId) {
-    const selectedTimeZone = readTimezoneSelection(sourceId);
-    setTimezoneSelectValue(targetId, selectedTimeZone.value, selectedTimeZone.label);
-}
-
 function addCustomTimezone(type) {
     const nameInput = $(type === "setup" ? "setupCustomTimezoneName" : "settingsCustomTimezoneName");
     const valueSelect = $(type === "setup" ? "setupCustomTimezoneValue" : "settingsCustomTimezoneValue");
@@ -399,17 +394,18 @@ function renderSetupSummary() {
 function finishOnboarding() {
     if (!validateOnboardingStep()) return;
     const appMode = getSetupMode();
-    const selectedTimeZone = readTimezoneSelection("setupDisplayTimezone");
+    const selectedBaseTimeZone = readTimezoneSelection("setupBaseTimezone");
+    const selectedDisplayTimeZone = readTimezoneSelection("setupDisplayTimezone");
     settings = {
         ...settings,
         hasCompletedOnboarding: true,
         appMode,
         teacherName: $("setupTeacherName").value.trim(),
         showTeacherName: $("setupShowTeacherName").checked,
-        baseTimeZone: selectedTimeZone.value,
-        baseTimeZoneLabel: selectedTimeZone.label,
-        displayTimeZone: selectedTimeZone.value,
-        displayTimeZoneLabel: selectedTimeZone.label,
+        baseTimeZone: selectedBaseTimeZone.value,
+        baseTimeZoneLabel: selectedBaseTimeZone.label,
+        displayTimeZone: selectedDisplayTimeZone.value,
+        displayTimeZoneLabel: selectedDisplayTimeZone.label,
         platforms: appMode === "teacher" ? cloneItems(setupItems) : settings.platforms,
         categories: appMode === "general" ? cloneItems(setupItems) : settings.categories
     };
@@ -424,7 +420,7 @@ function openSettingsModal() {
     $("settingsAppMode").value = settings.appMode;
     $("settingsTeacherName").value = settings.teacherName;
     $("settingsShowTeacherName").checked = settings.showTeacherName;
-    setTimezoneSelectValue("settingsBaseTimezone", settings.displayTimeZone, settings.displayTimeZoneLabel);
+    setTimezoneSelectValue("settingsBaseTimezone", settings.baseTimeZone, settings.baseTimeZoneLabel);
     setTimezoneSelectValue("settingsDisplayTimezone", settings.displayTimeZone, settings.displayTimeZoneLabel);
     $("settingsCurrency").value = settings.currency;
     $("settingsDefaultDuration").value = settings.defaultDuration;
@@ -459,17 +455,18 @@ function saveSettingsFromModal() {
         });
     });
 
-    const selectedTimeZone = readTimezoneSelection("settingsDisplayTimezone");
+    const selectedBaseTimeZone = readTimezoneSelection("settingsBaseTimezone");
+    const selectedDisplayTimeZone = readTimezoneSelection("settingsDisplayTimezone");
     settings = {
         ...settings,
         hasCompletedOnboarding: true,
         appMode,
         teacherName,
         showTeacherName: $("settingsShowTeacherName").checked,
-        baseTimeZone: selectedTimeZone.value,
-        baseTimeZoneLabel: selectedTimeZone.label,
-        displayTimeZone: selectedTimeZone.value,
-        displayTimeZoneLabel: selectedTimeZone.label,
+        baseTimeZone: selectedBaseTimeZone.value,
+        baseTimeZoneLabel: selectedBaseTimeZone.label,
+        displayTimeZone: selectedDisplayTimeZone.value,
+        displayTimeZoneLabel: selectedDisplayTimeZone.label,
         currency: $("settingsCurrency").value.trim() || "",
         defaultDuration: Number($("settingsDefaultDuration").value) || 50,
         platforms: appMode === "teacher" ? normalizedItems : settings.platforms,
