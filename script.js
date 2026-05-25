@@ -197,7 +197,9 @@ function bindEvents() {
         renderCalendar();
     };
     $("timezoneSelect").onchange = () => {
-        settings.displayTimeZone = $("timezoneSelect").value;
+        const selectedTimeZone = $("timezoneSelect").value;
+        settings.displayTimeZone = selectedTimeZone;
+        settings.baseTimeZone = selectedTimeZone;
         saveSettings();
         applySettingsToUI();
         updateModalTimezoneHint();
@@ -651,7 +653,7 @@ function setAddModalModeUI() {
 function updateModalTimezoneHint() {
     const hint = $("modalTimezoneHint");
     if (!hint) return;
-    hint.innerText = `（目前使用：${getTimezoneLabelByValue(settings.displayTimeZone)}）`;
+    hint.innerText = `（目前使用：${getTimezoneLabelByValue(settings.baseTimeZone)}）`;
 }
 
 function resetInputToggles() {
