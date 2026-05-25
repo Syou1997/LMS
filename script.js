@@ -1168,8 +1168,18 @@ function drawScheduleImageEventText(ctx, eventItem, x, itemY, maxWidth) {
         ctx.fillText(text, x, itemY + 25);
         return;
     }
-    drawClippedText(ctx, "本日有未定時間的", x, itemY + 19, maxWidth);
-    drawClippedText(ctx, "行程", x, itemY + 37, maxWidth);
+    fitCanvasFont(ctx, "bold", 17, "Microsoft JhengHei, Arial", "本日有未定時間的", maxWidth);
+    ctx.fillText("本日有未定時間的", x, itemY + 19);
+    ctx.font = "bold 17px Microsoft JhengHei, Arial";
+    ctx.fillText("行程", x, itemY + 37);
+}
+
+function fitCanvasFont(ctx, weight, size, family, text, maxWidth) {
+    let fontSize = size;
+    do {
+        ctx.font = `${weight} ${fontSize}px ${family}`;
+        fontSize -= 1;
+    } while (fontSize >= 11 && ctx.measureText(text).width > maxWidth);
 }
 
 function getScheduleImageItemStyle(eventItem) {
