@@ -182,7 +182,11 @@ function bindEvents() {
     $("importBackupBtn").onclick = () => $("importBackupInput").click();
     $("importBackupInput").onchange = importBackup;
     $("mobileAddBtn").onclick = () => openAddModal(currentSelectedDate);
-    $("statsFooter").ondblclick = toggleFooter;
+    $("statsFooter").ondblclick = event => {
+        event.stopPropagation();
+        toggleFooter();
+    };
+    document.addEventListener("dblclick", restoreFooterFromBottomEdge);
     $("showDayDetailBtn").onclick = openDetailModal;
     $("openSettingsBtn").onclick = openSettingsModal;
     $("saveSettingsBtn").onclick = saveSettingsFromModal;
@@ -236,6 +240,12 @@ function toggleFooter() {
     const footer = $("statsFooter");
     const collapsed = footer.classList.toggle("collapsed");
     document.body.classList.toggle("footer-collapsed", collapsed);
+}
+
+function restoreFooterFromBottomEdge(event) {
+    if (!document.body.classList.contains("footer-collapsed")) return;
+    if (event.clientY < window.innerHeight - 88) return;
+    toggleFooter();
 }
 
 function applySettingsToUI() {
