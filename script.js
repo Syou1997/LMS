@@ -660,7 +660,7 @@ function eventMatchesSearch(eventItem) {
     const keyword = getSearchKeyword();
     if (!keyword) return true;
     const values = isTeacherMode()
-        ? [eventItem.platform, eventItem.student, eventItem.content, eventItem.date, eventItem.start, eventItem.end]
+        ? [eventItem.platform, eventItem.student, eventItem.content, eventItem.note, eventItem.date, eventItem.start, eventItem.end]
         : [eventItem.category, eventItem.target, eventItem.location, eventItem.content, eventItem.note, eventItem.date, eventItem.start, eventItem.end];
     return values.some(value => String(value || "").toLowerCase().includes(keyword));
 }
@@ -704,8 +704,8 @@ function openEditModal(id, e) {
         $("targetPerson").value = target.target || "";
         $("locationInput").value = target.location || "";
         (target.expenses?.length ? target.expenses : [{ name: "", amount: "" }]).forEach(exp => addExpenseRow(exp.name, exp.amount));
-        $("noteInput").value = target.note || "";
     }
+    $("noteInput").value = target.note || "";
     const displayStart = getModalDisplayTime(target, "start");
     const displayEnd = getModalDisplayTime(target, "end");
     ensureTimeOptionExists("startTimeSelect", displayStart);
@@ -721,7 +721,7 @@ function openEditModal(id, e) {
 function setAddModalModeUI() {
     $("teacherFields").classList.toggle("hidden", !isTeacherMode());
     $("generalFields").classList.toggle("hidden", isTeacherMode());
-    $("generalNoteField").classList.toggle("hidden", isTeacherMode());
+    $("generalNoteField").classList.remove("hidden");
     $("generalTimeHint").classList.toggle("hidden", isTeacherMode());
     $("contentLabel").innerText = isTeacherMode() ? "課程內容" : "內容（必填）";
     $("courseContent").placeholder = isTeacherMode() ? "請輸入教材或進度..." : "請輸入行程內容...";
@@ -794,7 +794,8 @@ function submitScheduleForm(e) {
             student: $("studentName").value.trim() || "未填寫",
             start: storedStart,
             end: storedEnd,
-            content: $("courseContent").value.trim()
+            content: $("courseContent").value.trim(),
+            note: $("noteInput").value.trim()
         };
     } else {
         const content = $("courseContent").value.trim();
@@ -975,7 +976,7 @@ function renderDetailEvent(eventItem) {
         ? `${hasTimeRange(eventItem) ? getDisplayTimeRange(eventItem) : "未設定時間"} ｜ ${escapeHtml(eventItem.platform)}${isEventCompleted(eventItem) ? "｜已完成" : ""}`
         : `${hasTimeRange(eventItem) ? getDisplayTimeRange(eventItem) : "未設定時間"} ｜ ${escapeHtml(eventItem.content)}${isEventCompleted(eventItem) ? "｜已完成" : ""}`;
     const body = isTeacherMode()
-        ? `<small>學生：${escapeHtml(eventItem.student)} ｜ 費用：${escapeHtml(settings.currency)} ${eventItem.fee}</small><br><p>${escapeHtml(eventItem.content || "")}</p>`
+        ? `<small>學生：${escapeHtml(eventItem.student)} ｜ 費用：${escapeHtml(settings.currency)} ${eventItem.fee}</small><br><p>${escapeHtml(eventItem.content || "")}</p><p>${escapeHtml(eventItem.note || "")}</p>`
         : `<small>分類：${escapeHtml(eventItem.category)} ｜ 對象：${escapeHtml(eventItem.target || "未填寫")} ｜ 地點：${escapeHtml(eventItem.location || "未填寫")}</small><br>
            <small>花費：${escapeHtml(settings.currency)} ${getGeneralExpenseTotal(eventItem).toLocaleString()}</small>
            ${renderExpenseDetail(eventItem)}
@@ -1060,6 +1061,7 @@ function makeIcsDescription(item) {
     if (isTeacherMode()) {
         let description = `學生: ${item.student}\\n平台: ${item.platform}\\n費用: ${settings.currency} ${item.fee}`;
         if (item.content) description += `\\n課程內容: ${item.content.replace(/\n/g, "\\n")}`;
+        if (item.note) description += `\\n備註: ${item.note.replace(/\n/g, "\\n")}`;
         return description;
     }
     const expenses = item.expenses?.map(exp => `${exp.name}: ${settings.currency} ${exp.amount}`).join("\\n") || "";
