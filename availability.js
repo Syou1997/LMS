@@ -1,5 +1,5 @@
 const PUBLIC_DATA = window.TEACHER_PUBLIC_SCHEDULE || {};
-const EXTENDED_TIME_MAX_MINUTES = 29 * 60 + 30;
+const TIME_DISPLAY_MAX_MINUTES = 24 * 60;
 
 const DEFAULT_TIMEZONES = [
     { value: "UTC+08:00", label: "台北（GMT+8）" },
@@ -240,7 +240,7 @@ function getDisplayTimeInfo(baseDate, date, timeZone) {
         dateLabel,
         time,
         fullLabel: `${dateLabel} ${time}`,
-        useExtended: extendedMinutes >= 0 && extendedMinutes <= EXTENDED_TIME_MAX_MINUTES,
+        useExtended: diff === 0 && extendedMinutes >= 0 && extendedMinutes <= TIME_DISPLAY_MAX_MINUTES,
         extendedTime: formatExtendedTime(extendedMinutes)
     };
 }

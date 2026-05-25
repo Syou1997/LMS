@@ -44,7 +44,8 @@ const GMT_OFFSET_OPTIONS = [
 ];
 
 const PLATFORM_COLORS = ["#f1c40f", "#e74c3c", "#8e44ad", "#27ae60", "#2980b9", "#00897b", "#d81b60", "#3949ab", "#795548", "#455a64"];
-const EXTENDED_TIME_MAX_MINUTES = 29 * 60 + 30;
+const TIME_INPUT_MAX_MINUTES = 24 * 60;
+const EXTENDED_TIME_MAX_MINUTES = 47 * 60 + 30;
 const DEFAULT_PLATFORMS = [
     { name: "補習班", color: "#f1c40f", textColor: "#222222" },
     { name: "AmazingTalker", color: "#e74c3c", textColor: "#ffffff" },
@@ -558,16 +559,27 @@ function populateItemSelects() {
 }
 
 function fillTimeOptions() {
-    let html = isTeacherMode() ? "" : '<option value="">不設定</option>';
-    for (let h = 0; h <= 29; h++) {
+    let startHtml = isTeacherMode() ? "" : '<option value="">不設定</option>';
+    let endHtml = isTeacherMode() ? "" : '<option value="">不設定</option>';
+    for (let h = 0; h <= 24; h++) {
         for (const m of ["00", "30"]) {
-            if (h * 60 + Number(m) > EXTENDED_TIME_MAX_MINUTES) continue;
+            if (h * 60 + Number(m) > TIME_INPUT_MAX_MINUTES) continue;
             const time = `${String(h).padStart(2, "0")}:${m}`;
-            html += `<option value="${time}">${time}</option>`;
+            startHtml += `<option value="${time}">${time}</option>`;
+            endHtml += `<option value="${time}">${time}</option>`;
         }
     }
-    $("startTimeSelect").innerHTML = html;
-    $("endTimeSelect").innerHTML = html;
+    for (let h = 0; h <= 23; h++) {
+        for (const m of ["00", "30"]) {
+            const minutes = (24 + h) * 60 + Number(m);
+            if (minutes <= TIME_INPUT_MAX_MINUTES || minutes > EXTENDED_TIME_MAX_MINUTES) continue;
+            const value = formatExtendedTime(minutes);
+            const label = `隔日 ${String(h).padStart(2, "0")}:${m}`;
+            endHtml += `<option value="${value}">${label}</option>`;
+        }
+    }
+    $("startTimeSelect").innerHTML = startHtml;
+    $("endTimeSelect").innerHTML = endHtml;
 }
 
 function renderCalendar() {
@@ -694,12 +706,14 @@ function openEditModal(id, e) {
         (target.expenses?.length ? target.expenses : [{ name: "", amount: "" }]).forEach(exp => addExpenseRow(exp.name, exp.amount));
         $("noteInput").value = target.note || "";
     }
-    ensureTimeOptionExists("startTimeSelect", target.start);
-    ensureTimeOptionExists("endTimeSelect", target.end);
-    $("startTimeSelect").value = target.start || "";
-    $("endTimeSelect").value = target.end || "";
-    $("startTimeInput").value = target.start || "";
-    $("endTimeInput").value = target.end || "";
+    const displayStart = getModalDisplayTime(target, "start");
+    const displayEnd = getModalDisplayTime(target, "end");
+    ensureTimeOptionExists("startTimeSelect", displayStart);
+    ensureTimeOptionExists("endTimeSelect", displayEnd);
+    $("startTimeSelect").value = displayStart;
+    $("endTimeSelect").value = displayEnd;
+    $("startTimeInput").value = displayStart;
+    $("endTimeInput").value = displayEnd;
     $("courseContent").value = target.content || "";
     $("addModal").style.display = "block";
 }
@@ -718,7 +732,21 @@ function setAddModalModeUI() {
 function updateModalTimezoneHint() {
     const hint = $("modalTimezoneHint");
     if (!hint) return;
-    hint.innerText = `（目前使用：${getTimezoneLabelByValue(settings.baseTimeZone, settings.baseTimeZoneLabel)}）`;
+    hint.innerText = `（目前使用：${getTimezoneLabelByValue(settings.displayTimeZone, settings.displayTimeZoneLabel)}）`;
+}
+
+function getModalDisplayTime(eventItem, key) {
+    if (!eventItem[key]) return "";
+    const utc = zonedTimeToUtc(eventItem.date, eventItem[key], settings.baseTimeZone);
+    const display = getDisplayTimeInfo(eventItem.date, utc, settings.displayTimeZone);
+    return display.useExtended ? display.extendedTime : display.time;
+}
+
+function convertModalTimeToStoredTime(dateStr, timeStr) {
+    if (!timeStr) return "";
+    const utc = zonedTimeToUtc(dateStr, timeStr, settings.displayTimeZone);
+    const stored = getDisplayTimeInfo(dateStr, utc, settings.baseTimeZone);
+    return stored.useExtended ? stored.extendedTime : stored.time;
 }
 
 function resetInputToggles() {
@@ -752,6 +780,8 @@ function submitScheduleForm(e) {
     const end = !$("timeInputGroup").classList.contains("hidden") ? $("endTimeInput").value.trim() : $("endTimeSelect").value;
     const validation = validateTimeRange(start, end);
     if (!validation.valid) return alert(validation.message);
+    const storedStart = convertModalTimeToStoredTime(targetDate, start);
+    const storedEnd = convertModalTimeToStoredTime(targetDate, end);
 
     let eventData;
     if (isTeacherMode()) {
@@ -762,8 +792,8 @@ function submitScheduleForm(e) {
             platform,
             fee: Number($("courseFee").value) || 0,
             student: $("studentName").value.trim() || "未填寫",
-            start,
-            end,
+            start: storedStart,
+            end: storedEnd,
             content: $("courseContent").value.trim()
         };
     } else {
@@ -780,21 +810,21 @@ function submitScheduleForm(e) {
             location: $("locationInput").value.trim(),
             expenses,
             fee: expenses.reduce((sum, exp) => sum + exp.amount, 0),
-            start,
-            end,
+            start: storedStart,
+            end: storedEnd,
             content,
             note: $("noteInput").value.trim()
         };
     }
 
     if (editId) {
-        const conflict = getConflictEvent(targetDate, start, end, editId);
+        const conflict = getConflictEvent(targetDate, storedStart, storedEnd, editId);
         if (conflict) return alert(makeConflictMessage(conflict));
         const index = events.findIndex(item => item.id === editId);
         if (index !== -1) events[index] = { ...events[index], ...eventData };
     } else {
         const repeatDates = getRepeatDates(targetDate, $("repeatSelect").value);
-        const conflicts = getRepeatConflicts(repeatDates, start, end);
+        const conflicts = getRepeatConflicts(repeatDates, storedStart, storedEnd);
         if (conflicts.length > 0) return alert(makeRepeatConflictMessage(conflicts));
         repeatDates.forEach(date => events.push({ id: makeId(), date, ...eventData }));
     }
@@ -1486,7 +1516,7 @@ function ensureTimeOptionExists(selectId, timeValue) {
 function addMinutesToTime(timeStr, minutes) {
     const total = timeToMinutes(timeStr);
     if (total === null) return timeStr;
-    const next = Math.min(total + minutes, EXTENDED_TIME_MAX_MINUTES);
+    const next = Math.min(total + minutes, TIME_INPUT_MAX_MINUTES);
     return formatExtendedTime(next);
 }
 
@@ -1555,7 +1585,7 @@ function getDisplayTimeInfo(baseDate, date, timeZone) {
     const time = `${String(part.hour).padStart(2, "0")}:${String(part.minute).padStart(2, "0")}`;
     const diff = getDateDiff(baseDate, `${part.year}-${String(part.month).padStart(2, "0")}-${String(part.day).padStart(2, "0")}`);
     const extendedMinutes = diff * 1440 + part.hour * 60 + part.minute;
-    const useExtended = extendedMinutes >= 0 && extendedMinutes <= EXTENDED_TIME_MAX_MINUTES;
+    const useExtended = diff === 0 && extendedMinutes >= 0 && extendedMinutes <= TIME_INPUT_MAX_MINUTES;
 
     return {
         dateLabel,
