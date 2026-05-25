@@ -2,6 +2,8 @@ const PUBLIC_DATA = window.TEACHER_PUBLIC_SCHEDULE || {};
 const EXTENDED_TIME_MAX_MINUTES = 29 * 60 + 30;
 
 const DEFAULT_TIMEZONES = [
+    { value: "UTC+08:00", label: "台北（GMT+8）" },
+    { value: "UTC+09:00", label: "東京（GMT+9）" },
     { value: "UTC-12:00", label: "貝克島（GMT-12）" },
     { value: "UTC-11:00", label: "美屬薩摩亞（GMT-11）" },
     { value: "UTC-10:00", label: "夏威夷（GMT-10）" },
@@ -22,8 +24,6 @@ const DEFAULT_TIMEZONES = [
     { value: "UTC+05:00", label: "塔什干（GMT+5）" },
     { value: "UTC+06:00", label: "達卡（GMT+6）" },
     { value: "UTC+07:00", label: "曼谷（GMT+7）" },
-    { value: "UTC+08:00", label: "台北（GMT+8）" },
-    { value: "UTC+09:00", label: "東京（GMT+9）" },
     { value: "UTC+10:00", label: "雪梨（GMT+10）" },
     { value: "UTC+11:00", label: "索羅門群島（GMT+11）" },
     { value: "UTC+12:00", label: "奧克蘭（GMT+12）" },
