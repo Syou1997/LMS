@@ -1102,6 +1102,8 @@ function exportPublicScheduleData() {
     const publicData = {
         version: 2,
         updatedAt: new Date().toISOString(),
+        selectedYear: Number(yearSelect.value),
+        selectedMonth: Number(monthSelect.value),
         settings: {
             teacherName: settings.teacherName || "",
             showTeacherName: Boolean(settings.showTeacherName),

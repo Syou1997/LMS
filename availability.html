@@ -282,6 +282,12 @@
     function loadAvailabilityApp() {
         const appScript = document.createElement("script");
         appScript.src = `./availability.js?v=${cacheKey}`;
+        appScript.onerror = () => {
+            const alert = document.getElementById("dataAlert");
+            if (!alert) return;
+            alert.innerText = "找不到 availability.js。請確認這個檔案已放在 availability.html 同一層，並且已推送到 GitHub。";
+            alert.classList.remove("hidden");
+        };
         document.head.appendChild(appScript);
     }
 </script>

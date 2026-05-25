@@ -34,8 +34,8 @@ const DEFAULT_TIMEZONES = [
 const $ = id => document.getElementById(id);
 const now = new Date();
 const state = {
-    year: now.getFullYear(),
-    month: now.getMonth(),
+    year: Number(PUBLIC_DATA.selectedYear) || now.getFullYear(),
+    month: Number.isInteger(PUBLIC_DATA.selectedMonth) ? PUBLIC_DATA.selectedMonth : now.getMonth(),
     displayTimeZone: PUBLIC_DATA.settings?.displayTimeZone || "UTC+08:00",
     displayTimeZoneLabel: PUBLIC_DATA.settings?.displayTimeZoneLabel || ""
 };
@@ -50,7 +50,7 @@ function init() {
 }
 
 function populateYearSelect() {
-    const years = new Set([now.getFullYear() - 1, now.getFullYear(), now.getFullYear() + 1]);
+    const years = new Set([state.year - 1, state.year, state.year + 1, now.getFullYear()]);
     getPublicEvents().forEach(item => {
         const year = Number(item.date?.slice(0, 4));
         if (year) years.add(year);
