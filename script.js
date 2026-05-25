@@ -555,6 +555,10 @@ function eventBelongsToCurrentMode(eventItem) {
     return (eventItem.mode || "teacher") === settings.appMode;
 }
 
+function isTeacherEvent(eventItem) {
+    return (eventItem.mode || "teacher") === "teacher";
+}
+
 function compareEvents(a, b) {
     return `${a.start || "99:99"} ${a.content}`.localeCompare(`${b.start || "99:99"} ${b.content}`);
 }
@@ -749,7 +753,6 @@ function getConflictEvent(dateStr, start, end, editId) {
     const newStart = timeToMinutes(start);
     const newEnd = timeToMinutes(end);
     return events.find(eventItem => {
-        if (!eventBelongsToCurrentMode(eventItem)) return false;
         if (eventItem.date !== dateStr || !eventItem.start || !eventItem.end) return false;
         if (editId && eventItem.id === editId) return false;
         return newStart < timeToMinutes(eventItem.end) && newEnd > timeToMinutes(eventItem.start);
@@ -764,14 +767,14 @@ function getRepeatConflicts(repeatDates, start, end) {
 }
 
 function makeConflictMessage(conflict) {
-    if (isTeacherMode()) return `此時段與 ${conflict.date} ${conflict.start}-${conflict.end} ${conflict.platform}（${conflict.student || "未填寫"}）課程重疊。`;
+    if (isTeacherEvent(conflict)) return `此時段與 ${conflict.date} ${conflict.start}-${conflict.end} ${conflict.platform}（${conflict.student || "未填寫"}）課程重疊。`;
     return `此時段與 ${conflict.date} ${conflict.start}-${conflict.end}「${conflict.content || conflict.category}」行程重疊，請調整時間。`;
 }
 
 function makeRepeatConflictMessage(conflicts) {
     const label = isTeacherMode() ? "重複排課" : "重複行程";
     const rows = conflicts.slice(0, 5).map(conflict => {
-        const title = isTeacherMode()
+        const title = isTeacherEvent(conflict)
             ? `${conflict.platform}（${conflict.student || "未填寫"}）`
             : `「${conflict.content || conflict.category}」`;
         return `${conflict.date} ${conflict.start}-${conflict.end} ${title}`;
@@ -986,16 +989,21 @@ function downloadPreviewImage() {
 function exportPublicScheduleData() {
     if (!isTeacherMode()) return alert("公開頁資料只支援教師排課模式。");
     const publicEvents = events
-        .filter(item => (item.mode || "teacher") === "teacher" && item.start && item.end)
+        .filter(item => item.start && item.end)
         .map(item => ({
             id: item.id,
+            mode: item.mode || "teacher",
             date: item.date,
             start: item.start,
             end: item.end,
             completed: Boolean(item.completed)
         }));
+    const untimedGeneralDates = Array.from(new Set(events
+        .filter(item => (item.mode || "teacher") === "general" && item.date && (!item.start || !item.end))
+        .map(item => item.date)
+    )).sort();
     const publicData = {
-        version: 1,
+        version: 2,
         updatedAt: new Date().toISOString(),
         settings: {
             teacherName: settings.teacherName || "",
@@ -1004,7 +1012,8 @@ function exportPublicScheduleData() {
             displayTimeZone: "UTC+08:00",
             customTimeZones: settings.customTimeZones || []
         },
-        events: publicEvents
+        events: publicEvents,
+        untimedGeneralDates
     };
     const js = `window.TEACHER_PUBLIC_SCHEDULE = ${JSON.stringify(publicData, null, 2)};\n`;
     downloadBlob(new Blob([js], { type: "text/javascript;charset=utf-8" }), "public-schedule-data.js");
@@ -1020,7 +1029,7 @@ function createScheduleImageData() {
     const monthEventsByDate = {};
     for (let d = 1; d <= daysInMonth; d++) {
         const dateStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
-        monthEventsByDate[dateStr] = events.filter(item => item.date === dateStr && eventBelongsToCurrentMode(item)).sort(compareEvents);
+        monthEventsByDate[dateStr] = getScheduleImageEvents(dateStr);
     }
 
     const canvas = document.createElement("canvas");
@@ -1032,8 +1041,8 @@ function createScheduleImageData() {
     const weekdayHeight = 52;
     const footerHeight = 56;
     const cellWidth = (width - padding * 2) / 7;
-    const baseCellHeight = isTeacherMode() ? 120 : 132;
-    const itemHeight = isTeacherMode() ? 30 : 42;
+    const baseCellHeight = 120;
+    const itemHeight = 30;
     const rowHeights = [];
     for (let week = 0; week < weekCount; week++) {
         let maxItems = 0;
@@ -1106,19 +1115,12 @@ function createScheduleImageData() {
             } else {
                 dayEvents.forEach((eventItem, eventIndex) => {
                     const itemY = y + 52 + eventIndex * itemHeight;
-                    ctx.fillStyle = isEventCompleted(eventItem) ? "#eef1f4" : "#e9f3ff";
+                    const style = getScheduleImageItemStyle(eventItem);
+                    ctx.fillStyle = style.background;
                     roundRect(ctx, x + 14, itemY, cellWidth - 28, itemHeight - 6, 8, true, false);
-                    ctx.fillStyle = isEventCompleted(eventItem) ? "#697386" : "#1f5f99";
-                    if (isTeacherMode()) {
-                        ctx.font = "bold 17px Microsoft JhengHei, Arial";
-                        drawClippedText(ctx, getDisplayTimeRange(eventItem), x + 26, itemY + 17, cellWidth - 52);
-                    } else {
-                        ctx.font = "bold 15px Microsoft JhengHei, Arial";
-                        drawClippedText(ctx, hasTimeRange(eventItem) ? getDisplayTimeRange(eventItem) : "未設定時間", x + 26, itemY + 18, cellWidth - 52);
-                        ctx.font = "13px Microsoft JhengHei, Arial";
-                        ctx.fillStyle = "#334155";
-                        drawClippedText(ctx, eventItem.content || "未填寫內容", x + 26, itemY + 34, cellWidth - 52);
-                    }
+                    ctx.fillStyle = style.text;
+                    ctx.font = "bold 17px Microsoft JhengHei, Arial";
+                    drawClippedText(ctx, getScheduleImageEventText(eventItem), x + 26, itemY + 17, cellWidth - 52);
                 });
             }
         }
@@ -1132,6 +1134,31 @@ function createScheduleImageData() {
         dataUrl: canvas.toDataURL("image/png"),
         fileName: `${settings.teacherName || "schedule"}_${year}年${month + 1}月${isTeacherMode() ? "不可預約時間" : "行程表"}.png`
     };
+}
+
+function getScheduleImageEvents(dateStr) {
+    const dayEvents = events
+        .filter(item => item.date === dateStr && hasTimeRange(item))
+        .sort(compareEvents);
+    if (hasUntimedGeneralEvent(dateStr)) {
+        dayEvents.push({ id: `untimed-${dateStr}`, mode: "general", date: dateStr, untimedNotice: true });
+    }
+    return dayEvents;
+}
+
+function getScheduleImageEventText(eventItem) {
+    if (eventItem.untimedNotice) return "本日有未定時間的行程";
+    return getDisplayTimeRange(eventItem);
+}
+
+function getScheduleImageItemStyle(eventItem) {
+    if (!eventItem.untimedNotice && isEventCompleted(eventItem)) return { background: "#eef1f4", text: "#697386" };
+    if (isTeacherEvent(eventItem)) return { background: "#e9f3ff", text: "#1f5f99" };
+    return { background: "#ecfdf5", text: "#047857" };
+}
+
+function hasUntimedGeneralEvent(dateStr) {
+    return events.some(item => (item.mode || "teacher") === "general" && item.date === dateStr && (!item.start || !item.end));
 }
 
 function exportBackup() {

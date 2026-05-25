@@ -54,6 +54,10 @@ function populateYearSelect() {
         const year = Number(item.date?.slice(0, 4));
         if (year) years.add(year);
     });
+    getUntimedGeneralDates().forEach(date => {
+        const year = Number(date?.slice(0, 4));
+        if (year) years.add(year);
+    });
     $("yearSelect").innerHTML = "";
     Array.from(years).sort((a, b) => a - b).forEach(year => {
         $("yearSelect").add(new Option(`${year} 年`, year));
@@ -110,6 +114,9 @@ function renderCalendar() {
         const slots = getPublicEvents()
             .filter(item => item.date === date)
             .sort((a, b) => `${a.start}-${a.end}`.localeCompare(`${b.start}-${b.end}`));
+        if (hasUntimedGeneralDate(date)) {
+            slots.push({ date, mode: "general", untimedNotice: true });
+        }
         html += `
             <div class="day">
                 <span class="day-num">${day}</span>
@@ -121,8 +128,8 @@ function renderCalendar() {
 }
 
 function renderSlot(item) {
-    const range = getDisplayTimeRange(item);
-    return `<div class="slot ${item.completed ? "completed" : ""} ${range.includes("/") ? "date-time" : ""}">${range}</div>`;
+    const range = item.untimedNotice ? "本日有未定時間的行程" : getDisplayTimeRange(item);
+    return `<div class="slot ${getSlotClass(item)} ${range.includes("/") ? "date-time" : ""}">${range}</div>`;
 }
 
 function getDisplayTimeRange(eventItem) {
@@ -162,6 +169,20 @@ function renderDataAlert() {
 
 function getPublicEvents() {
     return Array.isArray(PUBLIC_DATA.events) ? PUBLIC_DATA.events : [];
+}
+
+function getUntimedGeneralDates() {
+    return Array.isArray(PUBLIC_DATA.untimedGeneralDates) ? PUBLIC_DATA.untimedGeneralDates : [];
+}
+
+function hasUntimedGeneralDate(date) {
+    return getUntimedGeneralDates().includes(date);
+}
+
+function getSlotClass(item) {
+    if (item.untimedNotice) return "general untimed";
+    if (item.completed) return "completed";
+    return (item.mode || "teacher") === "general" ? "general" : "teacher";
 }
 
 function getAllTimeZones() {

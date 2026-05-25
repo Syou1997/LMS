@@ -13,6 +13,8 @@
             --line: #dbe3ef;
             --busy: #e9f3ff;
             --busy-text: #1f5f99;
+            --general: #ecfdf5;
+            --general-text: #047857;
         }
 
         * { box-sizing: border-box; }
@@ -145,6 +147,21 @@
         .slot.completed {
             color: #697386;
             background: #eef1f4;
+        }
+
+        .slot.general {
+            color: var(--general-text);
+            background: var(--general);
+        }
+
+        .slot.teacher {
+            color: var(--busy-text);
+            background: var(--busy);
+        }
+
+        .slot.untimed {
+            color: var(--general-text);
+            background: var(--general);
         }
 
         .none {
