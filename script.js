@@ -1247,9 +1247,12 @@ function createScheduleImageData() {
 }
 
 function getScheduleImageEvents(dateStr) {
+    const keyword = getSearchKeyword();
     const dayEvents = events
         .filter(item => item.date === dateStr && hasTimeRange(item))
+        .filter(item => !keyword || (eventBelongsToCurrentMode(item) && eventMatchesSearch(item)))
         .sort(compareEvents);
+    if (keyword) return dayEvents;
     if (hasUntimedGeneralEvent(dateStr)) {
         dayEvents.push({ id: `untimed-${dateStr}`, mode: "general", date: dateStr, untimedNotice: true });
     }
