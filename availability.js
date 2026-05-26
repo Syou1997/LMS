@@ -34,10 +34,10 @@ const DEFAULT_TIMEZONES = [
 const $ = id => document.getElementById(id);
 const now = new Date();
 const state = {
-    year: Number(PUBLIC_DATA.selectedYear) || now.getFullYear(),
-    month: Number.isInteger(PUBLIC_DATA.selectedMonth) ? PUBLIC_DATA.selectedMonth : now.getMonth(),
-    displayTimeZone: PUBLIC_DATA.settings?.displayTimeZone || "UTC+08:00",
-    displayTimeZoneLabel: PUBLIC_DATA.settings?.displayTimeZoneLabel || ""
+    year: now.getFullYear(),
+    month: now.getMonth(),
+    displayTimeZone: getDeviceTimeZoneValue(),
+    displayTimeZoneLabel: ""
 };
 
 function init() {
@@ -251,6 +251,15 @@ function getOffsetMinutes(timeZone) {
     const sign = timeZone[3] === "+" ? 1 : -1;
     const [hour, minute] = timeZone.slice(4).split(":").map(Number);
     return sign * (hour * 60 + minute);
+}
+
+function getDeviceTimeZoneValue() {
+    const offset = -new Date().getTimezoneOffset();
+    const sign = offset >= 0 ? "+" : "-";
+    const abs = Math.abs(offset);
+    const hour = Math.floor(abs / 60);
+    const minute = abs % 60;
+    return `UTC${sign}${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`;
 }
 
 function getTodayInDisplayTimeZone() {

@@ -790,6 +790,7 @@ function submitScheduleForm(e) {
         eventData = {
             mode: "teacher",
             platform,
+            category: platform,
             fee: Number($("courseFee").value) || 0,
             student: $("studentName").value.trim() || "未填寫",
             start: storedStart,
@@ -827,7 +828,10 @@ function submitScheduleForm(e) {
         const repeatDates = getRepeatDates(targetDate, $("repeatSelect").value);
         const conflicts = getRepeatConflicts(repeatDates, storedStart, storedEnd);
         if (conflicts.length > 0) return alert(makeRepeatConflictMessage(conflicts));
-        repeatDates.forEach(date => events.push({ id: makeId(), date, ...eventData }));
+        repeatDates.forEach(date => {
+            const repeatedData = eventData.expenses ? { ...eventData, expenses: eventData.expenses.map(exp => ({ ...exp })) } : eventData;
+            events.push({ id: makeId(), date, ...repeatedData });
+        });
     }
 
     saveData();
