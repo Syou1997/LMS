@@ -241,7 +241,7 @@ function getDisplayTimeInfo(baseDate, date, timeZone) {
         dateLabel,
         time,
         fullLabel: `${dateLabel} ${time}`,
-        useExtended: diff === 0 && extendedMinutes >= 0 && extendedMinutes <= TIME_DISPLAY_MAX_MINUTES,
+        useExtended: extendedMinutes >= 0 && extendedMinutes <= TIME_DISPLAY_MAX_MINUTES && (diff === 0 || extendedMinutes === TIME_DISPLAY_MAX_MINUTES),
         extendedTime: formatExtendedTime(extendedMinutes)
     };
 }

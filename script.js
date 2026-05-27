@@ -1596,7 +1596,7 @@ function getDisplayTimeInfo(baseDate, date, timeZone) {
     const time = `${String(part.hour).padStart(2, "0")}:${String(part.minute).padStart(2, "0")}`;
     const diff = getDateDiff(baseDate, `${part.year}-${String(part.month).padStart(2, "0")}-${String(part.day).padStart(2, "0")}`);
     const extendedMinutes = diff * 1440 + part.hour * 60 + part.minute;
-    const useExtended = diff === 0 && extendedMinutes >= 0 && extendedMinutes <= TIME_INPUT_MAX_MINUTES;
+    const useExtended = extendedMinutes >= 0 && extendedMinutes <= TIME_INPUT_MAX_MINUTES && (diff === 0 || extendedMinutes === TIME_INPUT_MAX_MINUTES);
 
     return {
         dateLabel,
