@@ -105,7 +105,7 @@ function bindControls() {
 function render() {
     $("pageTitle").innerText = `${state.year} 年 ${state.month + 1} 月不可預約的時間`;
     $("timezoneLabel").innerText = `時區：${getTimezoneLabelByValue(state.displayTimeZone, state.displayTimeZoneLabel)}`;
-    $("updatedAt").innerText = `最後更新：${formatUpdatedAt(PUBLIC_DATA.updatedAt)}`;
+    $("updatedAt").innerText = `最後更新：${formatUpdatedAt(PUBLIC_DATA.updatedAt, state.displayTimeZone)}`;
     renderWeekdays();
     renderCalendar();
 }
@@ -277,11 +277,12 @@ function formatExtendedTime(totalMinutes) {
     return `${String(Math.floor(totalMinutes / 60)).padStart(2, "0")}:${String(totalMinutes % 60).padStart(2, "0")}`;
 }
 
-function formatUpdatedAt(value) {
+function formatUpdatedAt(value, timeZone) {
     if (!value) return "尚未匯出";
     const date = new Date(value);
     if (Number.isNaN(date.getTime())) return value;
-    return `${date.getFullYear()}/${String(date.getMonth() + 1).padStart(2, "0")}/${String(date.getDate()).padStart(2, "0")} ${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
+    const shifted = new Date(date.getTime() + getOffsetMinutes(timeZone) * 60000);
+    return `${shifted.getUTCFullYear()}/${String(shifted.getUTCMonth() + 1).padStart(2, "0")}/${String(shifted.getUTCDate()).padStart(2, "0")} ${String(shifted.getUTCHours()).padStart(2, "0")}:${String(shifted.getUTCMinutes()).padStart(2, "0")}`;
 }
 
 function getTimezoneLabelByValue(value, label) {
