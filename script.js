@@ -88,6 +88,10 @@ let toastTimer = null;
 let onboardingStep = 1;
 let setupItems = cloneItems(getCurrentItems());
 let settingsItems = cloneItems(getCurrentItems());
+let customRepeatDates = [];
+let pendingCustomRepeatDates = [];
+let customRepeatCalendarYear = new Date().getFullYear();
+let customRepeatCalendarMonth = new Date().getMonth();
 
 const $ = id => document.getElementById(id);
 const yearSelect = $("yearSelect");
@@ -208,6 +212,12 @@ function bindEvents() {
     $("settingsAppMode").onchange = syncSettingsModeUI;
     $("addExpenseBtn").onclick = () => addExpenseRow();
     $("scheduleForm").onsubmit = submitScheduleForm;
+    $("repeatSelect").onchange = handleRepeatModeChange;
+    $("closeCustomRepeatBtn").onclick = cancelCustomRepeat;
+    $("cancelCustomRepeatBtn").onclick = cancelCustomRepeat;
+    $("confirmCustomRepeatBtn").onclick = confirmCustomRepeat;
+    $("customRepeatPrevMonthBtn").onclick = () => changeCustomRepeatMonth(-1);
+    $("customRepeatNextMonthBtn").onclick = () => changeCustomRepeatMonth(1);
     $("confirmDelBtn").onclick = confirmDelete;
 
     document.querySelectorAll("input[name='setupAppMode']").forEach(radio => radio.onchange = syncOnboardingModeUI);
@@ -672,6 +682,8 @@ function openAddModal(dateStr) {
     $("scheduleForm").reset();
     $("editEventId").value = "";
     $("repeatSelect").disabled = false;
+    customRepeatDates = [];
+    renderCustomRepeatSummary();
     resetInputToggles();
     clearExpenseRows();
     if (!isTeacherMode()) addExpenseRow();
@@ -1354,6 +1366,7 @@ function resetApp() {
 function getRepeatDates(startDate, repeatMode) {
     const dates = [startDate];
     const start = new Date(`${startDate}T00:00:00`);
+    if (repeatMode === "custom") return [...new Set([...dates, ...customRepeatDates])].sort();
     if (repeatMode === "dailyWeek") {
         const daysUntilSunday = (7 - start.getDay()) % 7;
         for (let i = 1; i <= daysUntilSunday; i++) {
@@ -1396,6 +1409,64 @@ function getRepeatDates(startDate, repeatMode) {
         }
     }
     return dates;
+}
+
+function handleRepeatModeChange() {
+    customRepeatDates = [];
+    renderCustomRepeatSummary();
+    if ($("repeatSelect").value === "custom") openCustomRepeatModal();
+}
+
+function openCustomRepeatModal() {
+    const date = new Date(`${currentSelectedDate}T00:00:00`);
+    customRepeatCalendarYear = date.getFullYear();
+    customRepeatCalendarMonth = date.getMonth();
+    pendingCustomRepeatDates = [...customRepeatDates];
+    renderCustomRepeatCalendar();
+    $("customRepeatModal").style.display = "block";
+}
+
+function renderCustomRepeatCalendar() {
+    $("customRepeatMonthLabel").innerText = `${customRepeatCalendarYear} 年 ${customRepeatCalendarMonth + 1} 月`;
+    const firstDay = new Date(customRepeatCalendarYear, customRepeatCalendarMonth, 1).getDay();
+    const daysInMonth = new Date(customRepeatCalendarYear, customRepeatCalendarMonth + 1, 0).getDate();
+    let html = Array.from({ length: firstDay }, () => "<span></span>").join("");
+    for (let day = 1; day <= daysInMonth; day++) {
+        const date = `${customRepeatCalendarYear}-${String(customRepeatCalendarMonth + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+        html += `<button type="button" class="custom-repeat-day ${pendingCustomRepeatDates.includes(date) ? "selected" : ""}" data-custom-repeat-date="${date}">${day}</button>`;
+    }
+    $("customRepeatCalendar").innerHTML = html;
+    $("customRepeatCalendar").querySelectorAll("[data-custom-repeat-date]").forEach(button => button.onclick = () => {
+        const date = button.dataset.customRepeatDate;
+        pendingCustomRepeatDates = pendingCustomRepeatDates.includes(date) ? pendingCustomRepeatDates.filter(item => item !== date) : [...pendingCustomRepeatDates, date];
+        renderCustomRepeatCalendar();
+    });
+}
+
+function changeCustomRepeatMonth(offset) {
+    const date = new Date(customRepeatCalendarYear, customRepeatCalendarMonth + offset, 1);
+    customRepeatCalendarYear = date.getFullYear();
+    customRepeatCalendarMonth = date.getMonth();
+    renderCustomRepeatCalendar();
+}
+
+function confirmCustomRepeat() {
+    customRepeatDates = [...pendingCustomRepeatDates].sort();
+    $("customRepeatModal").style.display = "none";
+    renderCustomRepeatSummary();
+}
+
+function cancelCustomRepeat() {
+    customRepeatDates = [];
+    pendingCustomRepeatDates = [];
+    $("repeatSelect").value = "none";
+    $("customRepeatModal").style.display = "none";
+    renderCustomRepeatSummary();
+}
+
+function renderCustomRepeatSummary() {
+    $("customRepeatSummary").innerText = customRepeatDates.length ? `重複日期：${customRepeatDates.join("、")}` : "";
+    $("customRepeatSummary").classList.toggle("hidden", customRepeatDates.length === 0);
 }
 
 function goToday() {
@@ -1451,7 +1522,7 @@ function closeModal(id) {
 }
 
 function closeAllOptionalModals() {
-    ["settingsModal", "detailModal", "addModal", "deleteModal", "imagePreviewModal"].forEach(id => {
+    ["settingsModal", "detailModal", "addModal", "deleteModal", "imagePreviewModal", "customRepeatModal"].forEach(id => {
         const modal = $(id);
         if (modal) modal.style.display = "none";
     });

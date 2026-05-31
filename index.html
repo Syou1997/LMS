@@ -299,12 +299,14 @@
                 <label>重複<span id="repeatText">排課</span></label>
                 <select id="repeatSelect">
                     <option value="none">不重複</option>
+                    <option value="custom">自訂重複日期</option>
                     <option value="dailyWeek">每天重複到本週日</option>
                     <option value="4">每週重複 4 次</option>
                     <option value="weekly8">每週重複 8 次</option>
                     <option value="month">每週重複到本月底</option>
                     <option value="nextMonth">每天重複到本月底（不含六日）</option>
                 </select>
+                <small id="customRepeatSummary" class="custom-repeat-summary hidden"></small>
                 <small class="hint">編輯既有項目時不會套用重複設定。</small>
             </div>
 
@@ -322,6 +324,26 @@
                 <button type="button" class="btn btn-cancel" onclick="closeModal('addModal')">取消</button>
             </div>
         </form>
+    </div>
+</div>
+
+<div id="customRepeatModal" class="modal">
+    <div class="modal-box fade-in">
+        <button class="close" id="closeCustomRepeatBtn">×</button>
+        <h3>選擇自訂重複日期</h3>
+        <div class="custom-repeat-toolbar">
+            <button type="button" class="icon-btn" id="customRepeatPrevMonthBtn">‹</button>
+            <strong id="customRepeatMonthLabel"></strong>
+            <button type="button" class="icon-btn" id="customRepeatNextMonthBtn">›</button>
+        </div>
+        <div class="custom-repeat-weekdays">
+            <span>日</span><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span>
+        </div>
+        <div class="custom-repeat-grid" id="customRepeatCalendar"></div>
+        <div class="form-btns">
+            <button type="button" class="btn btn-confirm" id="confirmCustomRepeatBtn">確定</button>
+            <button type="button" class="btn btn-cancel" id="cancelCustomRepeatBtn">取消</button>
+        </div>
     </div>
 </div>
 

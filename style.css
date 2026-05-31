@@ -552,6 +552,50 @@ body.footer-collapsed .mobile-add-btn {
     line-height: 1.5;
 }
 
+.custom-repeat-summary {
+    color: #dc2626;
+    display: block;
+    font-size: 13px;
+    line-height: 1.6;
+    margin-top: 6px;
+}
+
+.custom-repeat-toolbar {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+    margin: 16px 0 10px;
+}
+
+.custom-repeat-weekdays,
+.custom-repeat-grid {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+}
+
+.custom-repeat-weekdays span {
+    background: #eef4fb;
+    border: 1px solid #d8e2ee;
+    color: #334155;
+    font-weight: 700;
+    padding: 8px 0;
+    text-align: center;
+}
+
+.custom-repeat-day {
+    aspect-ratio: 1;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    color: #1e293b;
+}
+
+.custom-repeat-day.selected {
+    background: #fee2e2;
+    border-color: #dc2626;
+    color: #b91c1c;
+    font-weight: 700;
+}
+
 .check-row {
     display: flex;
     align-items: center;
