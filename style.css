@@ -144,11 +144,11 @@ body.mode-general .icon-btn { color: var(--general-header); }
 }
 
 .timezone-picker select {
-    width: 150px;
+    width: 172px;
     border: 0;
     color: #ffffff;
     background: transparent;
-    padding: 6px;
+    padding: 6px 24px 6px 6px;
     box-shadow: none;
 }
 

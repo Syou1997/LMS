@@ -298,7 +298,7 @@ function populateTimezoneSelects() {
         const oldLabel = select.selectedOptions[0]?.dataset.label;
         select.innerHTML = "";
         zones.forEach(zone => {
-            const option = new Option(zone.label, zone.value);
+            const option = new Option(id === "timezoneSelect" ? getCompactTimezoneLabel(zone.label) : zone.label, zone.value);
             option.dataset.label = zone.label;
             select.add(option);
         });
@@ -1694,6 +1694,13 @@ function formatDisplayDateTime(date) {
 
 function getGmtLabelByValue(value) {
     return GMT_OFFSET_OPTIONS.find(option => option[0] === value)?.[1] || value.replace("UTC", "GMT");
+}
+
+function getCompactTimezoneLabel(label) {
+    const match = String(label).match(/^(.*?)(（GMT[+-]?\d+）)$/);
+    if (!match) return label;
+    const name = match[1];
+    return `${name.length > 5 ? `${name.slice(0, 5)}…` : name}${match[2]}`;
 }
 
 function makeShortCode(text) {
