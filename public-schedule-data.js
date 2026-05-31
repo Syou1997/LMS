@@ -1,8 +1,8 @@
 window.TEACHER_PUBLIC_SCHEDULE = {
   "version": 2,
-  "updatedAt": "2026-05-30T11:01:31.734Z",
+  "updatedAt": "2026-05-31T03:44:46.451Z",
   "selectedYear": 2026,
-  "selectedMonth": 4,
+  "selectedMonth": 5,
   "settings": {
     "teacherName": "Syou",
     "showTeacherName": false,
@@ -1115,6 +1115,14 @@ window.TEACHER_PUBLIC_SCHEDULE = {
       "date": "2026-06-14",
       "start": "17:00",
       "end": "18:00",
+      "completed": false
+    },
+    {
+      "id": "17801990384308811290ca97de",
+      "mode": "teacher",
+      "date": "2026-06-06",
+      "start": "10:00",
+      "end": "11:00",
       "completed": false
     }
   ],
