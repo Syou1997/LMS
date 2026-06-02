@@ -118,7 +118,7 @@ function loadSettings() {
 
 function normalizeSettings(raw) {
     const normalized = { ...defaultSettings, ...raw };
-    normalized.appMode = normalized.appMode === "general" ? "general" : "teacher";
+    normalized.appMode = ["teacher", "general", "combined"].includes(normalized.appMode) ? normalized.appMode : "teacher";
     normalized.customTimeZones = Array.isArray(normalized.customTimeZones) ? normalized.customTimeZones : [];
     normalized.platforms = normalizeItems(normalized.platforms, DEFAULT_PLATFORMS);
     normalized.categories = normalizeItems(normalized.categories, DEFAULT_CATEGORIES);
@@ -166,7 +166,11 @@ function cloneItems(items) {
 }
 
 function isTeacherMode() {
-    return settings.appMode !== "general";
+    return settings.appMode === "teacher";
+}
+
+function isCombinedMode() {
+    return settings.appMode === "combined";
 }
 
 function getCurrentItems() {
@@ -260,19 +264,24 @@ function restoreFooterFromBottomEdge(event) {
 }
 
 function applySettingsToUI() {
-    document.body.classList.toggle("mode-general", !isTeacherMode());
+    document.body.classList.toggle("mode-general", settings.appMode === "general");
     document.body.classList.toggle("mode-teacher", isTeacherMode());
+    document.body.classList.toggle("mode-combined", isCombinedMode());
     populateTimezoneSelects();
     setTimezoneSelectValue("timezoneSelect", settings.displayTimeZone, settings.displayTimeZoneLabel);
     $("timezoneFlag").innerText = getTimezoneShort(settings.displayTimeZone, settings.displayTimeZoneLabel);
     $("currencyLabel").innerText = settings.currency || "";
-    $("modePill").innerText = isTeacherMode() ? "教師排課模式" : "一般行事曆模式";
+    $("modePill").innerText = isCombinedMode() ? "綜合檢視模式" : isTeacherMode() ? "教師排課模式" : "一般行事曆模式";
     $("brandTitle").innerText = settings.teacherName
-        ? `${settings.teacherName} 的${isTeacherMode() ? "上課管理系統" : "行事曆"}`
-        : isTeacherMode() ? "教師上課管理系統" : "個人行事曆";
-    $("searchInput").placeholder = isTeacherMode() ? "搜尋學生、平台或課程內容" : "搜尋分類、對象、地點、內容或備註";
+        ? `${settings.teacherName} 的${isCombinedMode() ? "綜合日曆" : isTeacherMode() ? "上課管理系統" : "行事曆"}`
+        : isCombinedMode() ? "綜合日曆" : isTeacherMode() ? "教師上課管理系統" : "個人行事曆";
+    $("searchInput").placeholder = isCombinedMode() ? "搜尋課程或行程內容" : isTeacherMode() ? "搜尋學生、平台或課程內容" : "搜尋分類、對象、地點、內容或備註";
     $("exportImageBtn").innerText = isTeacherMode() ? "▣ 匯出課表圖片" : "▣ 匯出行程圖片";
     $("exportPublicPageBtn").classList.toggle("hidden", !isTeacherMode());
+    ["exportCalendarBtn", "exportImageBtn", "backupBtn", "importBackupBtn"].forEach(id => $(id).classList.toggle("hidden", isCombinedMode()));
+    $("mobileAddBtn").classList.toggle("hidden", isCombinedMode());
+    $("statsFooter").querySelector(".footer-container").classList.toggle("hidden", isCombinedMode());
+    $("combinedFooterMessage").classList.toggle("hidden", !isCombinedMode());
     $("monthCountLabel").innerText = isTeacherMode() ? "本月課程" : "本月行程";
     $("monthCountUnit").innerText = isTeacherMode() ? "堂" : "筆";
     $("monthHoursLabel").innerText = isTeacherMode() ? "本月時數" : "本月安排時數";
@@ -450,29 +459,69 @@ function openSettingsModal() {
 }
 
 function syncSettingsModeUI() {
+    const combined = $("settingsAppMode").value === "combined";
     const teacher = $("settingsAppMode").value !== "general";
-    settingsItems = cloneItems(teacher ? settings.platforms : settings.categories);
-    $("settingsListLabel").innerText = teacher ? "上課平台與顏色" : "行程分類與顏色";
-    $("settingsPlatformInput").placeholder = teacher ? "新增平台名稱" : "新增分類名稱";
-    renderItemList("settings");
+    if (combined) {
+        settingsItems = [];
+        $("settingsListLabel").innerText = "平台與分類設定";
+        $("settingsPlatformList").innerHTML = '<div class="settings-combined-note">綜合檢視模式僅供檢視。請切換至教師排課模式或一般行事曆模式後再修改平台與分類。</div>';
+        $("settingsPlatformInput").placeholder = "綜合檢視模式無法修改";
+        $("settingsItemHint").classList.add("hidden");
+    } else {
+        settingsItems = cloneItems(teacher ? settings.platforms : settings.categories);
+        $("settingsListLabel").innerText = teacher ? "上課平台與顏色" : "行程分類與顏色";
+        $("settingsPlatformInput").placeholder = teacher ? "新增平台名稱" : "新增分類名稱";
+        $("settingsItemHint").classList.remove("hidden");
+        renderItemList("settings");
+    }
+    $("settingsEditableFields").classList.toggle("settings-readonly", combined);
+    $("settingsEditableFields").setAttribute("aria-disabled", String(combined));
+    $("settingsEditableFields").querySelectorAll("input, select, button").forEach(element => {
+        element.disabled = combined;
+    });
 }
 
 function saveSettingsFromModal() {
-    const appMode = $("settingsAppMode").value === "general" ? "general" : "teacher";
+    const selectedMode = $("settingsAppMode").value;
+    const appMode = ["teacher", "general", "combined"].includes(selectedMode) ? selectedMode : "teacher";
     const teacherName = $("settingsTeacherName").value.trim();
     if (!teacherName) return alert("請輸入顯示名稱。");
-    const normalizedItems = readSettingsItemRows();
-    if (normalizedItems.length === 0) return alert(appMode === "teacher" ? "請至少保留一個上課平台。" : "請至少保留一個分類。");
+    const editableMode = appMode === "general" ? "general" : "teacher";
+    const normalizedItems = appMode === "combined" ? [] : readSettingsItemRows();
+    if (appMode === "combined") {
+        const selectedBaseTimeZone = readTimezoneSelection("settingsBaseTimezone");
+        const selectedDisplayTimeZone = readTimezoneSelection("settingsDisplayTimezone");
+        settings = {
+            ...settings,
+            hasCompletedOnboarding: true,
+            appMode,
+            teacherName,
+            showTeacherName: $("settingsShowTeacherName").checked,
+            baseTimeZone: selectedBaseTimeZone.value,
+            baseTimeZoneLabel: selectedBaseTimeZone.label,
+            displayTimeZone: selectedDisplayTimeZone.value,
+            displayTimeZoneLabel: selectedDisplayTimeZone.label,
+            currency: $("settingsCurrency").value.trim() || "",
+            defaultDuration: Number($("settingsDefaultDuration").value) || 50
+        };
+        saveSettings();
+        closeModal("settingsModal");
+        fillTimeOptions();
+        applySettingsToUI();
+        renderCalendar();
+        return;
+    }
+    if (normalizedItems.length === 0) return alert(editableMode === "teacher" ? "請至少保留一個上課平台。" : "請至少保留一個分類。");
     const duplicate = findDuplicateItemName(normalizedItems);
     if (duplicate) return alert(`名稱「${duplicate}」重複，請修正後再儲存。`);
 
-    const oldItems = appMode === "teacher" ? settings.platforms : settings.categories;
+    const oldItems = editableMode === "teacher" ? settings.platforms : settings.categories;
     oldItems.forEach((oldItem, index) => {
         const newItem = normalizedItems[index];
         if (!newItem || oldItem.name === newItem.name) return;
         events.forEach(eventItem => {
-            if (appMode === "teacher" && eventItem.platform === oldItem.name) eventItem.platform = newItem.name;
-            if (appMode === "general" && eventItem.category === oldItem.name) eventItem.category = newItem.name;
+            if (editableMode === "teacher" && eventItem.platform === oldItem.name) eventItem.platform = newItem.name;
+            if (editableMode === "general" && eventItem.category === oldItem.name) eventItem.category = newItem.name;
         });
     });
 
@@ -490,8 +539,8 @@ function saveSettingsFromModal() {
         displayTimeZoneLabel: selectedDisplayTimeZone.label,
         currency: $("settingsCurrency").value.trim() || "",
         defaultDuration: Number($("settingsDefaultDuration").value) || 50,
-        platforms: appMode === "teacher" ? normalizedItems : settings.platforms,
-        categories: appMode === "general" ? normalizedItems : settings.categories
+        platforms: editableMode === "teacher" ? normalizedItems : settings.platforms,
+        categories: editableMode === "general" ? normalizedItems : settings.categories
     };
     saveSettings();
     saveData();
@@ -621,7 +670,9 @@ function renderCalendar() {
             currentSelectedDate = dateStr;
             renderCalendar();
         };
-        cell.ondblclick = () => openAddModal(dateStr);
+        cell.ondblclick = () => {
+            if (!isCombinedMode()) openAddModal(dateStr);
+        };
         calendarGrid.appendChild(cell);
     }
     updateFooterStats();
@@ -629,19 +680,21 @@ function renderCalendar() {
 
 function renderMiniEvent(eventItem) {
     const style = getEventStyle(eventItem);
+    const actions = isCombinedMode() ? "" : `
+                <button class="event-action" onclick="openEditModal('${eventItem.id}', event)" title="編輯">✎</button>
+                <button class="event-action" onclick="openDeleteModal('${eventItem.id}', event)" title="刪除">×</button>`;
     return `
         <div class="event-tag-item ${isEventCompleted(eventItem) ? "completed-event" : ""}" style="background:${style.color};color:${style.textColor};${style.textColor === "#222222" ? "text-shadow:none;" : ""}">
             <span>${escapeHtml(getMiniEventText(eventItem))}</span>
             <div class="event-tag-actions">
-                <button class="event-action" onclick="openEditModal('${eventItem.id}', event)" title="編輯">✎</button>
-                <button class="event-action" onclick="openDeleteModal('${eventItem.id}', event)" title="刪除">×</button>
+                ${actions}
             </div>
         </div>
     `;
 }
 
 function eventBelongsToCurrentMode(eventItem) {
-    return (eventItem.mode || "teacher") === settings.appMode;
+    return isCombinedMode() || (eventItem.mode || "teacher") === settings.appMode;
 }
 
 function isTeacherEvent(eventItem) {
@@ -653,13 +706,14 @@ function compareEvents(a, b) {
 }
 
 function getMiniEventText(eventItem) {
-    if (isTeacherMode()) return getDisplayTimeRange(eventItem);
+    if (isTeacherEvent(eventItem)) return getDisplayTimeRange(eventItem);
     return `${hasTimeRange(eventItem) ? getDisplayTimeRange(eventItem) : "未設定時間"}｜${eventItem.content || "未命名行程"}`;
 }
 
 function getEventStyle(eventItem) {
-    const list = isTeacherMode() ? settings.platforms : settings.categories;
-    const name = isTeacherMode() ? eventItem.platform : eventItem.category;
+    const teacherEvent = isTeacherEvent(eventItem);
+    const list = teacherEvent ? settings.platforms : settings.categories;
+    const name = teacherEvent ? eventItem.platform : eventItem.category;
     const index = list.findIndex(item => item.name === name);
     if (index < 0) return { color: "#7f8c8d", textColor: "#ffffff" };
     const color = getItemColor(list[index], index);
@@ -669,13 +723,16 @@ function getEventStyle(eventItem) {
 function eventMatchesSearch(eventItem) {
     const keyword = getSearchKeyword();
     if (!keyword) return true;
-    const values = isTeacherMode()
+    const values = isCombinedMode()
+        ? [eventItem.platform, eventItem.student, eventItem.category, eventItem.target, eventItem.location, eventItem.content, eventItem.note, eventItem.date, eventItem.start, eventItem.end]
+        : isTeacherMode()
         ? [eventItem.platform, eventItem.student, eventItem.content, eventItem.note, eventItem.date, eventItem.start, eventItem.end]
         : [eventItem.category, eventItem.target, eventItem.location, eventItem.content, eventItem.note, eventItem.date, eventItem.start, eventItem.end];
     return values.some(value => String(value || "").toLowerCase().includes(keyword));
 }
 
 function openAddModal(dateStr) {
+    if (isCombinedMode()) return;
     currentSelectedDate = dateStr;
     populateItemSelects();
     fillTimeOptions();
@@ -695,6 +752,7 @@ function openAddModal(dateStr) {
 
 function openEditModal(id, e) {
     if (e) e.stopPropagation();
+    if (isCombinedMode()) return;
     const target = events.find(eventItem => eventItem.id === id);
     if (!target) return;
     populateItemSelects();
@@ -935,6 +993,7 @@ function toggleInput(type) {
 
 function openDeleteModal(id, e) {
     if (e) e.stopPropagation();
+    if (isCombinedMode()) return;
     delTargetId = id;
     const target = events.find(item => item.id === id);
     if (target) {
@@ -988,10 +1047,11 @@ function updateDetailModal() {
 }
 
 function renderDetailEvent(eventItem) {
-    const title = isTeacherMode()
+    const teacherEvent = isTeacherEvent(eventItem);
+    const title = teacherEvent
         ? `${hasTimeRange(eventItem) ? getDisplayTimeRange(eventItem) : "未設定時間"} ｜ ${escapeHtml(eventItem.platform)}${isEventCompleted(eventItem) ? "｜已完成" : ""}`
         : `${hasTimeRange(eventItem) ? getDisplayTimeRange(eventItem) : "未設定時間"} ｜ ${escapeHtml(eventItem.content)}${isEventCompleted(eventItem) ? "｜已完成" : ""}`;
-    const body = isTeacherMode()
+    const body = teacherEvent
         ? `<small>學生：${escapeHtml(eventItem.student)} ｜ 費用：${escapeHtml(settings.currency)} ${eventItem.fee}</small><br><p>${escapeHtml(eventItem.content || "")}</p><p>${escapeHtml(eventItem.note || "")}</p>`
         : `<small>分類：${escapeHtml(eventItem.category)} ｜ 對象：${escapeHtml(eventItem.target || "未填寫")} ｜ 地點：${escapeHtml(eventItem.location || "未填寫")}</small><br>
            <small>花費：${escapeHtml(settings.currency)} ${getGeneralExpenseTotal(eventItem).toLocaleString()}</small>
@@ -999,7 +1059,7 @@ function renderDetailEvent(eventItem) {
            <p>${escapeHtml(eventItem.note || "")}</p>`;
     return `
         <div class="detail-event ${isEventCompleted(eventItem) ? "completed" : ""}">
-            <div class="detail-actions">
+            <div class="detail-actions ${isCombinedMode() ? "hidden" : ""}">
                 <button class="detail-action edit" onclick="openEditModal('${eventItem.id}')">編輯</button>
                 <button class="detail-action delete" onclick="openDeleteModal('${eventItem.id}', event)">刪除</button>
             </div>

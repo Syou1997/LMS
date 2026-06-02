@@ -83,6 +83,7 @@
             <strong><span id="currencyLabel">NT$</span> <span id="estimatedIncome">0</span></strong>
         </div>
     </div>
+    <div id="combinedFooterMessage" class="combined-footer-message hidden">此模式僅供檢視。</div>
 </footer>
 
 <button id="mobileAddBtn" class="mobile-add-btn">＋</button>
@@ -170,9 +171,11 @@
             <select id="settingsAppMode">
                 <option value="teacher">教師排課模式</option>
                 <option value="general">一般行事曆模式</option>
+                <option value="combined">綜合檢視模式</option>
             </select>
         </div>
 
+        <div id="settingsEditableFields">
         <div class="form-item"><label>顯示名稱</label><input type="text" id="settingsTeacherName"></div>
         <label class="check-row"><input type="checkbox" id="settingsShowTeacherName">匯出圖片時顯示詳細資訊</label>
 
@@ -203,7 +206,8 @@
                 <input type="text" id="settingsPlatformInput" placeholder="新增平台名稱">
                 <button id="settingsAddPlatformBtn" type="button" class="btn btn-primary">新增</button>
             </div>
-            <small class="hint">儲存時會檢查重複名稱。若改名，既有資料也會同步更新。</small>
+            <small id="settingsItemHint" class="hint">平台或分類不能有相同名稱。<br>修改既有名稱後，先前建立的課程或行程也會自動套用新名稱。</small>
+        </div>
         </div>
 
         <div class="form-btns settings-actions">

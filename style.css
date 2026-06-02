@@ -8,6 +8,7 @@
     --primary-dark: #2f6fd0;
     --teacher-header: #254b84;
     --general-header: #0f766e;
+    --combined-header: #475569;
     --green: #18b96f;
     --red: #ef5350;
     --amber: #f59e0b;
@@ -40,6 +41,7 @@ header {
 }
 
 body.mode-general header { background: var(--general-header); }
+body.mode-combined header { background: var(--combined-header); }
 
 .header-container {
     max-width: 1440px;
@@ -116,6 +118,7 @@ header select {
 }
 
 body.mode-general .icon-btn { color: var(--general-header); }
+body.mode-combined .icon-btn { color: var(--combined-header); }
 
 .btn {
     min-height: 38px;
@@ -191,6 +194,11 @@ main {
 body.mode-general .mode-pill {
     background: #ccfbf1;
     color: #115e59;
+}
+
+body.mode-combined .mode-pill {
+    background: #e2e8f0;
+    color: #334155;
 }
 
 .search-box {
@@ -389,6 +397,15 @@ footer.collapsed {
     gap: 10px;
 }
 
+.combined-footer-message {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 14px 12px;
+    color: #475569;
+    text-align: center;
+    font-weight: 900;
+}
+
 .stat-card {
     min-width: 0;
     display: grid;
@@ -499,6 +516,30 @@ body.footer-collapsed .mobile-add-btn {
 }
 
 .settings-box, .onboarding-box { width: min(820px, 100%); }
+
+#settingsEditableFields {
+    transition: opacity .18s ease, filter .18s ease;
+}
+
+#settingsEditableFields.settings-readonly {
+    opacity: .46;
+    filter: grayscale(.45);
+}
+
+#settingsEditableFields.settings-readonly input,
+#settingsEditableFields.settings-readonly select,
+#settingsEditableFields.settings-readonly button {
+    cursor: not-allowed;
+}
+
+.settings-combined-note {
+    padding: 14px;
+    border: 1px dashed #94a3b8;
+    border-radius: var(--radius);
+    background: #f8fafc;
+    color: #475569;
+    line-height: 1.65;
+}
 .mini { width: min(440px, 100%); }
 .image-preview-box { width: min(1100px, 100%); }
 
