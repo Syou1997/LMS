@@ -276,9 +276,10 @@ function applySettingsToUI() {
         ? `${settings.teacherName} 的${isCombinedMode() ? "綜合日曆" : isTeacherMode() ? "上課管理系統" : "行事曆"}`
         : isCombinedMode() ? "綜合日曆" : isTeacherMode() ? "教師上課管理系統" : "個人行事曆";
     $("searchInput").placeholder = isCombinedMode() ? "搜尋課程或行程內容" : isTeacherMode() ? "搜尋學生、平台或課程內容" : "搜尋分類、對象、地點、內容或備註";
-    $("exportImageBtn").innerText = isTeacherMode() ? "▣ 匯出課表圖片" : "▣ 匯出行程圖片";
+    $("exportImageBtn").innerText = isCombinedMode() ? "▣ 匯出綜合圖片" : isTeacherMode() ? "▣ 匯出課表圖片" : "▣ 匯出行程圖片";
     $("exportPublicPageBtn").classList.toggle("hidden", !isTeacherMode());
-    ["exportCalendarBtn", "exportImageBtn", "backupBtn", "importBackupBtn"].forEach(id => $(id).classList.toggle("hidden", isCombinedMode()));
+    ["exportCalendarBtn", "backupBtn", "importBackupBtn"].forEach(id => $(id).classList.toggle("hidden", isCombinedMode()));
+    $("exportImageBtn").classList.remove("hidden");
     $("mobileAddBtn").classList.toggle("hidden", isCombinedMode());
     $("statsFooter").querySelector(".footer-container").classList.toggle("hidden", isCombinedMode());
     $("combinedFooterMessage").classList.toggle("hidden", !isCombinedMode());
@@ -1146,7 +1147,7 @@ function makeIcsDescription(item) {
 
 function openScheduleImagePreview() {
     latestPreviewImage = createScheduleImageData();
-    $("imagePreviewTitle").innerText = isTeacherMode() ? "課表圖片預覽" : "行程圖片預覽";
+    $("imagePreviewTitle").innerText = isCombinedMode() ? "綜合圖片預覽" : isTeacherMode() ? "課表圖片預覽" : "行程圖片預覽";
     $("schedulePreviewImage").src = latestPreviewImage.dataUrl;
     $("imagePreviewModal").style.display = "block";
 }
@@ -1240,11 +1241,11 @@ function createScheduleImageData() {
     ctx.scale(scale, scale);
     ctx.fillStyle = "#ffffff";
     ctx.fillRect(0, 0, width, height);
-    ctx.fillStyle = isTeacherMode() ? "#254b84" : "#0f766e";
+    ctx.fillStyle = isCombinedMode() ? "#475569" : isTeacherMode() ? "#254b84" : "#0f766e";
     ctx.fillRect(0, 0, width, titleHeight + padding);
     ctx.fillStyle = "#ffffff";
     ctx.font = "bold 40px Microsoft JhengHei, Arial";
-    ctx.fillText(isTeacherMode() ? `${year} 年 ${month + 1} 月不可預約的時間` : `${year} 年 ${month + 1} 月行程表`, padding, 76);
+    ctx.fillText(isCombinedMode() ? `${year} 年 ${month + 1} 月綜合行程表` : isTeacherMode() ? `${year} 年 ${month + 1} 月不可預約的時間` : `${year} 年 ${month + 1} 月行程表`, padding, 76);
     ctx.font = "22px Microsoft JhengHei, Arial";
     ctx.fillText(`時區：${getTimezoneLabelByValue(settings.displayTimeZone, settings.displayTimeZoneLabel)}`, padding, 112);
     ctx.fillText(`最後更新：${formatDisplayDateTime(new Date())}`, padding, 146);
@@ -1311,10 +1312,10 @@ function createScheduleImageData() {
     ctx.fillStyle = "#667085";
     ctx.font = "18px Microsoft JhengHei, Arial";
     ctx.textAlign = "center";
-    ctx.fillText(isTeacherMode() ? "圖片僅顯示不可預約的時間；其他時段請再與老師確認。" : "圖片顯示本月行程時間與內容。", width / 2, height - 20);
+    ctx.fillText(isCombinedMode() ? "圖片顯示本月課程與一般行程時間。" : isTeacherMode() ? "圖片僅顯示不可預約的時間；其他時段請再與老師確認。" : "圖片顯示本月行程時間與內容。", width / 2, height - 20);
     return {
         dataUrl: canvas.toDataURL("image/png"),
-        fileName: `${settings.teacherName || "schedule"}_${year}年${month + 1}月${isTeacherMode() ? "不可預約時間" : "行程表"}.png`
+        fileName: `${settings.teacherName || "schedule"}_${year}年${month + 1}月${isCombinedMode() ? "綜合行程表" : isTeacherMode() ? "不可預約時間" : "行程表"}.png`
     };
 }
 
@@ -1336,13 +1337,28 @@ function getScheduleImageEventText(eventItem) {
     return getDisplayTimeRange(eventItem);
 }
 
+function getScheduleImageEventDetail(eventItem) {
+    if (!settings.showTeacherName || eventItem.untimedNotice) return "";
+    if (isTeacherEvent(eventItem)) {
+        return `${eventItem.platform || "其他"}｜${eventItem.student || "未填寫學生"}`;
+    }
+    return `${eventItem.category || "其他"}｜${eventItem.content || "未命名行程"}`;
+}
+
 function getScheduleImageEventHeight(eventItem) {
-    return eventItem.untimedNotice ? 48 : 30;
+    if (eventItem.untimedNotice) return 48;
+    return getScheduleImageEventDetail(eventItem) ? 50 : 30;
 }
 
 function drawScheduleImageEventText(ctx, eventItem, x, itemY, maxWidth) {
     if (!eventItem.untimedNotice) {
         drawClippedText(ctx, getScheduleImageEventText(eventItem), x, itemY + 17, maxWidth);
+        const detail = getScheduleImageEventDetail(eventItem);
+        if (detail) {
+            ctx.font = "15px Microsoft JhengHei, Arial";
+            drawClippedText(ctx, detail, x, itemY + 37, maxWidth);
+            ctx.font = "bold 17px Microsoft JhengHei, Arial";
+        }
         return;
     }
     const text = getScheduleImageEventText(eventItem);
