@@ -987,6 +987,11 @@ function toggleInput(type) {
         $("categorySelect").classList.toggle("hidden");
         $("categoryInput").classList.toggle("hidden");
     } else {
+        const switchingToCustom = $("timeInputGroup").classList.contains("hidden");
+        if (switchingToCustom) {
+            $("startTimeInput").value = $("startTimeSelect").value;
+            $("endTimeInput").value = $("endTimeSelect").value;
+        }
         $("timeSelectGroup").classList.toggle("hidden");
         $("timeInputGroup").classList.toggle("hidden");
     }
