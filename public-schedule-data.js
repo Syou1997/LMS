@@ -1,6 +1,6 @@
 window.TEACHER_PUBLIC_SCHEDULE = {
   "version": 2,
-  "updatedAt": "2026-06-08T11:07:38.211Z",
+  "updatedAt": "2026-06-08T13:30:01.633Z",
   "selectedYear": 2026,
   "selectedMonth": 5,
   "settings": {
@@ -1297,8 +1297,8 @@ window.TEACHER_PUBLIC_SCHEDULE = {
       "id": "1780914328253a6f48d2ac16e2",
       "mode": "teacher",
       "date": "2026-06-10",
-      "start": "19:30",
-      "end": "20:00",
+      "start": "22:00",
+      "end": "22:30",
       "completed": false
     },
     {
@@ -1307,6 +1307,14 @@ window.TEACHER_PUBLIC_SCHEDULE = {
       "date": "2026-06-12",
       "start": "11:00",
       "end": "13:30",
+      "completed": false
+    },
+    {
+      "id": "178092376758124a68bb03921d8",
+      "mode": "teacher",
+      "date": "2026-06-09",
+      "start": "22:00",
+      "end": "23:00",
       "completed": false
     }
   ],
