@@ -65,6 +65,7 @@ const DEFAULT_CATEGORIES = [
 const defaultSettings = {
     hasCompletedOnboarding: false,
     appMode: "teacher",
+    lastRegularAppMode: "teacher",
     teacherName: "",
     showTeacherName: true,
     baseTimeZone: "UTC+08:00",
@@ -119,6 +120,8 @@ function loadSettings() {
 function normalizeSettings(raw) {
     const normalized = { ...defaultSettings, ...raw };
     normalized.appMode = ["teacher", "general", "combined"].includes(normalized.appMode) ? normalized.appMode : "teacher";
+    normalized.lastRegularAppMode = ["teacher", "general"].includes(normalized.lastRegularAppMode) ? normalized.lastRegularAppMode : "teacher";
+    if (normalized.appMode === "teacher" || normalized.appMode === "general") normalized.lastRegularAppMode = normalized.appMode;
     normalized.customTimeZones = Array.isArray(normalized.customTimeZones) ? normalized.customTimeZones : [];
     normalized.platforms = normalizeItems(normalized.platforms, DEFAULT_PLATFORMS);
     normalized.categories = normalizeItems(normalized.categories, DEFAULT_CATEGORIES);
@@ -173,6 +176,10 @@ function isCombinedMode() {
     return settings.appMode === "combined";
 }
 
+function getRegularAppMode() {
+    return ["teacher", "general"].includes(settings.lastRegularAppMode) ? settings.lastRegularAppMode : "teacher";
+}
+
 function getCurrentItems() {
     return isTeacherMode() ? settings.platforms : settings.categories;
 }
@@ -214,6 +221,7 @@ function bindEvents() {
     $("setupAddTimezoneBtn").onclick = () => addCustomTimezone("setup");
     $("settingsAddTimezoneBtn").onclick = () => addCustomTimezone("settings");
     $("settingsAppMode").onchange = syncSettingsModeUI;
+    $("combinedViewToggle").onchange = toggleCombinedViewMode;
     $("addExpenseBtn").onclick = () => addExpenseRow();
     $("scheduleForm").onsubmit = submitScheduleForm;
     $("repeatSelect").onchange = handleRepeatModeChange;
@@ -263,6 +271,19 @@ function restoreFooterFromBottomEdge(event) {
     toggleFooter();
 }
 
+function toggleCombinedViewMode() {
+    if ($("combinedViewToggle").checked) {
+        if (!isCombinedMode()) settings.lastRegularAppMode = settings.appMode;
+        settings.appMode = "combined";
+    } else {
+        settings.appMode = getRegularAppMode();
+    }
+    saveSettings();
+    fillTimeOptions();
+    applySettingsToUI();
+    renderCalendar();
+}
+
 function applySettingsToUI() {
     document.body.classList.toggle("mode-general", settings.appMode === "general");
     document.body.classList.toggle("mode-teacher", isTeacherMode());
@@ -270,6 +291,7 @@ function applySettingsToUI() {
     populateTimezoneSelects();
     setTimezoneSelectValue("timezoneSelect", settings.displayTimeZone, settings.displayTimeZoneLabel);
     $("timezoneFlag").innerText = getTimezoneShort(settings.displayTimeZone, settings.displayTimeZoneLabel);
+    $("combinedViewToggle").checked = isCombinedMode();
     $("currencyLabel").innerText = settings.currency || "";
     $("modePill").innerText = isCombinedMode() ? "綜合檢視模式" : isTeacherMode() ? "教師排課模式" : "一般行事曆模式";
     $("brandTitle").innerText = settings.teacherName
@@ -448,7 +470,7 @@ function finishOnboarding() {
 }
 
 function openSettingsModal() {
-    $("settingsAppMode").value = settings.appMode;
+    $("settingsAppMode").value = isCombinedMode() ? getRegularAppMode() : settings.appMode;
     $("settingsTeacherName").value = settings.teacherName;
     $("settingsShowTeacherName").checked = settings.showTeacherName;
     setTimezoneSelectValue("settingsBaseTimezone", settings.baseTimeZone, settings.baseTimeZoneLabel);
@@ -460,7 +482,7 @@ function openSettingsModal() {
 }
 
 function syncSettingsModeUI() {
-    const combined = $("settingsAppMode").value === "combined";
+    const combined = isCombinedMode();
     const teacher = $("settingsAppMode").value !== "general";
     if (combined) {
         settingsItems = [];
@@ -484,10 +506,11 @@ function syncSettingsModeUI() {
 
 function saveSettingsFromModal() {
     const selectedMode = $("settingsAppMode").value;
-    const appMode = ["teacher", "general", "combined"].includes(selectedMode) ? selectedMode : "teacher";
+    const regularMode = ["teacher", "general"].includes(selectedMode) ? selectedMode : "teacher";
+    const appMode = isCombinedMode() ? "combined" : regularMode;
     const teacherName = $("settingsTeacherName").value.trim();
     if (!teacherName) return alert("請輸入顯示名稱。");
-    const editableMode = appMode === "general" ? "general" : "teacher";
+    const editableMode = regularMode;
     const normalizedItems = appMode === "combined" ? [] : readSettingsItemRows();
     if (appMode === "combined") {
         const selectedBaseTimeZone = readTimezoneSelection("settingsBaseTimezone");
@@ -496,6 +519,7 @@ function saveSettingsFromModal() {
             ...settings,
             hasCompletedOnboarding: true,
             appMode,
+            lastRegularAppMode: regularMode,
             teacherName,
             showTeacherName: $("settingsShowTeacherName").checked,
             baseTimeZone: selectedBaseTimeZone.value,
@@ -532,6 +556,7 @@ function saveSettingsFromModal() {
         ...settings,
         hasCompletedOnboarding: true,
         appMode,
+        lastRegularAppMode: regularMode,
         teacherName,
         showTeacherName: $("settingsShowTeacherName").checked,
         baseTimeZone: selectedBaseTimeZone.value,

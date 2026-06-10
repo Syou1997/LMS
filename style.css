@@ -146,6 +146,26 @@ body.mode-combined .icon-btn { color: var(--combined-header); }
     background: rgba(255, 255, 255, .14);
 }
 
+.combined-toggle {
+    min-height: 38px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 11px;
+    border: 1px solid rgba(255, 255, 255, .28);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, .14);
+    color: #ffffff;
+    font-weight: 900;
+    white-space: nowrap;
+}
+
+.combined-toggle input {
+    width: auto;
+    margin: 0;
+    accent-color: #ffffff;
+}
+
 .timezone-picker select {
     width: 172px;
     border: 0;
