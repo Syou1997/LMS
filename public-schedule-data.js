@@ -1,6 +1,6 @@
 window.TEACHER_PUBLIC_SCHEDULE = {
   "version": 2,
-  "updatedAt": "2026-06-13T16:09:35.948Z",
+  "updatedAt": "2026-06-14T10:47:45.637Z",
   "selectedYear": 2026,
   "selectedMonth": 5,
   "settings": {
@@ -1102,14 +1102,6 @@ window.TEACHER_PUBLIC_SCHEDULE = {
       "completed": false
     },
     {
-      "id": "1780642563722a396e5ee029ec8",
-      "mode": "teacher",
-      "date": "2026-07-04",
-      "start": "16:00",
-      "end": "17:00",
-      "completed": false
-    },
-    {
       "id": "17799026146925ebc87246fbeb",
       "mode": "teacher",
       "date": "2026-07-06",
@@ -1147,14 +1139,6 @@ window.TEACHER_PUBLIC_SCHEDULE = {
       "date": "2026-07-10",
       "start": "07:30",
       "end": "18:00",
-      "completed": false
-    },
-    {
-      "id": "17806425637222d17e6dc7ce2c",
-      "mode": "teacher",
-      "date": "2026-07-11",
-      "start": "16:00",
-      "end": "17:00",
       "completed": false
     },
     {
@@ -1198,14 +1182,6 @@ window.TEACHER_PUBLIC_SCHEDULE = {
       "completed": false
     },
     {
-      "id": "17806425637227147a3709194b",
-      "mode": "teacher",
-      "date": "2026-07-18",
-      "start": "16:00",
-      "end": "17:00",
-      "completed": false
-    },
-    {
       "id": "1779902614692ebf8abeeffdeb8",
       "mode": "teacher",
       "date": "2026-07-20",
@@ -1246,14 +1222,6 @@ window.TEACHER_PUBLIC_SCHEDULE = {
       "completed": false
     },
     {
-      "id": "17806425637220e596093cb7cb8",
-      "mode": "teacher",
-      "date": "2026-07-25",
-      "start": "16:00",
-      "end": "17:00",
-      "completed": false
-    },
-    {
       "id": "1779902614692717213ba05c6f",
       "mode": "teacher",
       "date": "2026-07-27",
@@ -1291,14 +1259,6 @@ window.TEACHER_PUBLIC_SCHEDULE = {
       "date": "2026-07-31",
       "start": "07:30",
       "end": "18:00",
-      "completed": false
-    },
-    {
-      "id": "1780642657219d635d585c8166",
-      "mode": "teacher",
-      "date": "2026-08-01",
-      "start": "16:00",
-      "end": "17:00",
       "completed": false
     },
     {
