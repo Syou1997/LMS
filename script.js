@@ -42,6 +42,19 @@ const GMT_OFFSET_OPTIONS = [
     ["UTC+09:00", "GMT+9"], ["UTC+10:00", "GMT+10"], ["UTC+11:00", "GMT+11"],
     ["UTC+12:00", "GMT+12"], ["UTC+13:00", "GMT+13"], ["UTC+14:00", "GMT+14"]
 ];
+const TIMEZONE_NAME_TRANSLATIONS = {
+    "台北": ["台北", "台北", "Taipei"], "東京": ["東京", "東京", "Tokyo"], "貝克島": ["貝克島", "ベーカー島", "Baker Island"],
+    "美屬薩摩亞": ["美屬薩摩亞", "米領サモア", "American Samoa"], "夏威夷": ["夏威夷", "ハワイ", "Hawaii"],
+    "阿拉斯加": ["阿拉斯加", "アラスカ", "Alaska"], "洛杉磯": ["洛杉磯", "ロサンゼルス", "Los Angeles"],
+    "溫哥華": ["溫哥華", "バンクーバー", "Vancouver"], "芝加哥": ["芝加哥", "シカゴ", "Chicago"],
+    "紐約": ["紐約", "ニューヨーク", "New York"], "聖地牙哥": ["聖地牙哥", "サンティアゴ", "Santiago"],
+    "布宜諾斯艾利斯": ["布宜諾斯艾利斯", "ブエノスアイレス", "Buenos Aires"], "南喬治亞": ["南喬治亞", "サウスジョージア", "South Georgia"],
+    "亞速群島": ["亞速群島", "アゾレス諸島", "Azores"], "倫敦": ["倫敦", "ロンドン", "London"],
+    "巴黎": ["巴黎", "パリ", "Paris"], "雅典": ["雅典", "アテネ", "Athens"], "伊斯坦堡": ["伊斯坦堡", "イスタンブール", "Istanbul"],
+    "杜拜": ["杜拜", "ドバイ", "Dubai"], "塔什干": ["塔什干", "タシケント", "Tashkent"], "達卡": ["達卡", "ダッカ", "Dhaka"],
+    "曼谷": ["曼谷", "バンコク", "Bangkok"], "雪梨": ["雪梨", "シドニー", "Sydney"], "索羅門群島": ["索羅門群島", "ソロモン諸島", "Solomon Islands"],
+    "奧克蘭": ["奧克蘭", "オークランド", "Auckland"], "東加": ["東加", "トンガ", "Tonga"], "基里巴斯": ["基里巴斯", "キリバス", "Kiribati"]
+};
 
 const PLATFORM_COLORS = ["#f1c40f", "#e74c3c", "#8e44ad", "#27ae60", "#2980b9", "#00897b", "#d81b60", "#3949ab", "#795548", "#455a64"];
 const TIME_INPUT_MAX_MINUTES = 24 * 60;
@@ -64,6 +77,7 @@ const DEFAULT_CATEGORIES = [
 
 const defaultSettings = {
     hasCompletedOnboarding: false,
+    language: "zh-TW",
     appMode: "teacher",
     lastRegularAppMode: "teacher",
     teacherName: "",
@@ -93,6 +107,8 @@ let customRepeatDates = [];
 let pendingCustomRepeatDates = [];
 let customRepeatCalendarYear = new Date().getFullYear();
 let customRepeatCalendarMonth = new Date().getMonth();
+let selectedEventId = "";
+let dragState = null;
 
 const $ = id => document.getElementById(id);
 const yearSelect = $("yearSelect");
@@ -100,8 +116,11 @@ const monthSelect = $("monthSelect");
 const calendarGrid = $("calendarGrid");
 const searchInput = $("searchInput");
 const clearSearchBtn = $("clearSearchBtn");
+const t = value => window.trText ? window.trText(value, settings.language) : value;
+const l = (zh, ja, en) => settings.language === "ja" ? ja : settings.language === "en" ? en : zh;
 
 function init() {
+    initializeI18n(() => settings.language);
     currentSelectedDate = formatDate(new Date());
     populateCustomTimezoneSelectors();
     populateTimezoneSelects();
@@ -113,12 +132,21 @@ function init() {
     if (!settings.hasCompletedOnboarding) openOnboarding();
 }
 
+function applyLanguage() {
+    applyI18n();
+    populateYearMonth(true);
+    fillTimeOptions();
+    applySettingsToUI();
+    renderCalendar();
+}
+
 function loadSettings() {
     return { ...defaultSettings, ...(JSON.parse(localStorage.getItem(SETTINGS_KEY) || "null") || {}) };
 }
 
 function normalizeSettings(raw) {
     const normalized = { ...defaultSettings, ...raw };
+    normalized.language = ["zh-TW", "ja", "en"].includes(normalized.language) ? normalized.language : "zh-TW";
     normalized.appMode = ["teacher", "general", "combined"].includes(normalized.appMode) ? normalized.appMode : "teacher";
     normalized.lastRegularAppMode = ["teacher", "general"].includes(normalized.lastRegularAppMode) ? normalized.lastRegularAppMode : "teacher";
     if (normalized.appMode === "teacher" || normalized.appMode === "general") normalized.lastRegularAppMode = normalized.appMode;
@@ -221,6 +249,14 @@ function bindEvents() {
     $("setupAddTimezoneBtn").onclick = () => addCustomTimezone("setup");
     $("settingsAddTimezoneBtn").onclick = () => addCustomTimezone("settings");
     $("settingsAppMode").onchange = syncSettingsModeUI;
+    $("setupLanguage").onchange = event => {
+        settings.language = event.target.value;
+        applyLanguage();
+    };
+    $("settingsLanguage").onchange = event => {
+        settings.language = event.target.value;
+        applyLanguage();
+    };
     $("combinedViewToggle").onchange = toggleCombinedViewMode;
     $("addExpenseBtn").onclick = () => addExpenseRow();
     $("scheduleForm").onsubmit = submitScheduleForm;
@@ -293,31 +329,48 @@ function applySettingsToUI() {
     $("timezoneFlag").innerText = getTimezoneShort(settings.displayTimeZone, settings.displayTimeZoneLabel);
     $("combinedViewToggle").checked = isCombinedMode();
     $("currencyLabel").innerText = settings.currency || "";
-    $("modePill").innerText = isCombinedMode() ? "綜合檢視模式" : isTeacherMode() ? "教師排課模式" : "一般行事曆模式";
+    $("modePill").innerText = isCombinedMode() ? t("綜合日曆") : isTeacherMode() ? t("教師排課模式") : t("一般行事曆模式");
     $("brandTitle").innerText = settings.teacherName
-        ? `${settings.teacherName} 的${isCombinedMode() ? "綜合日曆" : isTeacherMode() ? "上課管理系統" : "行事曆"}`
-        : isCombinedMode() ? "綜合日曆" : isTeacherMode() ? "教師上課管理系統" : "個人行事曆";
-    $("searchInput").placeholder = isCombinedMode() ? "搜尋課程或行程內容" : isTeacherMode() ? "搜尋學生、平台或課程內容" : "搜尋分類、對象、地點、內容或備註";
-    $("exportImageBtn").innerText = isCombinedMode() ? "▣ 匯出綜合圖片" : isTeacherMode() ? "▣ 匯出課表圖片" : "▣ 匯出行程圖片";
+        ? `${settings.teacherName} ${settings.language === "en" ? "· " : "的"}${isCombinedMode() ? t("綜合日曆") : isTeacherMode() ? (settings.language === "ja" ? "レッスン管理" : settings.language === "en" ? "Lesson Manager" : "上課管理系統") : (settings.language === "ja" ? "予定表" : settings.language === "en" ? "Calendar" : "行事曆")}`
+        : isCombinedMode() ? t("綜合日曆") : isTeacherMode() ? t("教師上課管理系統") : (settings.language === "ja" ? "個人カレンダー" : settings.language === "en" ? "Personal Calendar" : "個人行事曆");
+    $("searchInput").placeholder = isCombinedMode()
+        ? l("搜尋課程或行程內容", "レッスンや予定を検索", "Search lessons or events")
+        : isTeacherMode() ? t("搜尋學生、平台或課程內容") : l("搜尋分類、對象、地點、內容或備註", "カテゴリー・相手・場所・内容・メモを検索", "Search categories, people, locations, details, or notes");
+    $("exportImageBtn").innerText = isCombinedMode()
+        ? (settings.language === "ja" ? "▣ 総合画像を出力" : settings.language === "en" ? "▣ Export combined image" : "▣ 匯出綜合圖片")
+        : isTeacherMode() ? t("▣ 匯出課表圖片") : (settings.language === "ja" ? "▣ 予定画像を出力" : settings.language === "en" ? "▣ Export event image" : "▣ 匯出行程圖片");
     $("exportPublicPageBtn").classList.toggle("hidden", !isTeacherMode());
     ["exportCalendarBtn", "backupBtn", "importBackupBtn"].forEach(id => $(id).classList.toggle("hidden", isCombinedMode()));
     $("exportImageBtn").classList.remove("hidden");
     $("mobileAddBtn").classList.toggle("hidden", isCombinedMode());
     $("statsFooter").querySelector(".footer-container").classList.toggle("hidden", isCombinedMode());
     $("combinedFooterMessage").classList.toggle("hidden", !isCombinedMode());
-    $("monthCountLabel").innerText = isTeacherMode() ? "本月課程" : "本月行程";
-    $("monthCountUnit").innerText = isTeacherMode() ? "堂" : "筆";
-    $("monthHoursLabel").innerText = isTeacherMode() ? "本月時數" : "本月安排時數";
-    $("selectedDayLabel").innerText = isTeacherMode() ? "課堂" : "待辦事項";
-    $("selectedDayUnit").innerText = isTeacherMode() ? "堂" : "筆";
-    $("moneyStatLabel").innerText = isTeacherMode() ? "預計總收入" : "目前本月總花費";
+    $("monthCountLabel").innerText = isTeacherMode() ? t("本月課程") : l("本月行程", "今月の予定", "Events this month");
+    $("monthCountUnit").innerText = isTeacherMode() ? l("堂", "件", "lessons") : l("筆", "件", "events");
+    $("monthHoursLabel").innerText = isTeacherMode() ? t("本月時數") : l("本月安排時數", "今月の予定時間", "Scheduled hours this month");
+    $("selectedDayLabel").innerText = isTeacherMode() ? l("課堂", "レッスン", "lessons") : l("待辦事項", "予定", "events");
+    $("selectedDayUnit").innerText = isTeacherMode() ? l("堂", "件", "lessons") : l("筆", "件", "events");
+    $("moneyStatLabel").innerText = isTeacherMode() ? t("預計總收入") : l("目前本月總花費", "今月の支出", "Expenses this month");
     populateItemSelects();
 }
 
-function populateYearMonth() {
+function populateYearMonth(reset = false) {
     const now = new Date();
-    for (let y = now.getFullYear() - 5; y <= now.getFullYear() + 5; y++) yearSelect.add(new Option(`${y}年`, y, false, y === now.getFullYear()));
-    for (let m = 0; m < 12; m++) monthSelect.add(new Option(`${m + 1}月`, m, false, m === now.getMonth()));
+    const selectedYear = yearSelect.value || now.getFullYear();
+    const selectedMonth = monthSelect.value || now.getMonth();
+    if (reset) {
+        yearSelect.innerHTML = "";
+        monthSelect.innerHTML = "";
+    }
+    if (yearSelect.options.length || monthSelect.options.length) return;
+    for (let y = now.getFullYear() - 5; y <= now.getFullYear() + 5; y++) {
+        const label = settings.language === "en" ? String(y) : `${y}${settings.language === "ja" ? "年" : "年"}`;
+        yearSelect.add(new Option(label, y, false, String(y) === String(selectedYear)));
+    }
+    for (let m = 0; m < 12; m++) {
+        const label = settings.language === "en" ? new Intl.DateTimeFormat("en", { month: "short" }).format(new Date(2020, m, 1)) : `${m + 1}月`;
+        monthSelect.add(new Option(label, m, false, String(m) === String(selectedMonth)));
+    }
 }
 
 function populateTimezoneSelects() {
@@ -347,11 +400,20 @@ function populateCustomTimezoneSelectors() {
 }
 
 function getAllTimeZones() {
-    const zones = [...DEFAULT_TIMEZONES];
+    const zones = DEFAULT_TIMEZONES.map(zone => ({ ...zone, label: localizeTimezoneLabel(zone.label) }));
     settings.customTimeZones.forEach(zone => {
         if (!zones.some(item => item.label === zone.label && item.value === zone.value)) zones.push(zone);
     });
     return zones;
+}
+
+function localizeTimezoneLabel(label) {
+    const match = String(label).match(/^(.*?)（(GMT[^）]+)）$/);
+    if (!match) return label;
+    const names = TIMEZONE_NAME_TRANSLATIONS[match[1]];
+    if (!names) return label;
+    const index = settings.language === "ja" ? 1 : settings.language === "en" ? 2 : 0;
+    return `${names[index]}（${match[2]}）`;
 }
 
 function readTimezoneSelection(selectId) {
@@ -390,6 +452,7 @@ function openOnboarding() {
     document.querySelector(`input[name='setupAppMode'][value='${settings.appMode}']`).checked = true;
     $("setupTeacherName").value = settings.teacherName || "";
     $("setupShowTeacherName").checked = settings.showTeacherName;
+    $("setupLanguage").value = settings.language;
     setTimezoneSelectValue("setupBaseTimezone", settings.baseTimeZone, settings.baseTimeZoneLabel);
     setTimezoneSelectValue("setupDisplayTimezone", settings.displayTimeZone, settings.displayTimeZoneLabel);
     onboardingStep = 1;
@@ -405,31 +468,31 @@ function getSetupMode() {
 function syncOnboardingModeUI() {
     const teacher = getSetupMode() === "teacher";
     setupItems = cloneItems(teacher ? settings.platforms : settings.categories);
-    $("setupListTitle").innerText = teacher ? "設定上課平台" : "設定行程分類";
-    $("setupListHelp").innerText = teacher ? "前 10 個平台可以有不同顏色，第 11 個開始會統一灰色。" : "可以先建立常用分類，之後也能在設定中新增。";
-    $("setupPlatformInput").placeholder = teacher ? "輸入平台名稱" : "輸入分類名稱";
+    $("setupListTitle").innerText = teacher ? t("設定上課平台") : l("設定行程分類", "予定カテゴリーを設定", "Set event categories");
+    $("setupListHelp").innerText = teacher ? t("前 10 個平台可以有不同顏色，第 11 個開始會統一灰色。") : l("可以先建立常用分類，之後也能在設定中新增。", "よく使うカテゴリーを作成できます。後から設定で追加できます。", "Create common categories now and add more later in Settings.");
+    $("setupPlatformInput").placeholder = teacher ? l("輸入平台名稱", "プラットフォーム名", "Platform name") : l("輸入分類名稱", "カテゴリー名", "Category name");
     renderItemList("setup");
 }
 
 function renderOnboardingStep() {
     document.querySelectorAll(".onboarding-step").forEach(step => step.classList.toggle("active", Number(step.dataset.step) === onboardingStep));
     document.querySelectorAll(".step-dot").forEach((dot, index) => dot.classList.toggle("active", index + 1 === onboardingStep));
-    $("onboardingStepText").innerText = `${onboardingStep} / 4`;
+    $("onboardingStepText").innerText = `${onboardingStep} / 5`;
     $("setupPrevBtn").classList.toggle("hidden", onboardingStep === 1);
-    $("setupNextBtn").classList.toggle("hidden", onboardingStep === 4);
-    $("setupFinishBtn").classList.toggle("hidden", onboardingStep !== 4);
-    if (onboardingStep === 4) renderSetupSummary();
+    $("setupNextBtn").classList.toggle("hidden", onboardingStep === 5);
+    $("setupFinishBtn").classList.toggle("hidden", onboardingStep !== 5);
+    if (onboardingStep === 5) renderSetupSummary();
 }
 
 function changeOnboardingStep(direction) {
     if (direction > 0 && !validateOnboardingStep()) return;
-    onboardingStep = Math.max(1, Math.min(4, onboardingStep + direction));
+    onboardingStep = Math.max(1, Math.min(5, onboardingStep + direction));
     renderOnboardingStep();
 }
 
 function validateOnboardingStep() {
-    if (onboardingStep === 1 && !$("setupTeacherName").value.trim()) return alert("請先輸入顯示名稱。"), false;
-    if (onboardingStep === 3 && setupItems.length === 0) return alert(getSetupMode() === "teacher" ? "請至少新增一個上課平台。" : "請至少新增一個分類。"), false;
+    if (onboardingStep === 2 && !$("setupTeacherName").value.trim()) return alert(t("enterDisplayName")), false;
+    if (onboardingStep === 4 && setupItems.length === 0) return alert(getSetupMode() === "teacher" ? t("keepOnePlatform") : t("keepOneCategory")), false;
     return true;
 }
 
@@ -452,6 +515,7 @@ function finishOnboarding() {
     settings = {
         ...settings,
         hasCompletedOnboarding: true,
+        language: $("setupLanguage").value,
         appMode,
         teacherName: $("setupTeacherName").value.trim(),
         showTeacherName: $("setupShowTeacherName").checked,
@@ -464,15 +528,14 @@ function finishOnboarding() {
     };
     saveSettings();
     closeModal("onboardingModal");
-    fillTimeOptions();
-    applySettingsToUI();
-    renderCalendar();
+    applyLanguage();
 }
 
 function openSettingsModal() {
     $("settingsAppMode").value = isCombinedMode() ? getRegularAppMode() : settings.appMode;
     $("settingsTeacherName").value = settings.teacherName;
     $("settingsShowTeacherName").checked = settings.showTeacherName;
+    $("settingsLanguage").value = settings.language;
     setTimezoneSelectValue("settingsBaseTimezone", settings.baseTimeZone, settings.baseTimeZoneLabel);
     setTimezoneSelectValue("settingsDisplayTimezone", settings.displayTimeZone, settings.displayTimeZoneLabel);
     $("settingsCurrency").value = settings.currency;
@@ -518,6 +581,7 @@ function saveSettingsFromModal() {
         settings = {
             ...settings,
             hasCompletedOnboarding: true,
+            language: $("settingsLanguage").value,
             appMode,
             lastRegularAppMode: regularMode,
             teacherName,
@@ -531,9 +595,7 @@ function saveSettingsFromModal() {
         };
         saveSettings();
         closeModal("settingsModal");
-        fillTimeOptions();
-        applySettingsToUI();
-        renderCalendar();
+        applyLanguage();
         return;
     }
     if (normalizedItems.length === 0) return alert(editableMode === "teacher" ? "請至少保留一個上課平台。" : "請至少保留一個分類。");
@@ -555,6 +617,7 @@ function saveSettingsFromModal() {
     settings = {
         ...settings,
         hasCompletedOnboarding: true,
+        language: $("settingsLanguage").value,
         appMode,
         lastRegularAppMode: regularMode,
         teacherName,
@@ -571,9 +634,7 @@ function saveSettingsFromModal() {
     saveSettings();
     saveData();
     closeModal("settingsModal");
-    fillTimeOptions();
-    applySettingsToUI();
-    renderCalendar();
+    applyLanguage();
 }
 
 function addModeItem(type) {
@@ -682,17 +743,19 @@ function renderCalendar() {
         const visibleDayEvents = allDayEvents.filter(eventMatchesSearch);
         const cell = document.createElement("div");
         cell.className = `day-cell ${isDayCompleted(allDayEvents) ? "completed-day" : ""} ${dateStr === todayStr ? "is-today" : ""} ${dateStr === currentSelectedDate ? "selected" : ""}`;
+        cell.dataset.date = dateStr;
         cell.innerHTML = `
             <div class="day-num-row">
                 <span class="day-num">${d}</span>
-                ${dateStr === todayStr ? '<span class="today-badge">今天</span>' : ""}
+                ${dateStr === todayStr ? `<span class="today-badge">${t("今天")}</span>` : ""}
             </div>
             <div class="event-list-mini">
                 ${visibleDayEvents.map(renderMiniEvent).join("")}
-                ${getSearchKeyword() && allDayEvents.length > 0 && visibleDayEvents.length === 0 ? '<div class="no-match-text">無符合結果</div>' : ""}
+                ${getSearchKeyword() && allDayEvents.length > 0 && visibleDayEvents.length === 0 ? `<div class="no-match-text">${t("無符合結果")}</div>` : ""}
             </div>
         `;
         cell.onclick = () => {
+            if (dragState?.active) return;
             currentSelectedDate = dateStr;
             renderCalendar();
         };
@@ -701,6 +764,7 @@ function renderCalendar() {
         };
         calendarGrid.appendChild(cell);
     }
+    bindDesktopEventMoving();
     updateFooterStats();
 }
 
@@ -710,13 +774,114 @@ function renderMiniEvent(eventItem) {
                 <button class="event-action" onclick="openEditModal('${eventItem.id}', event)" title="編輯">✎</button>
                 <button class="event-action" onclick="openDeleteModal('${eventItem.id}', event)" title="刪除">×</button>`;
     return `
-        <div class="event-tag-item ${isEventCompleted(eventItem) ? "completed-event" : ""}" style="background:${style.color};color:${style.textColor};${style.textColor === "#222222" ? "text-shadow:none;" : ""}">
+        <div class="event-tag-item ${selectedEventId === eventItem.id ? "selected-event" : ""} ${isEventCompleted(eventItem) ? "completed-event" : ""}" data-event-id="${eventItem.id}" style="background:${style.color};color:${style.textColor};${style.textColor === "#222222" ? "text-shadow:none;" : ""}">
             <span>${escapeHtml(getMiniEventText(eventItem))}</span>
             <div class="event-tag-actions">
                 ${actions}
             </div>
         </div>
     `;
+}
+
+function bindDesktopEventMoving() {
+    document.querySelectorAll(".event-tag-item[data-event-id]").forEach(item => {
+        item.onpointerdown = pointerEvent => {
+            if (isCombinedMode() || pointerEvent.button !== 0 || pointerEvent.target.closest(".event-action")) return;
+            pointerEvent.stopPropagation();
+            const eventId = item.dataset.eventId;
+            const startX = pointerEvent.clientX;
+            const startY = pointerEvent.clientY;
+            const timer = setTimeout(() => {
+                const source = events.find(eventItem => eventItem.id === eventId);
+                if (!source) return;
+                selectedEventId = eventId;
+                item.classList.add("selected-event", "drag-source");
+                const ghost = item.cloneNode(true);
+                ghost.classList.add("event-drag-ghost");
+                ghost.querySelector(".event-tag-actions")?.remove();
+                document.body.appendChild(ghost);
+                dragState = { active: true, eventId, ghost, targetDate: "", startX, startY };
+                positionDesktopDragGhost(pointerEvent.clientX, pointerEvent.clientY);
+            }, 500);
+            dragState = { active: false, eventId, timer, startX, startY };
+        };
+        item.onclick = clickEvent => {
+            if (clickEvent.target.closest(".event-action") || dragState?.active) return;
+            clickEvent.stopPropagation();
+            selectedEventId = item.dataset.eventId;
+            renderCalendar();
+        };
+    });
+
+    document.onpointermove = pointerEvent => {
+        if (!dragState) return;
+        if (!dragState.active) {
+            if (Math.hypot(pointerEvent.clientX - dragState.startX, pointerEvent.clientY - dragState.startY) > 8) {
+                clearTimeout(dragState.timer);
+                dragState = null;
+            }
+            return;
+        }
+        pointerEvent.preventDefault();
+        positionDesktopDragGhost(pointerEvent.clientX, pointerEvent.clientY);
+        document.querySelectorAll(".day-cell.drop-target").forEach(cell => cell.classList.remove("drop-target", "drop-conflict"));
+        const targetCell = document.elementFromPoint(pointerEvent.clientX, pointerEvent.clientY)?.closest(".day-cell[data-date]");
+        dragState.targetDate = targetCell?.dataset.date || "";
+        if (!targetCell) return;
+        const candidate = buildMovedDesktopEvent(dragState.eventId, dragState.targetDate);
+        const conflict = candidate && getConflictEvent(candidate.date, candidate.start, candidate.end, candidate.id);
+        targetCell.classList.add("drop-target");
+        targetCell.classList.toggle("drop-conflict", Boolean(conflict));
+    };
+
+    document.onpointerup = () => {
+        if (!dragState) return;
+        clearTimeout(dragState.timer);
+        const stateToFinish = dragState;
+        dragState = null;
+        document.querySelectorAll(".day-cell.drop-target").forEach(cell => cell.classList.remove("drop-target", "drop-conflict"));
+        stateToFinish.ghost?.remove();
+        if (!stateToFinish.active) return;
+        if (!stateToFinish.targetDate) {
+            renderCalendar();
+            return;
+        }
+        moveDesktopEvent(stateToFinish.eventId, stateToFinish.targetDate);
+    };
+}
+
+function positionDesktopDragGhost(x, y) {
+    if (!dragState?.ghost) return;
+    dragState.ghost.style.left = `${x + 12}px`;
+    dragState.ghost.style.top = `${y + 12}px`;
+}
+
+function buildMovedDesktopEvent(eventId, targetDisplayDate) {
+    const source = events.find(item => item.id === eventId);
+    if (!source) return null;
+    const sourceDisplayDate = source.start
+        ? formatDateInZone(zonedTimeToUtc(source.date, source.start, settings.baseTimeZone), settings.displayTimeZone)
+        : source.date;
+    const dayOffset = getDateDiff(sourceDisplayDate, targetDisplayDate);
+    const storedDate = formatDate(new Date(`${source.date}T00:00:00`).setDate(new Date(`${source.date}T00:00:00`).getDate() + dayOffset));
+    return { ...source, date: storedDate };
+}
+
+function moveDesktopEvent(eventId, targetDisplayDate) {
+    const candidate = buildMovedDesktopEvent(eventId, targetDisplayDate);
+    if (!candidate) return;
+    const conflict = getConflictEvent(candidate.date, candidate.start, candidate.end, candidate.id);
+    if (conflict) {
+        alert(makeConflictMessage(conflict));
+        renderCalendar();
+        return;
+    }
+    const index = events.findIndex(item => item.id === eventId);
+    events[index] = candidate;
+    currentSelectedDate = targetDisplayDate;
+    selectedEventId = eventId;
+    saveData();
+    renderCalendar();
 }
 
 function eventBelongsToCurrentMode(eventItem) {
@@ -733,7 +898,7 @@ function compareEvents(a, b) {
 
 function getMiniEventText(eventItem) {
     if (isTeacherEvent(eventItem)) return getDisplayTimeRange(eventItem);
-    return `${hasTimeRange(eventItem) ? getDisplayTimeRange(eventItem) : "未設定時間"}｜${eventItem.content || "未命名行程"}`;
+    return `${hasTimeRange(eventItem) ? getDisplayTimeRange(eventItem) : t("時間未定")}｜${eventItem.content || l("未命名行程", "名称未設定", "Untitled event")}`;
 }
 
 function getEventStyle(eventItem) {
@@ -771,7 +936,7 @@ function openAddModal(dateStr) {
     clearExpenseRows();
     if (!isTeacherMode()) addExpenseRow();
     setAddModalModeUI();
-    $("addModalDateTitle").innerText = `${isTeacherMode() ? "新增排課" : "新增行程"}：${dateStr}`;
+    $("addModalDateTitle").innerText = `${isTeacherMode() ? t("新增排課") : t("新增行程")}：${dateStr}`;
     updateModalTimezoneHint();
     $("addModal").style.display = "block";
 }
@@ -789,7 +954,7 @@ function openEditModal(id, e) {
     $("editEventId").value = id;
     $("repeatSelect").value = "none";
     $("repeatSelect").disabled = true;
-    $("addModalDateTitle").innerText = `${isTeacherMode() ? "編輯課程" : "編輯行程"}：${target.date}`;
+    $("addModalDateTitle").innerText = `${isTeacherMode() ? l("編輯課程", "レッスンを編集", "Edit lesson") : l("編輯行程", "予定を編集", "Edit event")}：${target.date}`;
     updateModalTimezoneHint();
     if (isTeacherMode()) {
         setSelectOrCustom("platformSelect", "platformInput", target.platform);
@@ -819,16 +984,16 @@ function setAddModalModeUI() {
     $("generalFields").classList.toggle("hidden", isTeacherMode());
     $("generalNoteField").classList.remove("hidden");
     $("generalTimeHint").classList.toggle("hidden", isTeacherMode());
-    $("contentLabel").innerText = isTeacherMode() ? "課程內容" : "內容（必填）";
-    $("courseContent").placeholder = isTeacherMode() ? "請輸入教材或進度..." : "請輸入行程內容...";
-    $("timeFieldLabel").innerText = isTeacherMode() ? "時間範圍" : "時間（選填）";
-    $("repeatText").innerText = isTeacherMode() ? "排課" : "行程";
+    $("contentLabel").innerText = isTeacherMode() ? t("課程內容") : l("內容（必填）", "内容（必須）", "Details (required)");
+    $("courseContent").placeholder = isTeacherMode() ? t("請輸入教材或進度...") : l("請輸入行程內容...", "予定の内容を入力...", "Enter event details...");
+    $("timeFieldLabel").innerText = isTeacherMode() ? t("時間範圍") : l("時間（選填）", "時間（任意）", "Time (optional)");
+    $("repeatText").innerText = isTeacherMode() ? t("排課") : t("行程");
 }
 
 function updateModalTimezoneHint() {
     const hint = $("modalTimezoneHint");
     if (!hint) return;
-    hint.innerText = `（目前使用：${getTimezoneLabelByValue(settings.displayTimeZone, settings.displayTimeZoneLabel)}）`;
+    hint.innerText = `${l("（目前使用：", "（現在：", "(current: ")}${getTimezoneLabelByValue(settings.displayTimeZone, settings.displayTimeZoneLabel)}${settings.language === "en" ? ")" : "）"}`;
 }
 
 function getModalDisplayTime(eventItem, key) {
@@ -1080,8 +1245,8 @@ function updateDetailModal() {
 function renderDetailEvent(eventItem) {
     const teacherEvent = isTeacherEvent(eventItem);
     const title = teacherEvent
-        ? `${hasTimeRange(eventItem) ? getDisplayTimeRange(eventItem) : "未設定時間"} ｜ ${escapeHtml(eventItem.platform)}${isEventCompleted(eventItem) ? "｜已完成" : ""}`
-        : `${hasTimeRange(eventItem) ? getDisplayTimeRange(eventItem) : "未設定時間"} ｜ ${escapeHtml(eventItem.content)}${isEventCompleted(eventItem) ? "｜已完成" : ""}`;
+        ? `${hasTimeRange(eventItem) ? getDisplayTimeRange(eventItem) : t("時間未定")} ｜ ${escapeHtml(eventItem.platform)}${isEventCompleted(eventItem) ? `｜${t("已完成")}` : ""}`
+        : `${hasTimeRange(eventItem) ? getDisplayTimeRange(eventItem) : t("時間未定")} ｜ ${escapeHtml(eventItem.content)}${isEventCompleted(eventItem) ? `｜${t("已完成")}` : ""}`;
     const body = teacherEvent
         ? `<small>學生：${escapeHtml(eventItem.student)} ｜ 費用：${escapeHtml(settings.currency)} ${eventItem.fee}</small><br><p>${escapeHtml(eventItem.content || "")}</p><p>${escapeHtml(eventItem.note || "")}</p>`
         : `<small>分類：${escapeHtml(eventItem.category)} ｜ 對象：${escapeHtml(eventItem.target || "未填寫")} ｜ 地點：${escapeHtml(eventItem.location || "未填寫")}</small><br>
@@ -1527,13 +1692,15 @@ function openCustomRepeatModal() {
     const date = new Date(`${currentSelectedDate}T00:00:00`);
     customRepeatCalendarYear = date.getFullYear();
     customRepeatCalendarMonth = date.getMonth();
-    pendingCustomRepeatDates = [...customRepeatDates];
+    pendingCustomRepeatDates = [...new Set([currentSelectedDate, ...customRepeatDates])];
     renderCustomRepeatCalendar();
     $("customRepeatModal").style.display = "block";
 }
 
 function renderCustomRepeatCalendar() {
-    $("customRepeatMonthLabel").innerText = `${customRepeatCalendarYear} 年 ${customRepeatCalendarMonth + 1} 月`;
+    $("customRepeatMonthLabel").innerText = settings.language === "en"
+        ? new Intl.DateTimeFormat("en", { year: "numeric", month: "long" }).format(new Date(customRepeatCalendarYear, customRepeatCalendarMonth, 1))
+        : `${customRepeatCalendarYear} 年 ${customRepeatCalendarMonth + 1} 月`;
     const firstDay = new Date(customRepeatCalendarYear, customRepeatCalendarMonth, 1).getDay();
     const daysInMonth = new Date(customRepeatCalendarYear, customRepeatCalendarMonth + 1, 0).getDate();
     let html = Array.from({ length: firstDay }, () => "<span></span>").join("");
@@ -1571,7 +1738,8 @@ function cancelCustomRepeat() {
 }
 
 function renderCustomRepeatSummary() {
-    $("customRepeatSummary").innerText = customRepeatDates.length ? `重複日期：${customRepeatDates.join("、")}` : "";
+    const prefix = settings.language === "ja" ? "繰り返し日：" : settings.language === "en" ? "Repeat dates: " : "重複日期：";
+    $("customRepeatSummary").innerText = customRepeatDates.length ? `${prefix}${customRepeatDates.join(settings.language === "en" ? ", " : "、")}` : "";
     $("customRepeatSummary").classList.toggle("hidden", customRepeatDates.length === 0);
 }
 
@@ -1669,7 +1837,7 @@ function isDayCompleted(dayEvents) {
 }
 
 function getDisplayTimeRange(eventItem) {
-    if (!hasTimeRange(eventItem)) return "未設定時間";
+    if (!hasTimeRange(eventItem)) return t("時間未定");
     const startUtc = zonedTimeToUtc(eventItem.date, eventItem.start, settings.baseTimeZone);
     const endUtc = zonedTimeToUtc(eventItem.date, eventItem.end, settings.baseTimeZone);
     const start = getDisplayTimeInfo(eventItem.date, startUtc, settings.displayTimeZone);
@@ -1815,8 +1983,9 @@ function makeShortCode(text) {
 }
 
 function getTimezoneLabelByValue(value, label) {
-    if (label) return label;
-    return getAllTimeZones().find(zone => zone.value === value)?.label || value.replace("UTC", "GMT");
+    const custom = settings.customTimeZones.find(zone => zone.value === value && (!label || zone.label === label));
+    if (custom) return custom.label;
+    return getAllTimeZones().find(zone => zone.value === value)?.label || label || value.replace("UTC", "GMT");
 }
 
 function getTimezoneShort(value, label) {

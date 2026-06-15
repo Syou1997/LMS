@@ -98,13 +98,26 @@
 <div id="onboardingModal" class="modal onboarding-modal">
     <div class="modal-box onboarding-box">
         <div class="onboarding-progress">
-            <span id="onboardingStepText">1 / 4</span>
+            <span id="onboardingStepText">1 / 5</span>
             <div class="step-dots">
-                <span class="step-dot active"></span><span class="step-dot"></span><span class="step-dot"></span><span class="step-dot"></span>
+                <span class="step-dot active"></span><span class="step-dot"></span><span class="step-dot"></span><span class="step-dot"></span><span class="step-dot"></span>
             </div>
         </div>
 
         <section class="onboarding-step active" data-step="1">
+            <h2 data-i18n="chooseLanguageTitle">選擇介面語言</h2>
+            <p data-i18n="chooseLanguageHelp">請先選擇使用語言，後續的新手設定會立即切換。</p>
+            <div class="form-item">
+                <label data-i18n="interfaceLanguage">介面語言</label>
+                <select id="setupLanguage">
+                    <option value="zh-TW">繁體中文</option>
+                    <option value="ja">日本語</option>
+                    <option value="en">English</option>
+                </select>
+            </div>
+        </section>
+
+        <section class="onboarding-step" data-step="2">
             <h2>開始設定你的行程工具</h2>
             <p>請先選擇主要用途。之後也可以從設定切換模式，不會刪除既有資料。</p>
             <div class="mode-choice">
@@ -121,7 +134,7 @@
             </label>
         </section>
 
-        <section class="onboarding-step" data-step="2">
+        <section class="onboarding-step" data-step="3">
             <h2>設定時區</h2>
             <p>你可以使用預設時區，也可以自行新增國家／地點與 GMT 時差。</p>
             <div class="form-grid">
@@ -138,7 +151,7 @@
             </div>
         </section>
 
-        <section class="onboarding-step" data-step="3">
+        <section class="onboarding-step" data-step="4">
             <h2 id="setupListTitle">設定上課平台</h2>
             <p id="setupListHelp">前 10 個平台可以有不同顏色，第 11 個開始會統一灰色。</p>
             <div class="platform-input-row">
@@ -148,7 +161,7 @@
             <div id="setupPlatformList" class="platform-list"></div>
         </section>
 
-        <section class="onboarding-step" data-step="4">
+        <section class="onboarding-step" data-step="5">
             <h2>準備完成</h2>
             <p>確認後就可以開始使用。之後也能從右上角「設定」修改。</p>
             <div id="setupSummary" class="summary-card"></div>
@@ -172,6 +185,15 @@
             <select id="settingsAppMode">
                 <option value="teacher">教師排課模式</option>
                 <option value="general">一般行事曆模式</option>
+            </select>
+        </div>
+
+        <div class="form-item">
+            <label data-i18n="interfaceLanguage">介面語言</label>
+            <select id="settingsLanguage">
+                <option value="zh-TW">繁體中文</option>
+                <option value="ja">日本語</option>
+                <option value="en">English</option>
             </select>
         </div>
 
@@ -376,6 +398,7 @@
     </div>
 </div>
 
+<script src="./i18n.js"></script>
 <script src="./script.js"></script>
 </body>
 </html>

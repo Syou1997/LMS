@@ -357,6 +357,36 @@ body.mode-general .day-cell.selected .day-num {
     font-weight: 900;
     line-height: 1.25;
     text-shadow: 0 1px 1px rgba(0, 0, 0, .18);
+    cursor: pointer;
+}
+
+.event-tag-item.selected-event {
+    outline: 3px solid rgba(15, 23, 42, .72);
+    outline-offset: 2px;
+}
+
+.event-tag-item.drag-source {
+    opacity: .45;
+}
+
+.event-drag-ghost {
+    position: fixed;
+    z-index: 3000;
+    width: 190px;
+    max-width: calc(100vw - 24px);
+    pointer-events: none;
+    box-shadow: 0 10px 24px rgba(15, 23, 42, .28);
+    opacity: .94;
+}
+
+.day-cell.drop-target {
+    box-shadow: inset 0 0 0 4px #22c55e;
+    background: #f0fdf4;
+}
+
+.day-cell.drop-target.drop-conflict {
+    box-shadow: inset 0 0 0 4px #dc2626;
+    background: #fef2f2;
 }
 
 .event-tag-item span {
