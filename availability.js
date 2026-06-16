@@ -129,7 +129,7 @@ function renderCalendar() {
         html += `
             <div class="day ${date < today ? "past-day" : ""}">
                 <span class="day-num">${day}</span>
-                ${slots.length ? slots.map(renderSlot).join("") : '<div class="none">無</div>'}
+                ${slots.length ? slots.map(renderSlot).join("") : '<div class="none">無排課</div>'}
             </div>
         `;
     }
