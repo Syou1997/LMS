@@ -1,8 +1,8 @@
 window.TEACHER_PUBLIC_SCHEDULE = {
   "version": 2,
-  "updatedAt": "2026-06-16T15:19:29.017Z",
+  "updatedAt": "2026-06-16T15:32:47.033Z",
   "selectedYear": 2026,
-  "selectedMonth": 5,
+  "selectedMonth": 6,
   "settings": {
     "teacherName": "Syou",
     "showTeacherName": false,
@@ -1481,6 +1481,86 @@ window.TEACHER_PUBLIC_SCHEDULE = {
       "id": "1781622950639a1d55b133487d",
       "mode": "teacher",
       "date": "2026-06-25",
+      "start": "20:00",
+      "end": "21:00",
+      "completed": false
+    },
+    {
+      "id": "1781623964725469c1b5964126",
+      "mode": "teacher",
+      "date": "2026-07-08",
+      "start": "20:00",
+      "end": "21:00",
+      "completed": false
+    },
+    {
+      "id": "1781623964725ff9fcb44ce72f",
+      "mode": "teacher",
+      "date": "2026-07-10",
+      "start": "20:00",
+      "end": "21:00",
+      "completed": false
+    },
+    {
+      "id": "1781623964725969d2e4352b3a",
+      "mode": "teacher",
+      "date": "2026-07-15",
+      "start": "20:00",
+      "end": "21:00",
+      "completed": false
+    },
+    {
+      "id": "178162396472569edeb9e1ec808",
+      "mode": "teacher",
+      "date": "2026-07-17",
+      "start": "20:00",
+      "end": "21:00",
+      "completed": false
+    },
+    {
+      "id": "1781623964725845e56a61507",
+      "mode": "teacher",
+      "date": "2026-07-20",
+      "start": "20:00",
+      "end": "21:00",
+      "completed": false
+    },
+    {
+      "id": "1781623964725136d5a1df6446",
+      "mode": "teacher",
+      "date": "2026-07-22",
+      "start": "20:00",
+      "end": "21:00",
+      "completed": false
+    },
+    {
+      "id": "1781623964725388cfe32f4b758",
+      "mode": "teacher",
+      "date": "2026-07-24",
+      "start": "20:00",
+      "end": "21:00",
+      "completed": false
+    },
+    {
+      "id": "178162396472567dcaa7a7a99a",
+      "mode": "teacher",
+      "date": "2026-07-27",
+      "start": "20:00",
+      "end": "21:00",
+      "completed": false
+    },
+    {
+      "id": "17816239647257c2f77e5c04998",
+      "mode": "teacher",
+      "date": "2026-07-29",
+      "start": "20:00",
+      "end": "21:00",
+      "completed": false
+    },
+    {
+      "id": "1781623964725242d47df491c7",
+      "mode": "teacher",
+      "date": "2026-07-31",
       "start": "20:00",
       "end": "21:00",
       "completed": false
