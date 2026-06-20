@@ -319,6 +319,8 @@ body.mode-general .day-cell.selected.completed-day {
     border-radius: 4px;
     font-weight: 900;
     font-size: 18px;
+    cursor: pointer;
+    user-select: none;
 }
 
 .day-cell.selected .day-num {

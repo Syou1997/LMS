@@ -759,6 +759,13 @@ function renderCalendar() {
             currentSelectedDate = dateStr;
             renderCalendar();
         };
+        cell.querySelector(".day-num").onclick = event => {
+            event.stopPropagation();
+            currentSelectedDate = dateStr;
+            renderCalendar();
+            openDetailModal();
+        };
+        cell.querySelector(".day-num").ondblclick = event => event.stopPropagation();
         cell.ondblclick = () => {
             if (!isCombinedMode()) openAddModal(dateStr);
         };
