@@ -1,15 +1,15 @@
 window.TEACHER_PUBLIC_SCHEDULE = {
   "version": 2,
-  "updatedAt": "2026-06-26T07:02:53.732Z",
+  "updatedAt": "2026-06-29T15:05:04.311Z",
   "selectedYear": 2026,
-  "selectedMonth": 5,
+  "selectedMonth": 6,
   "settings": {
     "teacherName": "Syou",
     "showTeacherName": false,
     "baseTimeZone": "UTC+08:00",
     "baseTimeZoneLabel": "台北（GMT+8）",
-    "displayTimeZone": "UTC+08:00",
-    "displayTimeZoneLabel": "台北（GMT+8）",
+    "displayTimeZone": "UTC+09:00",
+    "displayTimeZoneLabel": "東京（GMT+9）",
     "customTimeZones": []
   },
   "events": [
@@ -1582,14 +1582,6 @@ window.TEACHER_PUBLIC_SCHEDULE = {
       "completed": false
     },
     {
-      "id": "17821262259238289d2b9458d18",
-      "mode": "teacher",
-      "date": "2026-06-27",
-      "start": "10:30",
-      "end": "12:00",
-      "completed": false
-    },
-    {
       "id": "17821363445502991a01d1455b",
       "mode": "teacher",
       "date": "2026-06-23",
@@ -1718,14 +1710,6 @@ window.TEACHER_PUBLIC_SCHEDULE = {
       "completed": false
     },
     {
-      "id": "1782303345378c2a316c71c7ad",
-      "mode": "teacher",
-      "date": "2026-07-08",
-      "start": "19:00",
-      "end": "20:00",
-      "completed": false
-    },
-    {
       "id": "178230944528729ce40789b6078",
       "mode": "teacher",
       "date": "2026-06-26",
@@ -1739,6 +1723,30 @@ window.TEACHER_PUBLIC_SCHEDULE = {
       "date": "2026-06-27",
       "start": "14:00",
       "end": "14:40",
+      "completed": false
+    },
+    {
+      "id": "17827454401517ba2fc4453b438",
+      "mode": "teacher",
+      "date": "2026-07-13",
+      "start": "21:00",
+      "end": "21:40",
+      "completed": false
+    },
+    {
+      "id": "17827454401516de270dc345658",
+      "mode": "teacher",
+      "date": "2026-07-20",
+      "start": "21:00",
+      "end": "21:40",
+      "completed": false
+    },
+    {
+      "id": "1782745440151e04dd26b593e28",
+      "mode": "teacher",
+      "date": "2026-07-27",
+      "start": "21:00",
+      "end": "21:40",
       "completed": false
     }
   ],
