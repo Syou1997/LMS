@@ -471,6 +471,21 @@ footer.collapsed {
     background: #ffffff;
 }
 
+#statsFooter.search-results .stat-card {
+    border-color: #f59e0b;
+    background: #fffbeb;
+    box-shadow: inset 0 0 0 1px rgba(245, 158, 11, .18);
+}
+
+#statsFooter.search-results .stat-icon {
+    background: #fef3c7;
+    color: #d97706;
+}
+
+#statsFooter.search-results .stat-label {
+    color: #b45309;
+}
+
 .stat-icon {
     grid-row: span 2;
     width: 32px;
@@ -518,8 +533,16 @@ body.mode-general .stat-icon {
     background: linear-gradient(90deg, #22c55e, #4f8ee8);
 }
 
+#statsFooter.search-results .progress-fill {
+    background: linear-gradient(90deg, #f59e0b, #f97316);
+}
+
 body.mode-general .progress-fill {
     background: linear-gradient(90deg, #14b8a6, #0f766e);
+}
+
+body.mode-general #statsFooter.search-results .progress-fill {
+    background: linear-gradient(90deg, #f59e0b, #f97316);
 }
 
 .mobile-add-btn {

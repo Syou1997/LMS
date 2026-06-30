@@ -1280,10 +1280,15 @@ function updateFooterStats() {
     const year = Number(yearSelect.value);
     const month = Number(monthSelect.value);
     const now = new Date();
+    const searchActive = Boolean(getSearchKeyword());
+    const searchPrefix = searchActive ? l("搜尋結果：", "検索結果：", "Search: ") : "";
     const monthEvents = events.filter(item => {
         const [eventYear, eventMonth] = item.date.split("-").map(Number);
         return eventBelongsToCurrentMode(item) && eventYear === year && eventMonth === month + 1;
-    });
+    }).filter(item => !searchActive || eventMatchesSearch(item));
+    const selectedDayEvents = events
+        .filter(item => eventBelongsToCurrentMode(item) && item.date === currentSelectedDate)
+        .filter(item => !searchActive || eventMatchesSearch(item));
     let totalMinutes = 0;
     let completedCount = 0;
     let moneyTotal = 0;
@@ -1296,12 +1301,16 @@ function updateFooterStats() {
         moneyTotal += isTeacherMode() ? Number(item.fee || 0) : getGeneralExpenseTotal(item);
     });
     const completionRate = monthEvents.length === 0 ? 0 : Math.round((completedCount / monthEvents.length) * 100);
+    $("statsFooter").classList.toggle("search-results", searchActive);
+    $("monthCountLabel").innerText = `${searchPrefix}${isTeacherMode() ? t("本月課程") : l("本月行程", "今月の予定", "Events this month")}`;
+    $("monthHoursLabel").innerText = `${searchPrefix}${isTeacherMode() ? t("本月時數") : l("本月安排時數", "今月の予定時間", "Scheduled hours this month")}`;
+    $("moneyStatLabel").innerText = `${searchPrefix}${isTeacherMode() ? t("預計總收入") : l("目前本月總花費", "今月の支出", "Expenses this month")}`;
     $("monthCount").innerText = monthEvents.length;
     $("monthHours").innerText = Math.floor(totalMinutes / 60);
     $("monthCompletionRate").innerText = `${completionRate}%`;
     $("completionProgress").style.width = `${completionRate}%`;
-    $("selectedDateLabel").innerText = currentSelectedDate === formatDate(now) ? "今日" : currentSelectedDate.slice(5);
-    $("selectedDayCount").innerText = events.filter(item => eventBelongsToCurrentMode(item) && item.date === currentSelectedDate).length;
+    $("selectedDateLabel").innerText = `${searchPrefix}${currentSelectedDate === formatDate(now) ? l("今日", "今日", "Today") : currentSelectedDate.slice(5)}`;
+    $("selectedDayCount").innerText = selectedDayEvents.length;
     $("estimatedIncome").innerText = moneyTotal.toLocaleString();
 }
 
