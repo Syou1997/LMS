@@ -1,6 +1,6 @@
 window.TEACHER_PUBLIC_SCHEDULE = {
   "version": 2,
-  "updatedAt": "2026-06-29T15:05:04.311Z",
+  "updatedAt": "2026-06-30T06:18:20.038Z",
   "selectedYear": 2026,
   "selectedMonth": 6,
   "settings": {
@@ -8,8 +8,8 @@ window.TEACHER_PUBLIC_SCHEDULE = {
     "showTeacherName": false,
     "baseTimeZone": "UTC+08:00",
     "baseTimeZoneLabel": "台北（GMT+8）",
-    "displayTimeZone": "UTC+09:00",
-    "displayTimeZoneLabel": "東京（GMT+9）",
+    "displayTimeZone": "UTC+08:00",
+    "displayTimeZoneLabel": "台北（GMT+8）",
     "customTimeZones": []
   },
   "events": [
@@ -1747,6 +1747,78 @@ window.TEACHER_PUBLIC_SCHEDULE = {
       "date": "2026-07-27",
       "start": "21:00",
       "end": "21:40",
+      "completed": false
+    },
+    {
+      "id": "17828001813413bad69eb73bcc",
+      "mode": "teacher",
+      "date": "2026-07-01",
+      "start": "20:00",
+      "end": "21:00",
+      "completed": false
+    },
+    {
+      "id": "1782800181341ecad90dd1b2eb",
+      "mode": "teacher",
+      "date": "2026-07-03",
+      "start": "20:00",
+      "end": "21:00",
+      "completed": false
+    },
+    {
+      "id": "178280028445136f3b104169ac8",
+      "mode": "teacher",
+      "date": "2026-07-02",
+      "start": "18:00",
+      "end": "18:40",
+      "completed": false
+    },
+    {
+      "id": "1782800284451dd2ad3a65562b",
+      "mode": "teacher",
+      "date": "2026-07-10",
+      "start": "18:00",
+      "end": "18:40",
+      "completed": false
+    },
+    {
+      "id": "1782800284451aa33fa07f93978",
+      "mode": "teacher",
+      "date": "2026-07-13",
+      "start": "18:00",
+      "end": "18:40",
+      "completed": false
+    },
+    {
+      "id": "1782800284451f02b32423bd938",
+      "mode": "teacher",
+      "date": "2026-07-17",
+      "start": "18:00",
+      "end": "18:40",
+      "completed": false
+    },
+    {
+      "id": "17828002844517f335d4d876b88",
+      "mode": "teacher",
+      "date": "2026-07-20",
+      "start": "18:00",
+      "end": "18:40",
+      "completed": false
+    },
+    {
+      "id": "1782800284451ac9195baf1a3a",
+      "mode": "teacher",
+      "date": "2026-07-24",
+      "start": "18:00",
+      "end": "18:40",
+      "completed": false
+    },
+    {
+      "id": "1782800284451bd12651f580be",
+      "mode": "teacher",
+      "date": "2026-07-27",
+      "start": "18:00",
+      "end": "18:40",
       "completed": false
     }
   ],
