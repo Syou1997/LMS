@@ -1,6 +1,6 @@
 window.TEACHER_PUBLIC_SCHEDULE = {
   "version": 2,
-  "updatedAt": "2026-06-30T13:31:24.369Z",
+  "updatedAt": "2026-07-01T10:26:46.267Z",
   "selectedYear": 2026,
   "selectedMonth": 6,
   "settings": {
@@ -8,8 +8,8 @@ window.TEACHER_PUBLIC_SCHEDULE = {
     "showTeacherName": false,
     "baseTimeZone": "UTC+08:00",
     "baseTimeZoneLabel": "台北（GMT+8）",
-    "displayTimeZone": "UTC+08:00",
-    "displayTimeZoneLabel": "台北（GMT+8）",
+    "displayTimeZone": "UTC+09:00",
+    "displayTimeZoneLabel": "東京（GMT+9）",
     "customTimeZones": []
   },
   "events": [
@@ -1238,14 +1238,6 @@ window.TEACHER_PUBLIC_SCHEDULE = {
       "completed": false
     },
     {
-      "id": "1779902614692c488396e792db",
-      "mode": "teacher",
-      "date": "2026-07-31",
-      "start": "07:30",
-      "end": "18:00",
-      "completed": false
-    },
-    {
       "id": "178101738532175b6819ddede6",
       "mode": "teacher",
       "date": "2026-06-12",
@@ -1297,8 +1289,8 @@ window.TEACHER_PUBLIC_SCHEDULE = {
       "id": "1781145381261c81d29cb864418",
       "mode": "general",
       "date": "2026-07-23",
-      "start": "19:00",
-      "end": "21:30",
+      "start": "18:00",
+      "end": "23:00",
       "completed": false
     },
     {
@@ -1843,6 +1835,22 @@ window.TEACHER_PUBLIC_SCHEDULE = {
       "date": "2026-07-01",
       "start": "18:30",
       "end": "19:30",
+      "completed": false
+    },
+    {
+      "id": "17829014524770807b0399dcd68",
+      "mode": "general",
+      "date": "2026-07-31",
+      "start": "23:00",
+      "end": "20:00",
+      "completed": false
+    },
+    {
+      "id": "1782901521335808d042265d79",
+      "mode": "general",
+      "date": "2026-07-09",
+      "start": "18:00",
+      "end": "23:00",
       "completed": false
     }
   ],
