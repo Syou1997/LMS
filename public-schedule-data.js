@@ -1,6 +1,6 @@
 window.TEACHER_PUBLIC_SCHEDULE = {
   "version": 2,
-  "updatedAt": "2026-07-12T13:21:33.055Z",
+  "updatedAt": "2026-07-12T14:47:51.176Z",
   "selectedYear": 2026,
   "selectedMonth": 7,
   "settings": {
@@ -2651,6 +2651,166 @@ window.TEACHER_PUBLIC_SCHEDULE = {
       "date": "2026-08-26",
       "start": "19:00",
       "end": "19:40",
+      "completed": false
+    },
+    {
+      "id": "17838675488825b6412998fab7",
+      "mode": "teacher",
+      "date": "2026-07-13",
+      "start": "22:00",
+      "end": "22:50",
+      "completed": false
+    },
+    {
+      "id": "178386754888226157280ad80e8",
+      "mode": "teacher",
+      "date": "2026-07-15",
+      "start": "22:00",
+      "end": "22:50",
+      "completed": false
+    },
+    {
+      "id": "17838675488821f793da167d8b8",
+      "mode": "teacher",
+      "date": "2026-07-17",
+      "start": "22:00",
+      "end": "22:50",
+      "completed": false
+    },
+    {
+      "id": "178386754888238ef15c5a18568",
+      "mode": "teacher",
+      "date": "2026-07-20",
+      "start": "22:00",
+      "end": "22:50",
+      "completed": false
+    },
+    {
+      "id": "1783867548882e8a205d1728558",
+      "mode": "teacher",
+      "date": "2026-07-22",
+      "start": "22:00",
+      "end": "22:50",
+      "completed": false
+    },
+    {
+      "id": "17838675488829ec5f85158cc8",
+      "mode": "teacher",
+      "date": "2026-07-24",
+      "start": "22:00",
+      "end": "22:50",
+      "completed": false
+    },
+    {
+      "id": "1783867548882ded64ebb2c863",
+      "mode": "teacher",
+      "date": "2026-07-27",
+      "start": "22:00",
+      "end": "22:50",
+      "completed": false
+    },
+    {
+      "id": "1783867548882a794dbf2581d28",
+      "mode": "teacher",
+      "date": "2026-07-29",
+      "start": "22:00",
+      "end": "22:50",
+      "completed": false
+    },
+    {
+      "id": "17838675488822c2fd5f911f2a8",
+      "mode": "teacher",
+      "date": "2026-07-31",
+      "start": "22:00",
+      "end": "22:50",
+      "completed": false
+    },
+    {
+      "id": "178386766515492ee5825f4a51",
+      "mode": "teacher",
+      "date": "2026-08-03",
+      "start": "22:00",
+      "end": "22:50",
+      "completed": false
+    },
+    {
+      "id": "17838676651546a3761265ae068",
+      "mode": "teacher",
+      "date": "2026-08-05",
+      "start": "22:00",
+      "end": "22:50",
+      "completed": false
+    },
+    {
+      "id": "1783867665154c9deeaba6f9f18",
+      "mode": "teacher",
+      "date": "2026-08-07",
+      "start": "22:00",
+      "end": "22:50",
+      "completed": false
+    },
+    {
+      "id": "1783867665154dcbbe10d14eaa8",
+      "mode": "teacher",
+      "date": "2026-08-10",
+      "start": "22:00",
+      "end": "22:50",
+      "completed": false
+    },
+    {
+      "id": "17838676651547424d2a25aaf3",
+      "mode": "teacher",
+      "date": "2026-08-12",
+      "start": "22:00",
+      "end": "22:50",
+      "completed": false
+    },
+    {
+      "id": "1783867665154f0746e0b6dd258",
+      "mode": "teacher",
+      "date": "2026-08-14",
+      "start": "22:00",
+      "end": "22:50",
+      "completed": false
+    },
+    {
+      "id": "17838676651540e20d142f3fdd",
+      "mode": "teacher",
+      "date": "2026-08-17",
+      "start": "22:00",
+      "end": "22:50",
+      "completed": false
+    },
+    {
+      "id": "1783867665154237341c2592548",
+      "mode": "teacher",
+      "date": "2026-08-19",
+      "start": "22:00",
+      "end": "22:50",
+      "completed": false
+    },
+    {
+      "id": "1783867665154b6b83d1fa0cd",
+      "mode": "teacher",
+      "date": "2026-08-21",
+      "start": "22:00",
+      "end": "22:50",
+      "completed": false
+    },
+    {
+      "id": "1783867665154f431a804716d48",
+      "mode": "teacher",
+      "date": "2026-08-24",
+      "start": "22:00",
+      "end": "22:50",
+      "completed": false
+    },
+    {
+      "id": "1783867665154cd47bfebcb1b5",
+      "mode": "teacher",
+      "date": "2026-08-26",
+      "start": "22:00",
+      "end": "22:50",
       "completed": false
     }
   ],
