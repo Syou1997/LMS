@@ -1,6 +1,6 @@
 window.TEACHER_PUBLIC_SCHEDULE = {
   "version": 2,
-  "updatedAt": "2026-07-21T13:51:27.341Z",
+  "updatedAt": "2026-07-22T02:57:26.874Z",
   "selectedYear": 2026,
   "selectedMonth": 6,
   "settings": {
@@ -1934,14 +1934,6 @@ window.TEACHER_PUBLIC_SCHEDULE = {
       "completed": false
     },
     {
-      "id": "1784023826389654279f4eb5d8",
-      "mode": "teacher",
-      "date": "2026-07-25",
-      "start": "09:00",
-      "end": "10:30",
-      "completed": false
-    },
-    {
       "id": "1782198893906aa39410492bd8",
       "mode": "teacher",
       "date": "2026-07-25",
@@ -2118,14 +2110,6 @@ window.TEACHER_PUBLIC_SCHEDULE = {
       "completed": false
     },
     {
-      "id": "1784023853254c3640fc03be5a8",
-      "mode": "teacher",
-      "date": "2026-08-01",
-      "start": "09:00",
-      "end": "10:30",
-      "completed": false
-    },
-    {
       "id": "17840239641304c94efcba85078",
       "mode": "teacher",
       "date": "2026-08-01",
@@ -2254,14 +2238,6 @@ window.TEACHER_PUBLIC_SCHEDULE = {
       "completed": false
     },
     {
-      "id": "1784023853254748f10d0636f6",
-      "mode": "teacher",
-      "date": "2026-08-08",
-      "start": "09:00",
-      "end": "10:30",
-      "completed": false
-    },
-    {
       "id": "178402396413066d0418fcd226",
       "mode": "teacher",
       "date": "2026-08-08",
@@ -2379,14 +2355,6 @@ window.TEACHER_PUBLIC_SCHEDULE = {
       "date": "2026-08-14",
       "start": "22:00",
       "end": "22:50",
-      "completed": false
-    },
-    {
-      "id": "1784023853254912ca497a0a22",
-      "mode": "teacher",
-      "date": "2026-08-15",
-      "start": "09:00",
-      "end": "10:30",
       "completed": false
     },
     {
@@ -2510,14 +2478,6 @@ window.TEACHER_PUBLIC_SCHEDULE = {
       "completed": false
     },
     {
-      "id": "1784023853254d4cb7d1be08d18",
-      "mode": "teacher",
-      "date": "2026-08-22",
-      "start": "09:00",
-      "end": "10:30",
-      "completed": false
-    },
-    {
       "id": "17840239641305bd06ed7f89438",
       "mode": "teacher",
       "date": "2026-08-22",
@@ -2627,14 +2587,6 @@ window.TEACHER_PUBLIC_SCHEDULE = {
       "date": "2026-08-28",
       "start": "22:00",
       "end": "22:50",
-      "completed": false
-    },
-    {
-      "id": "17840238532548f6f15c12dfb",
-      "mode": "teacher",
-      "date": "2026-08-29",
-      "start": "09:00",
-      "end": "10:30",
       "completed": false
     },
     {
