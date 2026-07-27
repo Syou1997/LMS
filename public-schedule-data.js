@@ -1,6 +1,6 @@
 window.TEACHER_PUBLIC_SCHEDULE = {
   "version": 2,
-  "updatedAt": "2026-07-26T13:07:56.419Z",
+  "updatedAt": "2026-07-27T13:48:18.751Z",
   "selectedYear": 2026,
   "selectedMonth": 6,
   "settings": {
@@ -8,8 +8,8 @@ window.TEACHER_PUBLIC_SCHEDULE = {
     "showTeacherName": false,
     "baseTimeZone": "UTC+08:00",
     "baseTimeZoneLabel": "台北（GMT+8）",
-    "displayTimeZone": "UTC+08:00",
-    "displayTimeZoneLabel": "台北（GMT+8）",
+    "displayTimeZone": "UTC+09:00",
+    "displayTimeZoneLabel": "東京（GMT+9）",
     "customTimeZones": []
   },
   "events": [
@@ -2022,14 +2022,6 @@ window.TEACHER_PUBLIC_SCHEDULE = {
       "completed": false
     },
     {
-      "id": "17816239647257c2f77e5c04998",
-      "mode": "teacher",
-      "date": "2026-07-29",
-      "start": "20:00",
-      "end": "20:50",
-      "completed": false
-    },
-    {
       "id": "17842864896225fd6e549c03048",
       "mode": "teacher",
       "date": "2026-07-29",
@@ -2075,14 +2067,6 @@ window.TEACHER_PUBLIC_SCHEDULE = {
       "date": "2026-07-31",
       "start": "14:00",
       "end": "20:00",
-      "completed": false
-    },
-    {
-      "id": "1781623964725242d47df491c7",
-      "mode": "teacher",
-      "date": "2026-07-31",
-      "start": "20:00",
-      "end": "20:50",
       "completed": false
     },
     {
@@ -2174,14 +2158,6 @@ window.TEACHER_PUBLIC_SCHEDULE = {
       "completed": false
     },
     {
-      "id": "178376966699972fb7ddc2c4268",
-      "mode": "teacher",
-      "date": "2026-08-05",
-      "start": "20:00",
-      "end": "20:50",
-      "completed": false
-    },
-    {
       "id": "17838676651546a3761265ae068",
       "mode": "teacher",
       "date": "2026-08-05",
@@ -2203,14 +2179,6 @@ window.TEACHER_PUBLIC_SCHEDULE = {
       "date": "2026-08-07",
       "start": "07:30",
       "end": "18:00",
-      "completed": false
-    },
-    {
-      "id": "17837696669995c57c15882ec38",
-      "mode": "teacher",
-      "date": "2026-08-07",
-      "start": "20:00",
-      "end": "20:50",
       "completed": false
     },
     {
@@ -2302,14 +2270,6 @@ window.TEACHER_PUBLIC_SCHEDULE = {
       "completed": false
     },
     {
-      "id": "17837696669993376214db204f",
-      "mode": "teacher",
-      "date": "2026-08-12",
-      "start": "20:00",
-      "end": "20:50",
-      "completed": false
-    },
-    {
       "id": "17838676651547424d2a25aaf3",
       "mode": "teacher",
       "date": "2026-08-12",
@@ -2323,14 +2283,6 @@ window.TEACHER_PUBLIC_SCHEDULE = {
       "date": "2026-08-14",
       "start": "07:30",
       "end": "18:00",
-      "completed": false
-    },
-    {
-      "id": "178376966699942dfe5f86b64f8",
-      "mode": "teacher",
-      "date": "2026-08-14",
-      "start": "20:00",
-      "end": "20:50",
       "completed": false
     },
     {
@@ -2419,14 +2371,6 @@ window.TEACHER_PUBLIC_SCHEDULE = {
       "date": "2026-08-19",
       "start": "19:00",
       "end": "19:40",
-      "completed": false
-    },
-    {
-      "id": "178376966699976504c8c207eb",
-      "mode": "teacher",
-      "date": "2026-08-19",
-      "start": "20:00",
-      "end": "20:50",
       "completed": false
     },
     {
@@ -3075,6 +3019,38 @@ window.TEACHER_PUBLIC_SCHEDULE = {
       "date": "2026-08-02",
       "start": "17:40",
       "end": "22:00",
+      "completed": false
+    },
+    {
+      "id": "1785159990269814ff329b581a8",
+      "mode": "teacher",
+      "date": "2026-07-31",
+      "start": "20:00",
+      "end": "20:50",
+      "completed": false
+    },
+    {
+      "id": "1785159990269232a9c8b88fd8",
+      "mode": "teacher",
+      "date": "2026-08-07",
+      "start": "20:00",
+      "end": "20:50",
+      "completed": false
+    },
+    {
+      "id": "1785159990269d6fba60c4b175",
+      "mode": "teacher",
+      "date": "2026-08-14",
+      "start": "20:00",
+      "end": "20:50",
+      "completed": false
+    },
+    {
+      "id": "1785159990269f9f5bcab81fe",
+      "mode": "teacher",
+      "date": "2026-08-28",
+      "start": "20:00",
+      "end": "20:50",
       "completed": false
     }
   ],
