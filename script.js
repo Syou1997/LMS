@@ -293,6 +293,11 @@ function bindEvents() {
         ensureTimeOptionExists("endTimeSelect", endVal);
         $("endTimeSelect").value = endVal;
     };
+    $("copyTargetDate").onchange = () => {
+        if (!$("copyTargetDate").value) return;
+        currentSelectedDate = $("copyTargetDate").value;
+        updateCopyModalTitle();
+    };
 }
 
 function toggleFooter() {
@@ -779,6 +784,7 @@ function renderMiniEvent(eventItem) {
     const style = getEventStyle(eventItem);
     const actions = isCombinedMode() ? "" : `
                 <button class="event-action" onclick="openEditModal('${eventItem.id}', event)" title="編輯">✎</button>
+                <button class="event-action" onclick="openCopyModal('${eventItem.id}', event)" title="${t("複製")}">⧉</button>
                 <button class="event-action" onclick="openDeleteModal('${eventItem.id}', event)" title="刪除">×</button>`;
     return `
         <div class="event-tag-item ${selectedEventId === eventItem.id ? "selected-event" : ""} ${isEventCompleted(eventItem) ? "completed-event" : ""}" data-event-id="${eventItem.id}" style="background:${style.color};color:${style.textColor};${style.textColor === "#222222" ? "text-shadow:none;" : ""}">
@@ -937,8 +943,8 @@ function openAddModal(dateStr) {
     $("scheduleForm").reset();
     $("editEventId").value = "";
     $("repeatSelect").disabled = false;
-    customRepeatDates = [];
-    renderCustomRepeatSummary();
+    resetRepeatState();
+    setCopyMode(false);
     resetInputToggles();
     clearExpenseRows();
     if (!isTeacherMode()) addExpenseRow();
@@ -955,14 +961,80 @@ function openEditModal(id, e) {
     if (!target) return;
     populateItemSelects();
     fillTimeOptions();
+    $("scheduleForm").reset();
     resetInputToggles();
     clearExpenseRows();
     setAddModalModeUI();
     $("editEventId").value = id;
     $("repeatSelect").value = "none";
     $("repeatSelect").disabled = true;
+    resetRepeatState();
+    setCopyMode(false);
     $("addModalDateTitle").innerText = `${isTeacherMode() ? l("編輯課程", "レッスンを編集", "Edit lesson") : l("編輯行程", "予定を編集", "Edit event")}：${target.date}`;
     updateModalTimezoneHint();
+    fillScheduleFormFromEvent(target);
+    $("addModal").style.display = "block";
+}
+
+function openCopyModal(id, e) {
+    if (e) e.stopPropagation();
+    if (isCombinedMode()) return;
+    const target = events.find(eventItem => eventItem.id === id);
+    if (!target) return;
+    currentSelectedDate = target.date;
+    populateItemSelects();
+    fillTimeOptions();
+    $("scheduleForm").reset();
+    resetInputToggles();
+    clearExpenseRows();
+    setAddModalModeUI();
+    $("editEventId").value = "";
+    $("repeatSelect").value = "none";
+    $("repeatSelect").disabled = false;
+    resetRepeatState();
+    setCopyMode(true, target.date);
+    updateCopyModalTitle();
+    updateModalTimezoneHint();
+    fillScheduleFormFromEvent(target);
+    closeModal("detailModal");
+    $("addModal").style.display = "block";
+}
+
+function setAddModalModeUI() {
+    $("teacherFields").classList.toggle("hidden", !isTeacherMode());
+    $("generalFields").classList.toggle("hidden", isTeacherMode());
+    $("generalNoteField").classList.remove("hidden");
+    $("generalTimeHint").classList.toggle("hidden", isTeacherMode());
+    $("contentLabel").innerText = isTeacherMode() ? t("課程內容") : l("內容（必填）", "内容（必須）", "Details (required)");
+    $("courseContent").placeholder = isTeacherMode() ? t("請輸入教材或進度...") : l("請輸入行程內容...", "予定の内容を入力...", "Enter event details...");
+    $("timeFieldLabel").innerText = isTeacherMode() ? t("時間範圍") : l("時間（選填）", "時間（任意）", "Time (optional)");
+    $("repeatText").innerText = isTeacherMode() ? t("排課") : t("行程");
+}
+
+function setCopyMode(enabled, dateStr = currentSelectedDate) {
+    $("copyModeBox").classList.toggle("hidden", !enabled);
+    if (!enabled) {
+        $("copyTargetDate").value = "";
+        return;
+    }
+    $("copyModeLabel").innerText = l("目前是複製模式", "現在はコピーモードです", "Copy mode");
+    $("copyModeHelp").innerText = l("請確認要複製到哪一天，再按確認儲存。", "コピー先の日付を確認してから保存してください。", "Choose the target date, then save.");
+    $("copyTargetDate").value = dateStr;
+}
+
+function updateCopyModalTitle() {
+    if ($("copyModeBox").classList.contains("hidden")) return;
+    const dateStr = $("copyTargetDate").value || currentSelectedDate;
+    $("addModalDateTitle").innerText = `${isTeacherMode() ? l("複製課程", "レッスンをコピー", "Copy lesson") : l("複製行程", "予定をコピー", "Copy event")}：${dateStr}`;
+}
+
+function resetRepeatState() {
+    customRepeatDates = [];
+    pendingCustomRepeatDates = [];
+    renderCustomRepeatSummary();
+}
+
+function fillScheduleFormFromEvent(target) {
     if (isTeacherMode()) {
         setSelectOrCustom("platformSelect", "platformInput", target.platform);
         $("courseFee").value = target.fee || "";
@@ -983,18 +1055,6 @@ function openEditModal(id, e) {
     $("startTimeInput").value = displayStart;
     $("endTimeInput").value = displayEnd;
     $("courseContent").value = target.content || "";
-    $("addModal").style.display = "block";
-}
-
-function setAddModalModeUI() {
-    $("teacherFields").classList.toggle("hidden", !isTeacherMode());
-    $("generalFields").classList.toggle("hidden", isTeacherMode());
-    $("generalNoteField").classList.remove("hidden");
-    $("generalTimeHint").classList.toggle("hidden", isTeacherMode());
-    $("contentLabel").innerText = isTeacherMode() ? t("課程內容") : l("內容（必填）", "内容（必須）", "Details (required)");
-    $("courseContent").placeholder = isTeacherMode() ? t("請輸入教材或進度...") : l("請輸入行程內容...", "予定の内容を入力...", "Enter event details...");
-    $("timeFieldLabel").innerText = isTeacherMode() ? t("時間範圍") : l("時間（選填）", "時間（任意）", "Time (optional)");
-    $("repeatText").innerText = isTeacherMode() ? t("排課") : t("行程");
 }
 
 function updateModalTimezoneHint() {
@@ -1043,7 +1103,10 @@ function setSelectOrCustom(selectId, inputId, value) {
 function submitScheduleForm(e) {
     e.preventDefault();
     const editId = $("editEventId").value;
-    const targetDate = editId ? events.find(item => item.id === editId)?.date || currentSelectedDate : currentSelectedDate;
+    const isCopyMode = !$("copyModeBox").classList.contains("hidden");
+    const copyDate = $("copyTargetDate").value;
+    if (isCopyMode && !copyDate) return alert("請選擇要複製到哪一天。");
+    const targetDate = editId ? events.find(item => item.id === editId)?.date || currentSelectedDate : (isCopyMode ? copyDate : currentSelectedDate);
     const start = !$("timeInputGroup").classList.contains("hidden") ? $("startTimeInput").value.trim() : $("startTimeSelect").value;
     const end = !$("timeInputGroup").classList.contains("hidden") ? $("endTimeInput").value.trim() : $("endTimeSelect").value;
     const validation = validateTimeRange(start, end);
@@ -1104,6 +1167,9 @@ function submitScheduleForm(e) {
 
     saveData();
     closeModal("addModal");
+    resetRepeatState();
+    setCopyMode(false);
+    currentSelectedDate = targetDate;
     renderCalendar();
     showToast(isTeacherMode() ? "課程已儲存。" : "行程已儲存。", false);
 }
@@ -1263,8 +1329,9 @@ function renderDetailEvent(eventItem) {
     return `
         <div class="detail-event ${isEventCompleted(eventItem) ? "completed" : ""}">
             <div class="detail-actions ${isCombinedMode() ? "hidden" : ""}">
-                <button class="detail-action edit" onclick="openEditModal('${eventItem.id}')">編輯</button>
-                <button class="detail-action delete" onclick="openDeleteModal('${eventItem.id}', event)">刪除</button>
+                <button class="detail-action edit" onclick="openEditModal('${eventItem.id}')">${t("編輯")}</button>
+                <button class="detail-action copy" onclick="openCopyModal('${eventItem.id}', event)">${t("複製")}</button>
+                <button class="detail-action delete" onclick="openDeleteModal('${eventItem.id}', event)">${t("刪除")}</button>
             </div>
             <strong>${title}</strong><br>${body}
         </div>
@@ -1699,8 +1766,7 @@ function getRepeatDates(startDate, repeatMode) {
 }
 
 function handleRepeatModeChange() {
-    customRepeatDates = [];
-    renderCustomRepeatSummary();
+    resetRepeatState();
     if ($("repeatSelect").value === "custom") openCustomRepeatModal();
 }
 

@@ -418,6 +418,38 @@ body.mode-general .day-cell.selected .day-num {
     text-decoration: line-through;
 }
 
+.copy-mode-box {
+    display: grid;
+    gap: 8px;
+    margin: 12px 0 16px;
+    padding: 12px;
+    border: 1px solid #f59e0b;
+    border-radius: var(--radius);
+    background: #fffbeb;
+    color: #92400e;
+}
+
+.copy-mode-box strong {
+    font-size: 15px;
+}
+
+.copy-mode-box span {
+    color: #b45309;
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.copy-mode-box label {
+    display: grid;
+    gap: 6px;
+    color: #7c2d12;
+    font-weight: 900;
+}
+
+.copy-mode-box.hidden {
+    display: none;
+}
+
 .no-match-text {
     color: #94a3b8;
     font-size: 12px;
@@ -923,6 +955,7 @@ body.mode-general .detail-event { border-left-color: var(--general-header); }
 }
 
 .detail-action.edit { background: var(--primary); }
+.detail-action.copy { background: #d97706; }
 .detail-action.delete { background: var(--red); }
 
 .preview-scroll {

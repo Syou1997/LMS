@@ -272,6 +272,13 @@
     <div class="modal-box slide-up">
         <button class="close" onclick="closeModal('addModal')">×</button>
         <div class="add-title" id="addModalDateTitle">新增排課</div>
+        <div class="copy-mode-box hidden" id="copyModeBox">
+            <strong id="copyModeLabel">目前是複製模式</strong>
+            <span id="copyModeHelp">請確認要複製到哪一天，再按確認儲存。</span>
+            <label>複製到日期
+                <input type="date" id="copyTargetDate">
+            </label>
+        </div>
 
         <form id="scheduleForm">
             <input type="hidden" id="editEventId">

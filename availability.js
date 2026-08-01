@@ -86,6 +86,8 @@ function populateTimezones() {
 }
 
 function bindControls() {
+    $("prevMonthBtn").onclick = () => changeMonth(-1);
+    $("nextMonthBtn").onclick = () => changeMonth(1);
     $("yearSelect").onchange = () => {
         state.year = Number($("yearSelect").value);
         render();
@@ -100,6 +102,24 @@ function bindControls() {
         state.displayTimeZoneLabel = selectedTimeZone.label;
         render();
     };
+}
+
+function changeMonth(offset) {
+    const target = new Date(state.year, state.month + offset, 1);
+    state.year = target.getFullYear();
+    state.month = target.getMonth();
+    ensureYearOption(state.year);
+    $("yearSelect").value = state.year;
+    $("monthSelect").value = state.month;
+    render();
+}
+
+function ensureYearOption(year) {
+    if (Array.from($("yearSelect").options).some(option => Number(option.value) === year)) return;
+    $("yearSelect").add(new Option(`${year} 年`, year));
+    const sorted = Array.from($("yearSelect").options).sort((a, b) => Number(a.value) - Number(b.value));
+    $("yearSelect").innerHTML = "";
+    sorted.forEach(option => $("yearSelect").add(option));
 }
 
 function render() {
@@ -129,7 +149,7 @@ function renderCalendar() {
         html += `
             <div class="day ${date < today ? "past-day" : ""}">
                 <span class="day-num">${day}</span>
-                ${slots.length ? slots.map(renderSlot).join("") : '<div class="none">無排課</div>'}
+                ${slots.length ? slots.map(renderSlot).join("") : '<div class="none">無</div>'}
             </div>
         `;
     }
