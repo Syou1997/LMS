@@ -79,6 +79,28 @@
         #monthSelect { min-width: 100px; }
         #timezoneSelect { min-width: 230px; }
 
+        .month-control {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .month-arrow {
+            width: 40px;
+            min-height: 40px;
+            border: 1px solid rgba(255, 255, 255, .36);
+            border-radius: 8px;
+            color: #0f172a;
+            background: #ffffff;
+            font: inherit;
+            font-weight: 900;
+            cursor: pointer;
+        }
+
+        .month-arrow:hover {
+            background: #eef4ff;
+        }
+
         main {
             max-width: 1400px;
             margin: 0 auto;
@@ -206,6 +228,8 @@
             .header-inner { padding: 24px 16px; }
             main { padding: 0 16px 22px; }
             .controls { justify-content: flex-start; }
+            .month-control { width: 100%; }
+            .month-control #monthSelect { flex: 1 1 auto; }
             #yearSelect, #monthSelect, #timezoneSelect { width: 100%; min-width: 0; }
             .calendar {
                 overflow-x: visible;
@@ -253,7 +277,11 @@
         </div>
         <div class="controls">
             <select id="yearSelect" aria-label="選擇年份"></select>
-            <select id="monthSelect"></select>
+            <div class="month-control">
+                <button type="button" class="month-arrow" id="prevMonthBtn" aria-label="上一個月">‹</button>
+                <select id="monthSelect"></select>
+                <button type="button" class="month-arrow" id="nextMonthBtn" aria-label="下一個月">›</button>
+            </div>
             <select id="timezoneSelect" aria-label="選擇顯示時區"></select>
         </div>
     </div>
