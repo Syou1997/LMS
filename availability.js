@@ -123,7 +123,7 @@ function ensureYearOption(year) {
 }
 
 function render() {
-    $("pageTitle").innerText = `${state.year} 年 ${state.month + 1} 月不可預約的時間`;
+    $("pageTitle").innerText = `${state.year} 年 ${state.month + 1} 月已排課的時間`;
     $("timezoneLabel").innerText = `時區：${getTimezoneLabelByValue(state.displayTimeZone, state.displayTimeZoneLabel)}`;
     $("updatedAt").innerText = `最後更新：${formatUpdatedAt(PUBLIC_DATA.updatedAt, state.displayTimeZone)}`;
     renderWeekdays();
