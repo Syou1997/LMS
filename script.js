@@ -1523,7 +1523,7 @@ function createScheduleImageData() {
     ctx.fillRect(0, 0, width, titleHeight + padding);
     ctx.fillStyle = "#ffffff";
     ctx.font = "bold 40px Microsoft JhengHei, Arial";
-    ctx.fillText(isCombinedMode() ? `${year} 年 ${month + 1} 月綜合行程表` : isTeacherMode() ? `${year} 年 ${month + 1} 月不可預約的時間` : `${year} 年 ${month + 1} 月行程表`, padding, 76);
+    ctx.fillText(isCombinedMode() ? `${year} 年 ${month + 1} 月綜合行程表` : isTeacherMode() ? `${year} 年 ${month + 1} 月已排課的時間` : `${year} 年 ${month + 1} 月行程表`, padding, 76);
     ctx.font = "22px Microsoft JhengHei, Arial";
     ctx.fillText(`時區：${getTimezoneLabelByValue(settings.displayTimeZone, settings.displayTimeZoneLabel)}`, padding, 112);
     ctx.fillText(`最後更新：${formatDisplayDateTime(new Date())}`, padding, 146);
@@ -1590,7 +1590,7 @@ function createScheduleImageData() {
     ctx.fillStyle = "#667085";
     ctx.font = "18px Microsoft JhengHei, Arial";
     ctx.textAlign = "center";
-    ctx.fillText(isCombinedMode() ? "圖片顯示本月課程與一般行程時間。" : isTeacherMode() ? "圖片僅顯示不可預約的時間；其他時段請再與老師確認。" : "圖片顯示本月行程時間與內容。", width / 2, height - 20);
+    ctx.fillText(isCombinedMode() ? "圖片顯示本月課程與一般行程時間。" : isTeacherMode() ? "圖片僅顯示已排課的時間；其他時段請再與老師確認。" : "圖片顯示本月行程時間與內容。", width / 2, height - 20);
     return {
         dataUrl: canvas.toDataURL("image/png"),
         fileName: `${settings.teacherName || "schedule"}_${year}年${month + 1}月${isCombinedMode() ? "綜合行程表" : isTeacherMode() ? "不可預約時間" : "行程表"}.png`
