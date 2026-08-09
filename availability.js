@@ -220,7 +220,12 @@ function getPublicEvents() {
 function getVisibleEvents() {
     const current = getCurrentStudent();
     if (!current) return getPublicEvents();
+    if (!hasStudentScopedEvents()) return getPublicEvents();
     return getPublicEvents().filter(item => isStudentEvent(item, current));
+}
+
+function hasStudentScopedEvents() {
+    return getPublicEvents().some(item => item.studentNameBase64 || item.studentKeyBase64);
 }
 
 function getUntimedGeneralDates() {
