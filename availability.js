@@ -1,5 +1,19 @@
 const PUBLIC_DATA = window.TEACHER_PUBLIC_SCHEDULE || {};
 const TIME_DISPLAY_MAX_MINUTES = 24 * 60;
+const STUDENT_SESSION_KEY = "availabilityStudentNameBase64";
+const DEFAULT_STUDENTS = [
+    { nameBase64: "6buD6Yi66Yie", keyBase64: "6buD6Yi66Yie" },
+    { nameBase64: "5p6X5a2Q6Zm4", keyBase64: "5p6X5a2Q6Zm4" },
+    { nameBase64: "Tmljb2xl", keyBase64: "bmljb2xl" },
+    { nameBase64: "SGF6ZWwgQ2hlZQ==", keyBase64: "aGF6ZWwgY2hlZQ==" },
+    { nameBase64: "WkVZSQ==", keyBase64: "emV5aQ==" },
+    { nameBase64: "6auY5YGJ6Kqg", keyBase64: "6auY5YGJ6Kqg" },
+    { nameBase64: "6JSh5a6c5L+u", keyBase64: "6JSh5a6c5L+u" },
+    { nameBase64: "5L2R6IGy", keyBase64: "5L2R6IGy" },
+    { nameBase64: "U2FyYQ==", keyBase64: "c2FyYQ==" },
+    { nameBase64: "5rKI6YOB6Zuv", keyBase64: "5rKI6YOB6Zuv" },
+    { nameBase64: "TW9uaWNh", keyBase64: "bW9uaWNh" }
+];
 
 const DEFAULT_TIMEZONES = [
     { value: "UTC+08:00", label: "台北（GMT+8）" },
@@ -102,6 +116,8 @@ function bindControls() {
         state.displayTimeZoneLabel = selectedTimeZone.label;
         render();
     };
+    $("studentLoginForm").onsubmit = handleStudentLogin;
+    $("studentLogoutBtn").onclick = handleStudentLogout;
 }
 
 function changeMonth(offset) {
@@ -126,6 +142,7 @@ function render() {
     $("pageTitle").innerText = `${state.year} 年 ${state.month + 1} 月已排課的時間`;
     $("timezoneLabel").innerText = `時區：${getTimezoneLabelByValue(state.displayTimeZone, state.displayTimeZoneLabel)}`;
     $("updatedAt").innerText = `最後更新：${formatUpdatedAt(PUBLIC_DATA.updatedAt, state.displayTimeZone)}`;
+    renderStudentLogin();
     renderWeekdays();
     renderCalendar();
 }
@@ -140,16 +157,16 @@ function renderCalendar() {
     for (let i = 0; i < firstDay; i++) html += '<div class="day empty"></div>';
     for (let day = 1; day <= daysInMonth; day++) {
         const date = `${state.year}-${String(state.month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-        const slots = getPublicEvents()
+        const slots = getVisibleEvents()
             .filter(item => item.date === date)
             .sort((a, b) => `${a.start}-${a.end}`.localeCompare(`${b.start}-${b.end}`));
-        if (hasUntimedGeneralDate(date)) {
+        if (!getCurrentStudent() && hasUntimedGeneralDate(date)) {
             slots.push({ date, mode: "general", untimedNotice: true });
         }
         html += `
             <div class="day ${date < today ? "past-day" : ""}">
                 <span class="day-num">${day}</span>
-                ${slots.length ? slots.map(renderSlot).join("") : '<div class="none">無排課</div>'}
+                ${slots.length ? slots.map(renderSlot).join("") : '<div class="none">無</div>'}
             </div>
         `;
     }
@@ -200,8 +217,104 @@ function getPublicEvents() {
     return Array.isArray(PUBLIC_DATA.events) ? PUBLIC_DATA.events : [];
 }
 
+function getVisibleEvents() {
+    const current = getCurrentStudent();
+    if (!current) return getPublicEvents();
+    return getPublicEvents().filter(item => isStudentEvent(item, current));
+}
+
 function getUntimedGeneralDates() {
     return Array.isArray(PUBLIC_DATA.untimedGeneralDates) ? PUBLIC_DATA.untimedGeneralDates : [];
+}
+
+function getPublicStudents() {
+    return Array.isArray(PUBLIC_DATA.students) && PUBLIC_DATA.students.length ? PUBLIC_DATA.students : DEFAULT_STUDENTS;
+}
+
+function handleStudentLogin(event) {
+    event.preventDefault();
+    const input = $("studentNameInput");
+    const error = $("studentLoginError");
+    const normalized = normalizeStudentName(input.value);
+    const student = getPublicStudents().find(item => {
+        const key = item.keyBase64 || encodeBase64(normalizeStudentName(decodeBase64(item.nameBase64)));
+        return key === encodeBase64(normalized);
+    });
+    if (!student) {
+        error.innerText = "找不到這個學生姓名，請確認輸入是否和老師提供的名稱一致。";
+        error.classList.remove("hidden");
+        return;
+    }
+    sessionStorage.setItem(STUDENT_SESSION_KEY, student.nameBase64);
+    input.value = "";
+    error.classList.add("hidden");
+    render();
+}
+
+function handleStudentLogout() {
+    sessionStorage.removeItem(STUDENT_SESSION_KEY);
+    render();
+}
+
+function renderStudentLogin() {
+    const current = getCurrentStudent();
+    const form = $("studentLoginForm");
+    const status = $("studentLoginStatus");
+    const text = $("studentLoginText");
+    if (current) {
+        form.classList.add("hidden");
+        status.classList.remove("hidden");
+        text.innerText = `已登入：${current.name}`;
+    } else {
+        form.classList.remove("hidden");
+        status.classList.add("hidden");
+        $("studentLoginError").classList.add("hidden");
+    }
+}
+
+function getCurrentStudent() {
+    const nameBase64 = sessionStorage.getItem(STUDENT_SESSION_KEY);
+    if (!nameBase64) return null;
+    const name = decodeBase64(nameBase64);
+    if (!name) return null;
+    return {
+        name,
+        nameBase64,
+        keyBase64: encodeBase64(normalizeStudentName(name))
+    };
+}
+
+function isStudentEvent(item, current) {
+    if (item.untimedNotice) return "";
+    if (!current) return "";
+    const eventNameBase64 = item.studentNameBase64 || "";
+    const eventKeyBase64 = item.studentKeyBase64 || (eventNameBase64 ? encodeBase64(normalizeStudentName(decodeBase64(eventNameBase64))) : "");
+    return eventKeyBase64 === current.keyBase64;
+}
+
+function normalizeStudentName(value) {
+    return String(value || "").trim().replace(/\s+/g, " ").toLocaleLowerCase();
+}
+
+function encodeBase64(value) {
+    const bytes = new TextEncoder().encode(String(value || ""));
+    let binary = "";
+    bytes.forEach(byte => binary += String.fromCharCode(byte));
+    return btoa(binary);
+}
+
+function decodeBase64(value) {
+    try {
+        const binary = atob(String(value || ""));
+        const bytes = Uint8Array.from(binary, char => char.charCodeAt(0));
+        return new TextDecoder().decode(bytes);
+    } catch (error) {
+        return "";
+    }
+}
+
+function escapeHtml(value) {
+    return String(value || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
 }
 
 function hasUntimedGeneralDate(date) {

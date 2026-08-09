@@ -1450,14 +1450,15 @@ function exportPublicScheduleData() {
             date: item.date,
             start: item.start,
             end: item.end,
-            completed: Boolean(item.completed)
+            completed: Boolean(item.completed),
+            ...getPublicStudentFields(item)
         }));
     const untimedGeneralDates = Array.from(new Set(events
         .filter(item => (item.mode || "teacher") === "general" && item.date && (!item.start || !item.end))
         .map(item => item.date)
     )).sort();
     const publicData = {
-        version: 2,
+        version: 3,
         updatedAt: new Date().toISOString(),
         selectedYear: Number(yearSelect.value),
         selectedMonth: Number(monthSelect.value),
@@ -1470,12 +1471,59 @@ function exportPublicScheduleData() {
             displayTimeZoneLabel: settings.displayTimeZoneLabel,
             customTimeZones: settings.customTimeZones || []
         },
+        students: getPublicStudentRecords(),
         events: publicEvents,
         untimedGeneralDates
     };
     const js = `window.TEACHER_PUBLIC_SCHEDULE = ${JSON.stringify(publicData, null, 2)};\n`;
     downloadBlob(new Blob([js], { type: "text/javascript;charset=utf-8" }), "public-schedule-data.js");
     showToast(`公開頁資料已匯出 ${publicEvents.length} 筆排課與一般行程，請用新下載的 public-schedule-data.js 覆蓋專案同名檔案後推送到 GitHub。`, false);
+}
+
+function getPublicStudentFields(item) {
+    if (!isTeacherEvent(item) || !item.student || item.student === "未填寫") return {};
+    const name = normalizePublicStudentName(item.student);
+    return {
+        studentNameBase64: encodePublicBase64(name),
+        studentKeyBase64: encodePublicBase64(normalizePublicStudentKey(name))
+    };
+}
+
+function getPublicStudentRecords() {
+    return [
+        "黃鈺鈞",
+        "林子陸",
+        "Nicole",
+        "Hazel Chee",
+        "ZEYI",
+        "高偉誠",
+        "蔡宜修",
+        "佑聲",
+        "Sara",
+        "沈郁雯",
+        "Monica"
+    ].map(name => {
+        const normalized = normalizePublicStudentName(name);
+        return {
+            nameBase64: encodePublicBase64(normalized),
+            keyBase64: encodePublicBase64(normalizePublicStudentKey(normalized))
+        };
+    });
+}
+
+function normalizePublicStudentName(value) {
+    return String(value || "").trim().replace(/\s+/g, " ");
+}
+
+function normalizePublicStudentKey(value) {
+    return normalizePublicStudentName(value).toLocaleLowerCase();
+}
+
+function encodePublicBase64(value) {
+    const bytes = new TextEncoder().encode(String(value || ""));
+    let binary = "";
+    bytes.forEach(byte => binary += String.fromCharCode(byte));
+    return btoa(binary);
 }
 
 function createScheduleImageData() {

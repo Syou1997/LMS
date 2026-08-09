@@ -59,10 +59,15 @@
 
         .controls {
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             justify-content: flex-end;
             gap: 10px;
             flex-wrap: wrap;
+        }
+
+        .timezone-login-group {
+            display: grid;
+            gap: 10px;
         }
 
         select {
@@ -99,6 +104,66 @@
 
         .month-arrow:hover {
             background: #eef4ff;
+        }
+
+        .student-login {
+            width: 100%;
+            max-width: 390px;
+            padding: 10px;
+            border: 1px solid rgba(255, 255, 255, .22);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, .12);
+            box-shadow: 0 10px 24px rgba(15, 23, 42, .12);
+            backdrop-filter: blur(4px);
+        }
+
+        .student-login form,
+        .student-login-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .student-login input {
+            min-height: 40px;
+            flex: 1 1 190px;
+            min-width: 0;
+            border: 1px solid rgba(255, 255, 255, .36);
+            border-radius: 8px;
+            padding: 8px 12px;
+            font: inherit;
+            color: #0f172a;
+            background: #ffffff;
+        }
+
+        .student-login button {
+            min-height: 40px;
+            border: 1px solid rgba(255, 255, 255, .36);
+            border-radius: 8px;
+            padding: 8px 14px;
+            color: #0f172a;
+            background: #ffffff;
+            font: inherit;
+            font-weight: 900;
+            cursor: pointer;
+        }
+
+        .student-login button:hover {
+            background: #eef4ff;
+        }
+
+        .student-login-text {
+            color: rgba(255, 255, 255, .92);
+            font-size: 17px;
+            font-weight: 800;
+        }
+
+        .student-login-error {
+            width: 100%;
+            color: #ffe4e6;
+            font-size: 15px;
+            font-weight: 800;
         }
 
         main {
@@ -222,15 +287,22 @@
             font-weight: 800;
         }
 
+        .hidden { display: none !important; }
         .data-alert.hidden { display: none; }
 
         @media (max-width: 700px) {
             .header-inner { padding: 24px 16px; }
             main { padding: 0 16px 22px; }
             .controls { justify-content: flex-start; }
+            .timezone-login-group { width: 100%; }
             .month-control { width: 100%; }
             .month-control #monthSelect { flex: 1 1 auto; }
             #yearSelect, #monthSelect, #timezoneSelect { width: 100%; min-width: 0; }
+            .student-login { max-width: none; }
+            .student-login form,
+            .student-login-status { align-items: stretch; }
+            .student-login input,
+            .student-login button { width: 100%; }
             .calendar {
                 overflow-x: visible;
                 border-top: 1px solid var(--line);
@@ -282,7 +354,20 @@
                 <select id="monthSelect"></select>
                 <button type="button" class="month-arrow" id="nextMonthBtn" aria-label="下一個月">›</button>
             </div>
-            <select id="timezoneSelect" aria-label="選擇顯示時區"></select>
+            <div class="timezone-login-group">
+                <select id="timezoneSelect" aria-label="選擇顯示時區"></select>
+                <div class="student-login" id="studentLoginArea">
+                    <form id="studentLoginForm">
+                        <input id="studentNameInput" type="text" autocomplete="name" placeholder="輸入學生姓名">
+                        <button type="submit">登入</button>
+                        <div class="student-login-error hidden" id="studentLoginError"></div>
+                    </form>
+                    <div class="student-login-status hidden" id="studentLoginStatus">
+                        <span class="student-login-text" id="studentLoginText"></span>
+                        <button type="button" id="studentLogoutBtn">登出</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </header>
