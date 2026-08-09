@@ -1491,24 +1491,18 @@ function getPublicStudentFields(item) {
 
 function getPublicStudentRecords() {
     return [
-        "黃鈺鈞",
-        "林子陸",
-        "Nicole",
-        "Hazel Chee",
-        "ZEYI",
-        "高偉誠",
-        "蔡宜修",
-        "佑聲",
-        "Sara",
-        "沈郁雯",
-        "Monica"
-    ].map(name => {
-        const normalized = normalizePublicStudentName(name);
-        return {
-            nameBase64: encodePublicBase64(normalized),
-            keyBase64: encodePublicBase64(normalizePublicStudentKey(normalized))
-        };
-    });
+        { nameBase64: "6buD6Yi66Yie", keyBase64: "6buD6Yi66Yie" },
+        { nameBase64: "5p6X5a2Q6Zm4", keyBase64: "5p6X5a2Q6Zm4" },
+        { nameBase64: "Tmljb2xl", keyBase64: "bmljb2xl" },
+        { nameBase64: "SGF6ZWwgQ2hlZQ==", keyBase64: "aGF6ZWwgY2hlZQ==" },
+        { nameBase64: "WkVZSQ==", keyBase64: "emV5aQ==" },
+        { nameBase64: "6auY5YGJ6Kqg", keyBase64: "6auY5YGJ6Kqg" },
+        { nameBase64: "6JSh5a6c5L+u", keyBase64: "6JSh5a6c5L+u" },
+        { nameBase64: "5L2R6IGy", keyBase64: "5L2R6IGy" },
+        { nameBase64: "U2FyYQ==", keyBase64: "c2FyYQ==" },
+        { nameBase64: "5rKI6YOB6Zuv", keyBase64: "5rKI6YOB6Zuv" },
+        { nameBase64: "TW9uaWNh", keyBase64: "bW9uaWNh" }
+    ];
 }
 
 function normalizePublicStudentName(value) {
