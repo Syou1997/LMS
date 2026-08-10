@@ -1,6 +1,6 @@
 window.TEACHER_PUBLIC_SCHEDULE = {
   "version": 3,
-  "updatedAt": "2026-08-10T11:19:18.159Z",
+  "updatedAt": "2026-08-10T11:33:20.761Z",
   "selectedYear": 2026,
   "selectedMonth": 7,
   "settings": {
