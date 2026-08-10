@@ -234,7 +234,15 @@ function getUntimedGeneralDates() {
 }
 
 function getPublicStudents() {
-    return Array.isArray(PUBLIC_DATA.students) && PUBLIC_DATA.students.length ? PUBLIC_DATA.students : DEFAULT_STUDENTS;
+    const students = Array.isArray(PUBLIC_DATA.students) ? PUBLIC_DATA.students : [];
+    const merged = [...students, ...DEFAULT_STUDENTS];
+    const seen = new Set();
+    return merged.filter(item => {
+        const key = item.keyBase64 || item.nameBase64 || "";
+        if (!key || seen.has(key)) return false;
+        seen.add(key);
+        return true;
+    });
 }
 
 function handleStudentLogin(event) {
