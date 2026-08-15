@@ -1,6 +1,6 @@
 window.TEACHER_PUBLIC_SCHEDULE = {
   "version": 3,
-  "updatedAt": "2026-08-12T12:28:02.795Z",
+  "updatedAt": "2026-08-15T06:56:18.839Z",
   "selectedYear": 2026,
   "selectedMonth": 7,
   "settings": {
@@ -8,8 +8,8 @@ window.TEACHER_PUBLIC_SCHEDULE = {
     "showTeacherName": false,
     "baseTimeZone": "UTC+08:00",
     "baseTimeZoneLabel": "台北（GMT+8）",
-    "displayTimeZone": "UTC+08:00",
-    "displayTimeZoneLabel": "台北（GMT+8）",
+    "displayTimeZone": "UTC+09:00",
+    "displayTimeZoneLabel": "東京（GMT+9）",
     "customTimeZones": []
   },
   "students": [
@@ -3084,16 +3084,6 @@ window.TEACHER_PUBLIC_SCHEDULE = {
       "studentKeyBase64": "5p6X5a2Q6Zm4"
     },
     {
-      "id": "1783867665154cd47bfebcb1b5",
-      "mode": "teacher",
-      "date": "2026-08-26",
-      "start": "22:00",
-      "end": "22:50",
-      "completed": false,
-      "studentNameBase64": "Sg==",
-      "studentKeyBase64": "ag=="
-    },
-    {
       "id": "1783252133969c1b12709539be",
       "mode": "teacher",
       "date": "2026-08-27",
@@ -3118,16 +3108,6 @@ window.TEACHER_PUBLIC_SCHEDULE = {
       "completed": false,
       "studentNameBase64": "6buD6Yi66Yie",
       "studentKeyBase64": "6buD6Yi66Yie"
-    },
-    {
-      "id": "1783951926531ea2f5fdfed12",
-      "mode": "teacher",
-      "date": "2026-08-28",
-      "start": "22:00",
-      "end": "22:50",
-      "completed": false,
-      "studentNameBase64": "Sg==",
-      "studentKeyBase64": "ag=="
     },
     {
       "id": "17840239641304e49a11b002f28",
@@ -3790,6 +3770,24 @@ window.TEACHER_PUBLIC_SCHEDULE = {
       "completed": false,
       "studentNameBase64": "6JSh5a6c5L+u",
       "studentKeyBase64": "6JSh5a6c5L+u"
+    },
+    {
+      "id": "1786619216282c8aff9810425a8",
+      "mode": "general",
+      "date": "2026-09-12",
+      "start": "10:00",
+      "end": "18:00",
+      "completed": false
+    },
+    {
+      "id": "1786776975387d023c897901e1",
+      "mode": "teacher",
+      "date": "2026-08-20",
+      "start": "21:00",
+      "end": "22:30",
+      "completed": false,
+      "studentNameBase64": "SGF6ZWwgQ2hlZQ==",
+      "studentKeyBase64": "aGF6ZWwgY2hlZQ=="
     }
   ],
   "untimedGeneralDates": []
