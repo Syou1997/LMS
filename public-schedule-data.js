@@ -1,8 +1,8 @@
 window.TEACHER_PUBLIC_SCHEDULE = {
   "version": 3,
-  "updatedAt": "2026-08-15T09:09:33.323Z",
+  "updatedAt": "2026-08-15T10:44:44.517Z",
   "selectedYear": 2026,
-  "selectedMonth": 7,
+  "selectedMonth": 8,
   "settings": {
     "teacherName": "Syou",
     "showTeacherName": false,
@@ -3805,6 +3805,66 @@ window.TEACHER_PUBLIC_SCHEDULE = {
       "date": "2026-08-27",
       "start": "18:00",
       "end": "18:40",
+      "completed": false,
+      "studentNameBase64": "YW11cm8=",
+      "studentKeyBase64": "YW11cm8="
+    },
+    {
+      "id": "17867906678295503fa190ca44",
+      "mode": "teacher",
+      "date": "2026-09-03",
+      "start": "19:00",
+      "end": "19:40",
+      "completed": false,
+      "studentNameBase64": "YW11cm8=",
+      "studentKeyBase64": "YW11cm8="
+    },
+    {
+      "id": "1786790667829ba1fc3cc76a2c",
+      "mode": "teacher",
+      "date": "2026-09-14",
+      "start": "19:00",
+      "end": "19:40",
+      "completed": false,
+      "studentNameBase64": "YW11cm8=",
+      "studentKeyBase64": "YW11cm8="
+    },
+    {
+      "id": "17867906678295995ee8d075038",
+      "mode": "teacher",
+      "date": "2026-09-17",
+      "start": "19:00",
+      "end": "19:40",
+      "completed": false,
+      "studentNameBase64": "YW11cm8=",
+      "studentKeyBase64": "YW11cm8="
+    },
+    {
+      "id": "1786790667829ac929e86d673a8",
+      "mode": "teacher",
+      "date": "2026-09-21",
+      "start": "19:00",
+      "end": "19:40",
+      "completed": false,
+      "studentNameBase64": "YW11cm8=",
+      "studentKeyBase64": "YW11cm8="
+    },
+    {
+      "id": "178679066782998773dca14cf28",
+      "mode": "teacher",
+      "date": "2026-09-24",
+      "start": "19:00",
+      "end": "19:40",
+      "completed": false,
+      "studentNameBase64": "YW11cm8=",
+      "studentKeyBase64": "YW11cm8="
+    },
+    {
+      "id": "1786790667829574974beb9bad8",
+      "mode": "teacher",
+      "date": "2026-09-28",
+      "start": "19:00",
+      "end": "19:40",
       "completed": false,
       "studentNameBase64": "YW11cm8=",
       "studentKeyBase64": "YW11cm8="
