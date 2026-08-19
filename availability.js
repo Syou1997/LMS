@@ -152,12 +152,13 @@ function render() {
 function renderAnnouncement() {
     const announcement = String(PUBLIC_DATA.settings?.announcement || "").trim();
     const element = $("announcement");
+    const content = $("announcementContent");
     if (!announcement) {
         element.classList.add("hidden");
-        element.innerText = "";
+        content.innerText = "";
         return;
     }
-    element.innerText = `最新公告：${announcement}`;
+    content.innerText = announcement;
     element.classList.remove("hidden");
 }
 

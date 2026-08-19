@@ -57,12 +57,33 @@
             font-size: clamp(18px, 2.4vw, 24px);
         }
 
-        .announcement {
-            max-width: 760px;
-            color: #fef3c7;
-            line-height: 1.45;
+        .announcement-card {
+            flex: 1 1 340px;
+            max-width: 430px;
+            margin-left: auto;
+        }
+
+        .announcement-card h3 {
+            margin: 0 0 8px;
+            color: #ffffff;
+            font-size: clamp(20px, 2vw, 26px);
+            font-weight: 900;
+            line-height: 1.2;
+        }
+
+        .announcement-content {
+            max-height: 230px;
+            overflow-y: auto;
+            padding: 12px 14px;
+            border: 2px solid #111827;
+            border-radius: 8px;
+            color: #111827;
+            background: #ffffff;
+            font-size: clamp(16px, 1.8vw, 20px);
+            font-weight: 700;
+            line-height: 1.55;
             white-space: pre-wrap;
-            word-break: break-word;
+            overflow-wrap: anywhere;
         }
 
         .controls {
@@ -311,6 +332,15 @@
             .month-control #monthSelect { flex: 1 1 auto; }
             #yearSelect, #monthSelect, #timezoneSelect { width: 100%; min-width: 0; }
             .student-login { max-width: none; }
+            .announcement-card {
+                width: 100%;
+                max-width: none;
+                margin-left: 0;
+            }
+            .announcement-content {
+                max-height: none;
+                font-size: 16px;
+            }
             .student-login form,
             .student-login-status { align-items: stretch; }
             .student-login input,
@@ -364,7 +394,6 @@
             <div class="meta">
                 <div id="timezoneLabel">時區：</div>
                 <div id="updatedAt">最後更新：</div>
-                <div id="announcement" class="announcement hidden"></div>
             </div>
         </div>
         <div class="controls">
@@ -389,6 +418,10 @@
                 </div>
             </div>
         </div>
+        <section id="announcement" class="announcement-card hidden" aria-label="最新公告">
+            <h3>最新公告：</h3>
+            <div id="announcementContent" class="announcement-content"></div>
+        </section>
     </div>
 </header>
 
