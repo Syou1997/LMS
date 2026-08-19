@@ -81,6 +81,7 @@ const defaultSettings = {
     appMode: "teacher",
     lastRegularAppMode: "teacher",
     teacherName: "",
+    announcement: "",
     showTeacherName: true,
     baseTimeZone: "UTC+08:00",
     baseTimeZoneLabel: "台北（GMT+8）",
@@ -153,6 +154,7 @@ function normalizeSettings(raw) {
     normalized.customTimeZones = Array.isArray(normalized.customTimeZones) ? normalized.customTimeZones : [];
     normalized.platforms = normalizeItems(normalized.platforms, DEFAULT_PLATFORMS);
     normalized.categories = normalizeItems(normalized.categories, DEFAULT_CATEGORIES);
+    normalized.announcement = String(normalized.announcement || "");
     if (normalized.baseTimeZone === "Asia/Taipei") normalized.baseTimeZone = "UTC+08:00";
     if (normalized.displayTimeZone === "Asia/Taipei") normalized.displayTimeZone = "UTC+08:00";
     normalized.displayTimeZoneLabel = normalized.displayTimeZoneLabel || [...DEFAULT_TIMEZONES, ...normalized.customTimeZones].find(zone => zone.value === normalized.displayTimeZone)?.label || normalized.displayTimeZone.replace("UTC", "GMT");
@@ -539,6 +541,7 @@ function finishOnboarding() {
 function openSettingsModal() {
     $("settingsAppMode").value = isCombinedMode() ? getRegularAppMode() : settings.appMode;
     $("settingsTeacherName").value = settings.teacherName;
+    $("settingsAnnouncement").value = settings.announcement || "";
     $("settingsShowTeacherName").checked = settings.showTeacherName;
     $("settingsLanguage").value = settings.language;
     setTimezoneSelectValue("settingsBaseTimezone", settings.baseTimeZone, settings.baseTimeZoneLabel);
@@ -577,6 +580,7 @@ function saveSettingsFromModal() {
     const regularMode = ["teacher", "general"].includes(selectedMode) ? selectedMode : "teacher";
     const appMode = isCombinedMode() ? "combined" : regularMode;
     const teacherName = $("settingsTeacherName").value.trim();
+    const announcement = $("settingsAnnouncement").value.trim();
     if (!teacherName) return alert("請輸入顯示名稱。");
     const editableMode = regularMode;
     const normalizedItems = appMode === "combined" ? [] : readSettingsItemRows();
@@ -590,6 +594,7 @@ function saveSettingsFromModal() {
             appMode,
             lastRegularAppMode: regularMode,
             teacherName,
+            announcement,
             showTeacherName: $("settingsShowTeacherName").checked,
             baseTimeZone: selectedBaseTimeZone.value,
             baseTimeZoneLabel: selectedBaseTimeZone.label,
@@ -626,6 +631,7 @@ function saveSettingsFromModal() {
         appMode,
         lastRegularAppMode: regularMode,
         teacherName,
+        announcement,
         showTeacherName: $("settingsShowTeacherName").checked,
         baseTimeZone: selectedBaseTimeZone.value,
         baseTimeZoneLabel: selectedBaseTimeZone.label,
@@ -1464,6 +1470,7 @@ function exportPublicScheduleData() {
         selectedMonth: Number(monthSelect.value),
         settings: {
             teacherName: settings.teacherName || "",
+            announcement: settings.announcement || "",
             showTeacherName: Boolean(settings.showTeacherName),
             baseTimeZone: settings.baseTimeZone,
             baseTimeZoneLabel: settings.baseTimeZoneLabel,

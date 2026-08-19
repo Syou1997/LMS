@@ -57,6 +57,13 @@
             font-size: clamp(18px, 2.4vw, 24px);
         }
 
+        .announcement {
+            max-width: 760px;
+            color: #fef3c7;
+            line-height: 1.45;
+            word-break: break-word;
+        }
+
         .controls {
             display: flex;
             align-items: flex-start;
@@ -225,6 +232,10 @@
             font-weight: 900;
         }
 
+        .mobile-weekday {
+            display: none;
+        }
+
         .slot {
             margin-top: 7px;
             padding: 4px 12px;
@@ -326,6 +337,13 @@
                 margin-bottom: 10px;
                 font-size: 24px;
             }
+            .mobile-weekday {
+                display: inline;
+                margin-left: 8px;
+                color: var(--muted);
+                font-size: 16px;
+                font-weight: 800;
+            }
             .slot {
                 width: 100%;
                 max-width: 260px;
@@ -345,6 +363,7 @@
             <div class="meta">
                 <div id="timezoneLabel">時區：</div>
                 <div id="updatedAt">最後更新：</div>
+                <div id="announcement" class="announcement hidden"></div>
             </div>
         </div>
         <div class="controls">

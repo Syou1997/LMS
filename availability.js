@@ -143,9 +143,22 @@ function render() {
     $("pageTitle").innerText = `${state.year} 年 ${state.month + 1} 月已排課的時間`;
     $("timezoneLabel").innerText = `時區：${getTimezoneLabelByValue(state.displayTimeZone, state.displayTimeZoneLabel)}`;
     $("updatedAt").innerText = `最後更新：${formatUpdatedAt(PUBLIC_DATA.updatedAt, state.displayTimeZone)}`;
+    renderAnnouncement();
     renderStudentLogin();
     renderWeekdays();
     renderCalendar();
+}
+
+function renderAnnouncement() {
+    const announcement = String(PUBLIC_DATA.settings?.announcement || "").trim();
+    const element = $("announcement");
+    if (!announcement) {
+        element.classList.add("hidden");
+        element.innerText = "";
+        return;
+    }
+    element.innerText = `最新公告：${announcement}`;
+    element.classList.remove("hidden");
 }
 
 function renderCalendar() {
@@ -166,7 +179,7 @@ function renderCalendar() {
         }
         html += `
             <div class="day ${date < today ? "past-day" : ""}">
-                <span class="day-num">${day}</span>
+                <span class="day-num">${day}<span class="mobile-weekday">${getWeekdayLabel(date)}</span></span>
                 ${slots.length ? slots.map(renderSlot).join("") : '<div class="none">無</div>'}
             </div>
         `;
@@ -195,6 +208,11 @@ function renderWeekdays() {
     $("weekdays").innerHTML = ["週日", "週一", "週二", "週三", "週四", "週五", "週六"]
         .map(day => `<div class="weekday">${day}</div>`)
         .join("");
+}
+
+function getWeekdayLabel(dateStr) {
+    const [year, month, day] = dateStr.split("-").map(Number);
+    return ["週日", "週一", "週二", "週三", "週四", "週五", "週六"][new Date(year, month - 1, day).getDay()];
 }
 
 function renderDataAlert() {
