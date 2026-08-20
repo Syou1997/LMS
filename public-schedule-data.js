@@ -1,6 +1,6 @@
 window.TEACHER_PUBLIC_SCHEDULE = {
   "version": 3,
-  "updatedAt": "2026-08-20T09:58:50.681Z",
+  "updatedAt": "2026-08-20T23:23:27.335Z",
   "selectedYear": 2026,
   "selectedMonth": 7,
   "settings": {
@@ -3877,6 +3877,26 @@ window.TEACHER_PUBLIC_SCHEDULE = {
       "start": "07:30",
       "end": "18:00",
       "completed": false
+    },
+    {
+      "id": "178726817789787ba4611b9588",
+      "mode": "teacher",
+      "date": "2026-08-25",
+      "start": "20:30",
+      "end": "22:00",
+      "completed": false,
+      "studentNameBase64": "SGF6ZWwgQ2hlZQ==",
+      "studentKeyBase64": "aGF6ZWwgY2hlZQ=="
+    },
+    {
+      "id": "17872682046208a3c0bfa29ed9",
+      "mode": "teacher",
+      "date": "2026-08-30",
+      "start": "16:00",
+      "end": "17:30",
+      "completed": false,
+      "studentNameBase64": "SGF6ZWwgQ2hlZQ==",
+      "studentKeyBase64": "aGF6ZWwgY2hlZQ=="
     }
   ],
   "untimedGeneralDates": []
