@@ -1,16 +1,16 @@
 window.TEACHER_PUBLIC_SCHEDULE = {
   "version": 3,
-  "updatedAt": "2026-08-20T23:23:27.335Z",
+  "updatedAt": "2026-08-22T10:52:42.920Z",
   "selectedYear": 2026,
-  "selectedMonth": 7,
+  "selectedMonth": 8,
   "settings": {
     "teacherName": "Syou",
     "announcement": "1.跟老師預約上課時間時，如果沒有特別備註是日本還是台灣時間，那老師一律當成台灣時間。如果是住在澳洲或是英國的同學，預約的時候請一律用「日本時間」來跟老師預約。範例:老師我要約日本時間的8/19 18:00~19:30，一次兩堂課，謝謝。\n\n2.預約課程的時候，不一定只能約整點。範例:老師我要約8/19的 19:40 可以嗎? 像這樣也是可以的。",
     "showTeacherName": false,
     "baseTimeZone": "UTC+08:00",
     "baseTimeZoneLabel": "台北（GMT+8）",
-    "displayTimeZone": "UTC+09:00",
-    "displayTimeZoneLabel": "東京（GMT+9）",
+    "displayTimeZone": "UTC+08:00",
+    "displayTimeZoneLabel": "台北（GMT+8）",
     "customTimeZones": []
   },
   "students": [
@@ -3897,6 +3897,70 @@ window.TEACHER_PUBLIC_SCHEDULE = {
       "completed": false,
       "studentNameBase64": "SGF6ZWwgQ2hlZQ==",
       "studentKeyBase64": "aGF6ZWwgY2hlZQ=="
+    },
+    {
+      "id": "1787395413106039d2e4547feb8",
+      "mode": "teacher",
+      "date": "2026-09-04",
+      "start": "18:00",
+      "end": "22:00",
+      "completed": false
+    },
+    {
+      "id": "17873954131067c09e7e3d8de38",
+      "mode": "teacher",
+      "date": "2026-09-05",
+      "start": "18:00",
+      "end": "22:00",
+      "completed": false
+    },
+    {
+      "id": "17873954131064dc8d023e1768",
+      "mode": "teacher",
+      "date": "2026-09-13",
+      "start": "18:00",
+      "end": "22:00",
+      "completed": false
+    },
+    {
+      "id": "1787395413106b3e29a903a99d8",
+      "mode": "teacher",
+      "date": "2026-09-25",
+      "start": "18:00",
+      "end": "22:00",
+      "completed": false
+    },
+    {
+      "id": "17873956226675c2e52c54c1dd",
+      "mode": "teacher",
+      "date": "2026-09-20",
+      "start": "14:00",
+      "end": "17:00",
+      "completed": false
+    },
+    {
+      "id": "1787395636064606d69778e7d7",
+      "mode": "teacher",
+      "date": "2026-09-20",
+      "start": "17:40",
+      "end": "22:00",
+      "completed": false
+    },
+    {
+      "id": "178739581176961e5271e1f7ac",
+      "mode": "teacher",
+      "date": "2026-09-21",
+      "start": "14:00",
+      "end": "17:00",
+      "completed": false
+    },
+    {
+      "id": "1787395811769452e48acb097b8",
+      "mode": "teacher",
+      "date": "2026-09-26",
+      "start": "14:00",
+      "end": "17:00",
+      "completed": false
     }
   ],
   "untimedGeneralDates": []
