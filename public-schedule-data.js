@@ -1,16 +1,16 @@
 window.TEACHER_PUBLIC_SCHEDULE = {
   "version": 3,
-  "updatedAt": "2026-08-29T06:32:53.964Z",
+  "updatedAt": "2026-08-30T00:58:59.136Z",
   "selectedYear": 2026,
-  "selectedMonth": 8,
+  "selectedMonth": 7,
   "settings": {
     "teacherName": "Syou",
     "announcement": "1.跟老師預約上課時間時，如果沒有特別備註是日本還是台灣時間，那老師一律當成台灣時間。如果是住在澳洲或是英國的同學，預約的時候請一律用「日本時間」來跟老師預約。範例:老師我要約日本時間的8/19 18:00~19:30，一次兩堂課，謝謝。\n\n2.預約課程的時候，不一定只能約整點。範例:老師我要約8/19的 19:40 可以嗎? 像這樣也是可以的。",
     "showTeacherName": false,
     "baseTimeZone": "UTC+08:00",
     "baseTimeZoneLabel": "台北（GMT+8）",
-    "displayTimeZone": "UTC+08:00",
-    "displayTimeZoneLabel": "台北（GMT+8）",
+    "displayTimeZone": "UTC+09:00",
+    "displayTimeZoneLabel": "東京（GMT+9）",
     "customTimeZones": []
   },
   "students": [
@@ -3379,16 +3379,6 @@ window.TEACHER_PUBLIC_SCHEDULE = {
       "completed": false
     },
     {
-      "id": "17839437922535f836ba007ca88",
-      "mode": "teacher",
-      "date": "2026-08-31",
-      "start": "22:00",
-      "end": "22:40",
-      "completed": false,
-      "studentNameBase64": "6auY5YGJ6Kqg",
-      "studentKeyBase64": "6auY5YGJ6Kqg"
-    },
-    {
       "id": "1783746469265beb66ffb8ebde",
       "mode": "teacher",
       "date": "2026-09-01",
@@ -3579,16 +3569,6 @@ window.TEACHER_PUBLIC_SCHEDULE = {
       "studentKeyBase64": "YW11cm8="
     },
     {
-      "id": "17857609578205ebb84ce287fb",
-      "mode": "teacher",
-      "date": "2026-09-14",
-      "start": "22:00",
-      "end": "22:40",
-      "completed": false,
-      "studentNameBase64": "6auY5YGJ6Kqg",
-      "studentKeyBase64": "6auY5YGJ6Kqg"
-    },
-    {
       "id": "17837464692657eb14d6ce0ece",
       "mode": "teacher",
       "date": "2026-09-15",
@@ -3701,16 +3681,6 @@ window.TEACHER_PUBLIC_SCHEDULE = {
       "completed": false,
       "studentNameBase64": "YW11cm8=",
       "studentKeyBase64": "YW11cm8="
-    },
-    {
-      "id": "1785760969298d186a046046e5",
-      "mode": "teacher",
-      "date": "2026-09-21",
-      "start": "22:00",
-      "end": "22:40",
-      "completed": false,
-      "studentNameBase64": "6auY5YGJ6Kqg",
-      "studentKeyBase64": "6auY5YGJ6Kqg"
     },
     {
       "id": "1785943672958ca483a2abba11",
