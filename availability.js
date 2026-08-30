@@ -23,26 +23,31 @@ const DEFAULT_TIMEZONES = [
     { value: "UTC-12:00", label: "貝克島（GMT-12）" },
     { value: "UTC-11:00", label: "美屬薩摩亞（GMT-11）" },
     { value: "UTC-10:00", label: "夏威夷（GMT-10）" },
-    { value: "UTC-09:00", label: "阿拉斯加（GMT-9）" },
-    { value: "UTC-08:00", label: "洛杉磯（GMT-8）" },
-    { value: "UTC-07:00", label: "溫哥華（GMT-7）" },
-    { value: "UTC-06:00", label: "芝加哥（GMT-6）" },
-    { value: "UTC-05:00", label: "紐約（GMT-5）" },
-    { value: "UTC-04:00", label: "聖地牙哥（GMT-4）" },
+    { value: "America/Anchorage", label: "阿拉斯加（GMT-9）" },
+    { value: "America/Los_Angeles", label: "洛杉磯（GMT-8）" },
+    { value: "America/Vancouver", label: "溫哥華（GMT-8）" },
+    { value: "America/Denver", label: "丹佛（GMT-7）" },
+    { value: "America/Chicago", label: "芝加哥（GMT-6）" },
+    { value: "America/Toronto", label: "多倫多（GMT-5）" },
+    { value: "America/New_York", label: "紐約（GMT-5）" },
+    { value: "America/Santiago", label: "聖地牙哥（GMT-4）" },
     { value: "UTC-03:00", label: "布宜諾斯艾利斯（GMT-3）" },
     { value: "UTC-02:00", label: "南喬治亞（GMT-2）" },
-    { value: "UTC-01:00", label: "亞速群島（GMT-1）" },
-    { value: "UTC+00:00", label: "倫敦（GMT+0）" },
-    { value: "UTC+01:00", label: "巴黎（GMT+1）" },
-    { value: "UTC+02:00", label: "雅典（GMT+2）" },
-    { value: "UTC+03:00", label: "伊斯坦堡（GMT+3）" },
+    { value: "Atlantic/Azores", label: "亞速群島（GMT-1）" },
+    { value: "Europe/London", label: "倫敦（GMT+0）" },
+    { value: "Europe/Paris", label: "巴黎（GMT+1）" },
+    { value: "Europe/Athens", label: "雅典（GMT+2）" },
+    { value: "Europe/Istanbul", label: "伊斯坦堡（GMT+3）" },
     { value: "UTC+04:00", label: "杜拜（GMT+4）" },
     { value: "UTC+05:00", label: "塔什干（GMT+5）" },
     { value: "UTC+06:00", label: "達卡（GMT+6）" },
     { value: "UTC+07:00", label: "曼谷（GMT+7）" },
-    { value: "UTC+10:00", label: "雪梨（GMT+10）" },
+    { value: "Australia/Sydney", label: "雪梨（GMT+10）" },
+    { value: "Australia/Adelaide", label: "阿德雷德（GMT+9:30）" },
+    { value: "Australia/Brisbane", label: "布里斯本（GMT+10）" },
+    { value: "Australia/Perth", label: "伯斯（GMT+8）" },
     { value: "UTC+11:00", label: "索羅門群島（GMT+11）" },
-    { value: "UTC+12:00", label: "奧克蘭（GMT+12）" },
+    { value: "Pacific/Auckland", label: "奧克蘭（GMT+12）" },
     { value: "UTC+13:00", label: "東加（GMT+13）" },
     { value: "UTC+14:00", label: "基里巴斯（GMT+14）" }
 ];
@@ -195,11 +200,12 @@ function renderSlot(item) {
 }
 
 function getDisplayTimeRange(eventItem) {
-    const baseTimeZone = PUBLIC_DATA.settings?.baseTimeZone || "UTC+08:00";
+    const baseTimeZone = migrateDefaultTimeZoneValue(PUBLIC_DATA.settings?.baseTimeZone || "UTC+08:00", PUBLIC_DATA.settings?.baseTimeZoneLabel);
     const startUtc = zonedTimeToUtc(eventItem.date, eventItem.start, baseTimeZone);
     const endUtc = zonedTimeToUtc(eventItem.date, eventItem.end, baseTimeZone);
-    const start = getDisplayTimeInfo(eventItem.date, startUtc, state.displayTimeZone);
-    const end = getDisplayTimeInfo(eventItem.date, endUtc, state.displayTimeZone);
+    const displayTimeZone = migrateDefaultTimeZoneValue(state.displayTimeZone, state.displayTimeZoneLabel);
+    const start = getDisplayTimeInfo(eventItem.date, startUtc, displayTimeZone);
+    const end = getDisplayTimeInfo(eventItem.date, endUtc, displayTimeZone);
 
     if (start.useExtended && end.useExtended) return `${start.extendedTime}-${end.extendedTime}`;
     if (start.dateLabel === end.dateLabel) return `${start.dateLabel} ${start.time}-${end.time}`;
@@ -362,11 +368,43 @@ function getSlotClass(item) {
 }
 
 function getAllTimeZones() {
-    const zones = [...DEFAULT_TIMEZONES];
+    const zones = DEFAULT_TIMEZONES.map(zone => ({ ...zone, label: getDynamicTimezoneLabel(zone.label, zone.value) }));
     (PUBLIC_DATA.settings?.customTimeZones || []).forEach(zone => {
         if (!zones.some(item => item.value === zone.value && item.label === zone.label)) zones.push(zone);
     });
     return zones;
+}
+
+function getDynamicTimezoneLabel(label, value) {
+    const match = String(label).match(/^(.*?)（GMT[^）]+）$/);
+    if (!match) return label;
+    return `${match[1]}（${getGmtLabelByValue(value)}）`;
+}
+
+function migrateDefaultTimeZoneValue(value, label) {
+    const text = String(label || "");
+    const migrations = [
+        ["阿拉斯加", "America/Anchorage"],
+        ["洛杉磯", "America/Los_Angeles"],
+        ["溫哥華", "America/Vancouver"],
+        ["丹佛", "America/Denver"],
+        ["芝加哥", "America/Chicago"],
+        ["多倫多", "America/Toronto"],
+        ["紐約", "America/New_York"],
+        ["聖地牙哥", "America/Santiago"],
+        ["亞速群島", "Atlantic/Azores"],
+        ["倫敦", "Europe/London"],
+        ["巴黎", "Europe/Paris"],
+        ["雅典", "Europe/Athens"],
+        ["伊斯坦堡", "Europe/Istanbul"],
+        ["雪梨", "Australia/Sydney"],
+        ["阿德雷德", "Australia/Adelaide"],
+        ["布里斯本", "Australia/Brisbane"],
+        ["伯斯", "Australia/Perth"],
+        ["奧克蘭", "Pacific/Auckland"]
+    ];
+    const matched = migrations.find(([name]) => text.includes(name));
+    return matched ? matched[1] : value;
 }
 
 function readTimezoneSelection(selectId) {
@@ -388,16 +426,20 @@ function setTimezoneSelectValue(selectId, value, label) {
 function zonedTimeToUtc(dateStr, timeStr, timeZone) {
     const [year, month, day] = dateStr.split("-").map(Number);
     const [hour, minute] = timeStr.split(":").map(Number);
-    return new Date(Date.UTC(year, month - 1, day, hour, minute) - getOffsetMinutes(timeZone) * 60000);
+    if (isFixedOffsetZone(timeZone)) return new Date(Date.UTC(year, month - 1, day, hour, minute) - getOffsetMinutes(timeZone) * 60000);
+    const desired = Date.UTC(year, month - 1, day, hour, minute);
+    let utc = new Date(desired);
+    for (let i = 0; i < 3; i++) {
+        const parts = getZonedParts(utc, timeZone);
+        const asUtc = Date.UTC(parts.year, parts.month - 1, parts.day, parts.hour, parts.minute);
+        utc = new Date(utc.getTime() + desired - asUtc);
+    }
+    return utc;
 }
 
 function getDisplayTimeInfo(baseDate, date, timeZone) {
-    const shifted = new Date(date.getTime() + getOffsetMinutes(timeZone) * 60000);
-    const year = shifted.getUTCFullYear();
-    const month = shifted.getUTCMonth() + 1;
-    const day = shifted.getUTCDate();
-    const hour = shifted.getUTCHours();
-    const minute = shifted.getUTCMinutes();
+    const parts = getZonedParts(date, timeZone);
+    const { year, month, day, hour, minute } = parts;
     const displayDate = `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
     const dateLabel = `${month}/${day}`;
     const time = `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`;
@@ -413,14 +455,35 @@ function getDisplayTimeInfo(baseDate, date, timeZone) {
     };
 }
 
+function isFixedOffsetZone(timeZone) {
+    return /^UTC[+-]\d{2}:\d{2}$/.test(timeZone);
+}
+
 function getOffsetMinutes(timeZone) {
-    if (!/^UTC[+-]\d{2}:\d{2}$/.test(timeZone)) return 0;
+    if (!isFixedOffsetZone(timeZone)) return 0;
     const sign = timeZone[3] === "+" ? 1 : -1;
     const [hour, minute] = timeZone.slice(4).split(":").map(Number);
     return sign * (hour * 60 + minute);
 }
 
+function getZonedParts(date, timeZone) {
+    if (isFixedOffsetZone(timeZone)) {
+        const shifted = new Date(date.getTime() + getOffsetMinutes(timeZone) * 60000);
+        return { year: shifted.getUTCFullYear(), month: shifted.getUTCMonth() + 1, day: shifted.getUTCDate(), hour: shifted.getUTCHours(), minute: shifted.getUTCMinutes() };
+    }
+    try {
+        const parts = new Intl.DateTimeFormat("en-CA", { timeZone, hourCycle: "h23", year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit" }).formatToParts(date);
+        const map = {};
+        parts.forEach(part => { if (part.type !== "literal") map[part.type] = Number(part.value); });
+        return map;
+    } catch (error) {
+        return getZonedParts(date, "UTC+00:00");
+    }
+}
+
 function getDeviceTimeZoneValue() {
+    const deviceZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    if (deviceZone && DEFAULT_TIMEZONES.some(zone => zone.value === deviceZone)) return deviceZone;
     const offset = -new Date().getTimezoneOffset();
     const sign = offset >= 0 ? "+" : "-";
     const abs = Math.abs(offset);
@@ -430,8 +493,8 @@ function getDeviceTimeZoneValue() {
 }
 
 function getTodayInDisplayTimeZone() {
-    const shifted = new Date(Date.now() + getOffsetMinutes(state.displayTimeZone) * 60000);
-    return `${shifted.getUTCFullYear()}-${String(shifted.getUTCMonth() + 1).padStart(2, "0")}-${String(shifted.getUTCDate()).padStart(2, "0")}`;
+    const parts = getZonedParts(new Date(), state.displayTimeZone);
+    return `${parts.year}-${String(parts.month).padStart(2, "0")}-${String(parts.day).padStart(2, "0")}`;
 }
 
 function getDateDiff(baseDate, displayDate) {
@@ -448,13 +511,39 @@ function formatUpdatedAt(value, timeZone) {
     if (!value) return "尚未匯出";
     const date = new Date(value);
     if (Number.isNaN(date.getTime())) return value;
-    const shifted = new Date(date.getTime() + getOffsetMinutes(timeZone) * 60000);
-    return `${shifted.getUTCFullYear()}/${String(shifted.getUTCMonth() + 1).padStart(2, "0")}/${String(shifted.getUTCDate()).padStart(2, "0")} ${String(shifted.getUTCHours()).padStart(2, "0")}:${String(shifted.getUTCMinutes()).padStart(2, "0")}`;
+    const parts = getZonedParts(date, timeZone);
+    return `${parts.year}/${String(parts.month).padStart(2, "0")}/${String(parts.day).padStart(2, "0")} ${String(parts.hour).padStart(2, "0")}:${String(parts.minute).padStart(2, "0")}`;
 }
 
 function getTimezoneLabelByValue(value, label) {
+    const defaultZone = getAllTimeZones().find(zone => zone.value === value);
+    if (defaultZone) return defaultZone.label;
     if (label) return label;
-    return getAllTimeZones().find(zone => zone.value === value)?.label || value.replace("UTC", "GMT");
+    return isFixedOffsetZone(value) ? value.replace("UTC", "GMT") : value;
+}
+
+function getGmtLabelByValue(value) {
+    if (isFixedOffsetZone(value)) return value.replace("UTC", "GMT").replace(":00", "");
+    return getGmtLabelForDate(value, new Date());
+}
+
+function getGmtLabelForDate(timeZone, date) {
+    try {
+        const zoneName = new Intl.DateTimeFormat("en-US", { timeZone, timeZoneName: "shortOffset" })
+            .formatToParts(date)
+            .find(part => part.type === "timeZoneName")?.value || "";
+        return normalizeGmtLabel(zoneName);
+    } catch (error) {
+        return String(timeZone || "").replace("UTC", "GMT");
+    }
+}
+
+function normalizeGmtLabel(value) {
+    if (!value || value === "GMT" || value === "UTC") return "GMT+0";
+    const match = String(value).replace("UTC", "GMT").match(/^GMT([+-])(\d{1,2})(?::?(\d{2}))?$/);
+    if (!match) return String(value).replace("UTC", "GMT");
+    const minute = match[3] && match[3] !== "00" ? `:${match[3]}` : "";
+    return `GMT${match[1]}${Number(match[2])}${minute}`;
 }
 
 init();

@@ -7,26 +7,31 @@ const DEFAULT_TIMEZONES = [
     { value: "UTC-12:00", label: "貝克島（GMT-12）", short: "BIT" },
     { value: "UTC-11:00", label: "美屬薩摩亞（GMT-11）", short: "PPG" },
     { value: "UTC-10:00", label: "夏威夷（GMT-10）", short: "HNL" },
-    { value: "UTC-09:00", label: "阿拉斯加（GMT-9）", short: "ANC" },
-    { value: "UTC-08:00", label: "洛杉磯（GMT-8）", short: "LA" },
-    { value: "UTC-07:00", label: "溫哥華（GMT-7）", short: "YVR" },
-    { value: "UTC-06:00", label: "芝加哥（GMT-6）", short: "CHI" },
-    { value: "UTC-05:00", label: "紐約（GMT-5）", short: "NY" },
-    { value: "UTC-04:00", label: "聖地牙哥（GMT-4）", short: "SCL" },
+    { value: "America/Anchorage", label: "阿拉斯加（GMT-9）", short: "ANC" },
+    { value: "America/Los_Angeles", label: "洛杉磯（GMT-8）", short: "LA" },
+    { value: "America/Vancouver", label: "溫哥華（GMT-8）", short: "YVR" },
+    { value: "America/Denver", label: "丹佛（GMT-7）", short: "DEN" },
+    { value: "America/Chicago", label: "芝加哥（GMT-6）", short: "CHI" },
+    { value: "America/Toronto", label: "多倫多（GMT-5）", short: "YYZ" },
+    { value: "America/New_York", label: "紐約（GMT-5）", short: "NY" },
+    { value: "America/Santiago", label: "聖地牙哥（GMT-4）", short: "SCL" },
     { value: "UTC-03:00", label: "布宜諾斯艾利斯（GMT-3）", short: "BUE" },
     { value: "UTC-02:00", label: "南喬治亞（GMT-2）", short: "GST" },
-    { value: "UTC-01:00", label: "亞速群島（GMT-1）", short: "AZO" },
-    { value: "UTC+00:00", label: "倫敦（GMT+0）", short: "LDN" },
-    { value: "UTC+01:00", label: "巴黎（GMT+1）", short: "PAR" },
-    { value: "UTC+02:00", label: "雅典（GMT+2）", short: "ATH" },
-    { value: "UTC+03:00", label: "伊斯坦堡（GMT+3）", short: "IST" },
+    { value: "Atlantic/Azores", label: "亞速群島（GMT-1）", short: "AZO" },
+    { value: "Europe/London", label: "倫敦（GMT+0）", short: "LDN" },
+    { value: "Europe/Paris", label: "巴黎（GMT+1）", short: "PAR" },
+    { value: "Europe/Athens", label: "雅典（GMT+2）", short: "ATH" },
+    { value: "Europe/Istanbul", label: "伊斯坦堡（GMT+3）", short: "IST" },
     { value: "UTC+04:00", label: "杜拜（GMT+4）", short: "DXB" },
     { value: "UTC+05:00", label: "塔什干（GMT+5）", short: "TAS" },
     { value: "UTC+06:00", label: "達卡（GMT+6）", short: "DAC" },
     { value: "UTC+07:00", label: "曼谷（GMT+7）", short: "BKK" },
-    { value: "UTC+10:00", label: "雪梨（GMT+10）", short: "SYD" },
+    { value: "Australia/Sydney", label: "雪梨（GMT+10）", short: "SYD" },
+    { value: "Australia/Adelaide", label: "阿德雷德（GMT+9:30）", short: "ADL" },
+    { value: "Australia/Brisbane", label: "布里斯本（GMT+10）", short: "BNE" },
+    { value: "Australia/Perth", label: "伯斯（GMT+8）", short: "PER" },
     { value: "UTC+11:00", label: "索羅門群島（GMT+11）", short: "SBT" },
-    { value: "UTC+12:00", label: "奧克蘭（GMT+12）", short: "AKL" },
+    { value: "Pacific/Auckland", label: "奧克蘭（GMT+12）", short: "AKL" },
     { value: "UTC+13:00", label: "東加（GMT+13）", short: "TBU" },
     { value: "UTC+14:00", label: "基里巴斯（GMT+14）", short: "LINT" }
 ];
@@ -46,13 +51,14 @@ const TIMEZONE_NAME_TRANSLATIONS = {
     "台北": ["台北", "台北", "Taipei"], "東京": ["東京", "東京", "Tokyo"], "貝克島": ["貝克島", "ベーカー島", "Baker Island"],
     "美屬薩摩亞": ["美屬薩摩亞", "米領サモア", "American Samoa"], "夏威夷": ["夏威夷", "ハワイ", "Hawaii"],
     "阿拉斯加": ["阿拉斯加", "アラスカ", "Alaska"], "洛杉磯": ["洛杉磯", "ロサンゼルス", "Los Angeles"],
-    "溫哥華": ["溫哥華", "バンクーバー", "Vancouver"], "芝加哥": ["芝加哥", "シカゴ", "Chicago"],
-    "紐約": ["紐約", "ニューヨーク", "New York"], "聖地牙哥": ["聖地牙哥", "サンティアゴ", "Santiago"],
+    "溫哥華": ["溫哥華", "バンクーバー", "Vancouver"], "丹佛": ["丹佛", "デンバー", "Denver"], "芝加哥": ["芝加哥", "シカゴ", "Chicago"],
+    "多倫多": ["多倫多", "トロント", "Toronto"], "紐約": ["紐約", "ニューヨーク", "New York"], "聖地牙哥": ["聖地牙哥", "サンティアゴ", "Santiago"],
     "布宜諾斯艾利斯": ["布宜諾斯艾利斯", "ブエノスアイレス", "Buenos Aires"], "南喬治亞": ["南喬治亞", "サウスジョージア", "South Georgia"],
     "亞速群島": ["亞速群島", "アゾレス諸島", "Azores"], "倫敦": ["倫敦", "ロンドン", "London"],
     "巴黎": ["巴黎", "パリ", "Paris"], "雅典": ["雅典", "アテネ", "Athens"], "伊斯坦堡": ["伊斯坦堡", "イスタンブール", "Istanbul"],
     "杜拜": ["杜拜", "ドバイ", "Dubai"], "塔什干": ["塔什干", "タシケント", "Tashkent"], "達卡": ["達卡", "ダッカ", "Dhaka"],
-    "曼谷": ["曼谷", "バンコク", "Bangkok"], "雪梨": ["雪梨", "シドニー", "Sydney"], "索羅門群島": ["索羅門群島", "ソロモン諸島", "Solomon Islands"],
+    "曼谷": ["曼谷", "バンコク", "Bangkok"], "雪梨": ["雪梨", "シドニー", "Sydney"], "阿德雷德": ["阿德雷德", "アデレード", "Adelaide"],
+    "布里斯本": ["布里斯本", "ブリスベン", "Brisbane"], "伯斯": ["伯斯", "パース", "Perth"], "索羅門群島": ["索羅門群島", "ソロモン諸島", "Solomon Islands"],
     "奧克蘭": ["奧克蘭", "オークランド", "Auckland"], "東加": ["東加", "トンガ", "Tonga"], "基里巴斯": ["基里巴斯", "キリバス", "Kiribati"]
 };
 
@@ -157,9 +163,37 @@ function normalizeSettings(raw) {
     normalized.announcement = String(normalized.announcement || "");
     if (normalized.baseTimeZone === "Asia/Taipei") normalized.baseTimeZone = "UTC+08:00";
     if (normalized.displayTimeZone === "Asia/Taipei") normalized.displayTimeZone = "UTC+08:00";
+    normalized.baseTimeZone = migrateDefaultTimeZoneValue(normalized.baseTimeZone, normalized.baseTimeZoneLabel);
+    normalized.displayTimeZone = migrateDefaultTimeZoneValue(normalized.displayTimeZone, normalized.displayTimeZoneLabel);
     normalized.displayTimeZoneLabel = normalized.displayTimeZoneLabel || [...DEFAULT_TIMEZONES, ...normalized.customTimeZones].find(zone => zone.value === normalized.displayTimeZone)?.label || normalized.displayTimeZone.replace("UTC", "GMT");
     normalized.baseTimeZoneLabel = normalized.baseTimeZoneLabel || [...DEFAULT_TIMEZONES, ...normalized.customTimeZones].find(zone => zone.value === normalized.baseTimeZone)?.label || normalized.baseTimeZone.replace("UTC", "GMT");
     return normalized;
+}
+
+function migrateDefaultTimeZoneValue(value, label) {
+    const text = String(label || "");
+    const migrations = [
+        ["阿拉斯加", "America/Anchorage"],
+        ["洛杉磯", "America/Los_Angeles"],
+        ["溫哥華", "America/Vancouver"],
+        ["丹佛", "America/Denver"],
+        ["芝加哥", "America/Chicago"],
+        ["多倫多", "America/Toronto"],
+        ["紐約", "America/New_York"],
+        ["聖地牙哥", "America/Santiago"],
+        ["亞速群島", "Atlantic/Azores"],
+        ["倫敦", "Europe/London"],
+        ["巴黎", "Europe/Paris"],
+        ["雅典", "Europe/Athens"],
+        ["伊斯坦堡", "Europe/Istanbul"],
+        ["雪梨", "Australia/Sydney"],
+        ["阿德雷德", "Australia/Adelaide"],
+        ["布里斯本", "Australia/Brisbane"],
+        ["伯斯", "Australia/Perth"],
+        ["奧克蘭", "Pacific/Auckland"]
+    ];
+    const matched = migrations.find(([name]) => text.includes(name));
+    return matched ? matched[1] : value;
 }
 
 function normalizeItems(items, fallback) {
@@ -407,20 +441,20 @@ function populateCustomTimezoneSelectors() {
 }
 
 function getAllTimeZones() {
-    const zones = DEFAULT_TIMEZONES.map(zone => ({ ...zone, label: localizeTimezoneLabel(zone.label) }));
+    const zones = DEFAULT_TIMEZONES.map(zone => ({ ...zone, label: localizeTimezoneLabel(zone.label, zone.value) }));
     settings.customTimeZones.forEach(zone => {
         if (!zones.some(item => item.label === zone.label && item.value === zone.value)) zones.push(zone);
     });
     return zones;
 }
 
-function localizeTimezoneLabel(label) {
+function localizeTimezoneLabel(label, value) {
     const match = String(label).match(/^(.*?)（(GMT[^）]+)）$/);
     if (!match) return label;
     const names = TIMEZONE_NAME_TRANSLATIONS[match[1]];
     if (!names) return label;
     const index = settings.language === "ja" ? 1 : settings.language === "en" ? 2 : 0;
-    return `${names[index]}（${match[2]}）`;
+    return `${names[index]}（${getGmtLabelByValue(value)}）`;
 }
 
 function readTimezoneSelection(selectId) {
@@ -2100,11 +2134,31 @@ function formatDisplayDateTime(date) {
 }
 
 function getGmtLabelByValue(value) {
-    return GMT_OFFSET_OPTIONS.find(option => option[0] === value)?.[1] || value.replace("UTC", "GMT");
+    if (isFixedOffsetZone(value)) return GMT_OFFSET_OPTIONS.find(option => option[0] === value)?.[1] || value.replace("UTC", "GMT");
+    return getGmtLabelForDate(value, new Date());
+}
+
+function getGmtLabelForDate(timeZone, date) {
+    try {
+        const zoneName = new Intl.DateTimeFormat("en-US", { timeZone, timeZoneName: "shortOffset" })
+            .formatToParts(date)
+            .find(part => part.type === "timeZoneName")?.value || "";
+        return normalizeGmtLabel(zoneName);
+    } catch (error) {
+        return String(timeZone || "").replace("UTC", "GMT");
+    }
+}
+
+function normalizeGmtLabel(value) {
+    if (!value || value === "GMT" || value === "UTC") return "GMT+0";
+    const match = String(value).replace("UTC", "GMT").match(/^GMT([+-])(\d{1,2})(?::?(\d{2}))?$/);
+    if (!match) return String(value).replace("UTC", "GMT");
+    const minute = match[3] && match[3] !== "00" ? `:${match[3]}` : "";
+    return `GMT${match[1]}${Number(match[2])}${minute}`;
 }
 
 function getCompactTimezoneLabel(label) {
-    const match = String(label).match(/^(.*?)(（GMT[+-]?\d+）)$/);
+    const match = String(label).match(/^(.*?)(（GMT[+-]?\d+(?::\d{2})?）)$/);
     if (!match) return label;
     const name = match[1];
     return `${name.length > 5 ? `${name.slice(0, 5)}…` : name}${match[2]}`;
@@ -2116,9 +2170,11 @@ function makeShortCode(text) {
 }
 
 function getTimezoneLabelByValue(value, label) {
+    const defaultZone = getAllTimeZones().find(zone => zone.value === value);
+    if (defaultZone) return defaultZone.label;
     const custom = settings.customTimeZones.find(zone => zone.value === value && (!label || zone.label === label));
     if (custom) return custom.label;
-    return getAllTimeZones().find(zone => zone.value === value)?.label || label || value.replace("UTC", "GMT");
+    return label || (isFixedOffsetZone(value) ? value.replace("UTC", "GMT") : value);
 }
 
 function getTimezoneShort(value, label) {
