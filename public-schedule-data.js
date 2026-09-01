@@ -1,16 +1,16 @@
 window.TEACHER_PUBLIC_SCHEDULE = {
   "version": 3,
-  "updatedAt": "2026-09-01T10:56:23.063Z",
+  "updatedAt": "2026-09-01T11:53:46.273Z",
   "selectedYear": 2026,
-  "selectedMonth": 7,
+  "selectedMonth": 8,
   "settings": {
     "teacherName": "Syou",
     "announcement": "1.跟老師預約上課時間時，如果沒有特別備註是日本還是台灣時間，那老師一律當成台灣時間。如果是住在澳洲或是英國的同學，預約的時候請一律用「日本時間」來跟老師預約。範例:老師我要約日本時間的8/19 18:00~19:30，一次兩堂課，謝謝。\n\n2.預約課程的時候，不一定只能約整點。範例:老師我要約8/19的 19:40 可以嗎? 像這樣也是可以的。",
     "showTeacherName": false,
     "baseTimeZone": "UTC+08:00",
     "baseTimeZoneLabel": "台北（GMT+8）",
-    "displayTimeZone": "UTC+09:00",
-    "displayTimeZoneLabel": "東京（GMT+9）",
+    "displayTimeZone": "UTC+08:00",
+    "displayTimeZoneLabel": "台北（GMT+8）",
     "customTimeZones": []
   },
   "students": [
@@ -3991,6 +3991,26 @@ window.TEACHER_PUBLIC_SCHEDULE = {
       "start": "18:00",
       "end": "23:00",
       "completed": false
+    },
+    {
+      "id": "17882635643451df61e487df96",
+      "mode": "teacher",
+      "date": "2026-09-03",
+      "start": "20:00",
+      "end": "20:40",
+      "completed": false,
+      "studentNameBase64": "6JSh5a6c5L+u",
+      "studentKeyBase64": "6JSh5a6c5L+u"
+    },
+    {
+      "id": "17882636028120c47823d955718",
+      "mode": "teacher",
+      "date": "2026-09-06",
+      "start": "17:10",
+      "end": "17:50",
+      "completed": false,
+      "studentNameBase64": "6JSh5a6c5L+u",
+      "studentKeyBase64": "6JSh5a6c5L+u"
     }
   ],
   "untimedGeneralDates": []
