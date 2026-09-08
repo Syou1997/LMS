@@ -1,11 +1,11 @@
 window.TEACHER_PUBLIC_SCHEDULE = {
   "version": 3,
-  "updatedAt": "2026-09-07T13:58:24.846Z",
+  "updatedAt": "2026-09-08T11:53:36.077Z",
   "selectedYear": 2026,
-  "selectedMonth": 9,
+  "selectedMonth": 8,
   "settings": {
     "teacherName": "Syou",
-    "announcement": "1.跟老師預約上課時間時，如果沒有特別備註是日本還是台灣時間，那老師一律當成台灣時間。如果是住在澳洲或是英國的同學，預約的時候請一律用「日本時間」來跟老師預約。範例:老師我要約日本時間的8/19 18:00~19:30，一次兩堂課，謝謝。\n\n2.預約課程的時候，不一定只能約整點。範例:老師我要約8/19的 19:40 可以嗎? 像這樣也是可以的。",
+    "announcement": "0.老師在2026/09/16~09/21會回台灣，因此這幾天的課程可能會比較不穩定。但還是請同學照常預約與上課，有狀況老師都會通知同學。\n\n1.跟老師預約上課時間時，如果沒有特別備註是日本還是台灣時間，那老師一律當成台灣時間。如果是住在澳洲或是英國的同學，預約的時候請一律用「日本時間」來跟老師預約。範例:老師我要約日本時間的8/19 18:00~19:30，一次兩堂課，謝謝。\n\n2.預約課程的時候，不一定只能約整點。範例:老師我要約8/19的 19:40 可以嗎? 像這樣也是可以的。",
     "showTeacherName": false,
     "baseTimeZone": "UTC+08:00",
     "baseTimeZoneLabel": "台北（GMT+8）",
@@ -3645,22 +3645,6 @@ window.TEACHER_PUBLIC_SCHEDULE = {
       "completed": false
     },
     {
-      "id": "1783746469265143be4d08f6a8",
-      "mode": "teacher",
-      "date": "2026-09-14",
-      "start": "07:30",
-      "end": "18:00",
-      "completed": false
-    },
-    {
-      "id": "17837464692657eb14d6ce0ece",
-      "mode": "teacher",
-      "date": "2026-09-15",
-      "start": "07:30",
-      "end": "18:00",
-      "completed": false
-    },
-    {
       "id": "17859436729584adfe4d32f239",
       "mode": "teacher",
       "date": "2026-09-15",
@@ -3671,14 +3655,6 @@ window.TEACHER_PUBLIC_SCHEDULE = {
       "studentKeyBase64": "bmljb2xl"
     },
     {
-      "id": "1783746469265112df5b351cfe",
-      "mode": "teacher",
-      "date": "2026-09-16",
-      "start": "07:30",
-      "end": "18:00",
-      "completed": false
-    },
-    {
       "id": "17857662829902b589aa67fa3c",
       "mode": "teacher",
       "date": "2026-09-16",
@@ -3687,22 +3663,6 @@ window.TEACHER_PUBLIC_SCHEDULE = {
       "completed": false,
       "studentNameBase64": "5p6X5a2Q6Zm4",
       "studentKeyBase64": "5p6X5a2Q6Zm4"
-    },
-    {
-      "id": "1783746469265c26c7222aa68a8",
-      "mode": "teacher",
-      "date": "2026-09-17",
-      "start": "07:30",
-      "end": "18:00",
-      "completed": false
-    },
-    {
-      "id": "1783746469265dbf587972f19d",
-      "mode": "teacher",
-      "date": "2026-09-18",
-      "start": "07:30",
-      "end": "18:00",
-      "completed": false
     },
     {
       "id": "1787399902220181256306fe3",
@@ -3731,22 +3691,6 @@ window.TEACHER_PUBLIC_SCHEDULE = {
       "completed": false,
       "studentNameBase64": "5rKI6YOB6Zuv",
       "studentKeyBase64": "5rKI6YOB6Zuv"
-    },
-    {
-      "id": "17873956226675c2e52c54c1dd",
-      "mode": "teacher",
-      "date": "2026-09-20",
-      "start": "14:00",
-      "end": "17:00",
-      "completed": false
-    },
-    {
-      "id": "1787395636064606d69778e7d7",
-      "mode": "teacher",
-      "date": "2026-09-20",
-      "start": "17:40",
-      "end": "22:00",
-      "completed": false
     },
     {
       "id": "178739581176961e5271e1f7ac",
@@ -4113,6 +4057,14 @@ window.TEACHER_PUBLIC_SCHEDULE = {
       "completed": false,
       "studentNameBase64": "5rKI6YOB6Zuv",
       "studentKeyBase64": "5rKI6YOB6Zuv"
+    },
+    {
+      "id": "178886555415412f1da8b6a8a1",
+      "mode": "general",
+      "date": "2026-09-14",
+      "start": "09:00",
+      "end": "15:00",
+      "completed": false
     }
   ],
   "untimedGeneralDates": []
