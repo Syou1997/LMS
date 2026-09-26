@@ -1,7 +1,6 @@
 const PUBLIC_DATA = window.TEACHER_PUBLIC_SCHEDULE || {};
 const TIME_DISPLAY_MAX_MINUTES = 24 * 60;
 const STUDENT_SESSION_KEY = "availabilityStudentNameBase64";
-const LANGUAGE_KEY = "availabilityLanguage";
 const LANGUAGES = ["zh-TW", "ja", "en"];
 const TEXT = {
     "zh-TW": {
@@ -179,7 +178,7 @@ const state = {
     month: now.getMonth(),
     displayTimeZone: initialDisplayTimeZone,
     displayTimeZoneLabel: "",
-    language: getSavedLanguage(initialDisplayTimeZone)
+    language: getDefaultLanguageForTimeZone(initialDisplayTimeZone)
 };
 
 function init() {
@@ -239,7 +238,6 @@ function bindControls() {
     $("nextMonthBtn").onclick = () => changeMonth(1);
     $("languageSelect").onchange = () => {
         state.language = LANGUAGES.includes($("languageSelect").value) ? $("languageSelect").value : "zh-TW";
-        localStorage.setItem(LANGUAGE_KEY, state.language);
         populateYearSelect();
         populateMonthSelect();
         populateTimezones();
@@ -257,13 +255,11 @@ function bindControls() {
         const selectedTimeZone = readTimezoneSelection("timezoneSelect");
         state.displayTimeZone = selectedTimeZone.value;
         state.displayTimeZoneLabel = selectedTimeZone.label;
-        if (!hasSavedLanguage()) {
-            state.language = getDefaultLanguageForTimeZone(state.displayTimeZone);
-            populateLanguageSelect();
-            populateYearSelect();
-            populateMonthSelect();
-            populateTimezones();
-        }
+        state.language = getDefaultLanguageForTimeZone(state.displayTimeZone);
+        populateLanguageSelect();
+        populateYearSelect();
+        populateMonthSelect();
+        populateTimezones();
         render();
     };
     $("studentLoginForm").onsubmit = handleStudentLogin;
@@ -715,15 +711,6 @@ function tr(key, ...args) {
     const source = TEXT[state.language] || TEXT["zh-TW"];
     const value = source[key] ?? TEXT["zh-TW"][key] ?? "";
     return typeof value === "function" ? value(...args) : value;
-}
-
-function getSavedLanguage(timeZone) {
-    const saved = localStorage.getItem(LANGUAGE_KEY);
-    return LANGUAGES.includes(saved) ? saved : getDefaultLanguageForTimeZone(timeZone);
-}
-
-function hasSavedLanguage() {
-    return LANGUAGES.includes(localStorage.getItem(LANGUAGE_KEY));
 }
 
 function getDefaultLanguageForTimeZone(timeZone) {

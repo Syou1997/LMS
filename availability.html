@@ -473,7 +473,11 @@
         appScript.onerror = () => {
             const alert = document.getElementById("dataAlert");
             if (!alert) return;
-            const language = localStorage.getItem("availabilityLanguage");
+            const language = (navigator.language || "").startsWith("ja")
+                ? "ja"
+                : (navigator.language || "").startsWith("en")
+                    ? "en"
+                    : "zh-TW";
             const messages = {
                 "ja": "availability.js が見つかりません。このファイルを availability.html と同じ階層に置き、GitHub に反映してください。",
                 "en": "availability.js was not found. Make sure this file is in the same folder as availability.html and has been pushed to GitHub.",
