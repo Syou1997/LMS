@@ -111,6 +111,7 @@
         #yearSelect { min-width: 120px; }
         #monthSelect { min-width: 100px; }
         #timezoneSelect { min-width: 230px; }
+        #languageSelect { min-width: 150px; }
 
         .month-control {
             display: inline-flex;
@@ -135,7 +136,7 @@
         }
 
         .student-login {
-            width: 100%;
+            flex: 1 1 320px;
             max-width: 390px;
             padding: 10px;
             border: 1px solid rgba(255, 255, 255, .22);
@@ -143,6 +144,12 @@
             background: rgba(255, 255, 255, .12);
             box-shadow: 0 10px 24px rgba(15, 23, 42, .12);
             backdrop-filter: blur(4px);
+        }
+
+        .public-tools-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
         }
 
         .student-login form,
@@ -330,9 +337,13 @@
             main { padding: 0 16px 22px; }
             .controls { justify-content: flex-start; }
             .timezone-login-group { width: 100%; }
+            .public-tools-row {
+                width: 100%;
+                flex-direction: column;
+            }
             .month-control { width: 100%; }
             .month-control #monthSelect { flex: 1 1 auto; }
-            #yearSelect, #monthSelect, #timezoneSelect { width: 100%; min-width: 0; }
+            #yearSelect, #monthSelect, #timezoneSelect, #languageSelect { width: 100%; min-width: 0; }
             .student-login { max-width: none; }
             .announcement-card {
                 margin-top: 0;
@@ -405,15 +416,22 @@
             </div>
             <div class="timezone-login-group">
                 <select id="timezoneSelect" aria-label="選擇顯示時區"></select>
-                <div class="student-login" id="studentLoginArea">
-                    <form id="studentLoginForm">
-                        <input id="studentNameInput" type="text" autocomplete="name" placeholder="輸入學生姓名">
-                        <button type="submit">登入</button>
-                        <div class="student-login-error hidden" id="studentLoginError"></div>
-                    </form>
-                    <div class="student-login-status hidden" id="studentLoginStatus">
-                        <span class="student-login-text" id="studentLoginText"></span>
-                        <button type="button" id="studentLogoutBtn">登出</button>
+                <div class="public-tools-row">
+                    <select id="languageSelect" aria-label="選擇語言">
+                        <option value="zh-TW">中文</option>
+                        <option value="ja">日本語</option>
+                        <option value="en">English</option>
+                    </select>
+                    <div class="student-login" id="studentLoginArea">
+                        <form id="studentLoginForm">
+                            <input id="studentNameInput" type="text" autocomplete="name" placeholder="輸入學生姓名">
+                            <button type="submit" id="studentLoginBtn">登入</button>
+                            <div class="student-login-error hidden" id="studentLoginError"></div>
+                        </form>
+                        <div class="student-login-status hidden" id="studentLoginStatus">
+                            <span class="student-login-text" id="studentLoginText"></span>
+                            <button type="button" id="studentLogoutBtn">登出</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -451,7 +469,13 @@
         appScript.onerror = () => {
             const alert = document.getElementById("dataAlert");
             if (!alert) return;
-            alert.innerText = "找不到 availability.js。請確認這個檔案已放在 availability.html 同一層，並且已推送到 GitHub。";
+            const language = localStorage.getItem("availabilityLanguage");
+            const messages = {
+                "ja": "availability.js が見つかりません。このファイルを availability.html と同じ階層に置き、GitHub に反映してください。",
+                "en": "availability.js was not found. Make sure this file is in the same folder as availability.html and has been pushed to GitHub.",
+                "zh-TW": "找不到 availability.js。請確認這個檔案已放在 availability.html 同一層，並且已推送到 GitHub。"
+            };
+            alert.innerText = messages[language] || messages["zh-TW"];
             alert.classList.remove("hidden");
         };
         document.head.appendChild(appScript);

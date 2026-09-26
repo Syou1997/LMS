@@ -1,6 +1,91 @@
 const PUBLIC_DATA = window.TEACHER_PUBLIC_SCHEDULE || {};
 const TIME_DISPLAY_MAX_MINUTES = 24 * 60;
 const STUDENT_SESSION_KEY = "availabilityStudentNameBase64";
+const LANGUAGE_KEY = "availabilityLanguage";
+const LANGUAGES = ["zh-TW", "ja", "en"];
+const TEXT = {
+    "zh-TW": {
+        pageTitle: (year, month) => `${year} 年 ${month} 月已排課的時間`,
+        timezonePrefix: "時區：",
+        updatedPrefix: "最後更新：",
+        announcementTitle: "最新公告：",
+        yearOption: year => `${year} 年`,
+        monthOption: month => `${month} 月`,
+        weekdays: ["週日", "週一", "週二", "週三", "週四", "週五", "週六"],
+        studentPlaceholder: "輸入學生姓名",
+        login: "登入",
+        logout: "登出",
+        loggedIn: name => `已登入：${name}`,
+        studentNotFound: "找不到這個學生姓名，請確認輸入是否和老師提供的名稱一致。",
+        noSchedule: "無排課",
+        untimedNotice: "本日有未定時間的行程",
+        notExported: "尚未匯出",
+        dataLoadError: "找不到 public-schedule-data.js。請確認這個資料檔已放在 availability.html 同一層，並且已推送到 GitHub。",
+        emptyData: "目前讀到的 public-schedule-data.js 還沒有課程資料。請在教師模式按「公開頁資料」，把下載的新 public-schedule-data.js 覆蓋專案內的同名檔案後，再推送到 GitHub。",
+        footnote: "此頁僅顯示已排課的時間；其他時段請再與老師確認。",
+        calendarLabel: "已排課時間月曆",
+        yearAria: "選擇年份",
+        monthAria: "選擇月份",
+        timezoneAria: "選擇顯示時區",
+        languageAria: "選擇語言",
+        prevMonthAria: "上一個月",
+        nextMonthAria: "下一個月"
+    },
+    ja: {
+        pageTitle: (year, month) => `${year} 年 ${month} 月の予約済み時間`,
+        timezonePrefix: "タイムゾーン：",
+        updatedPrefix: "最終更新：",
+        announcementTitle: "最新のお知らせ：",
+        yearOption: year => `${year} 年`,
+        monthOption: month => `${month} 月`,
+        weekdays: ["日", "月", "火", "水", "木", "金", "土"],
+        studentPlaceholder: "学生名を入力",
+        login: "ログイン",
+        logout: "ログアウト",
+        loggedIn: name => `ログイン中：${name}`,
+        studentNotFound: "この学生名が見つかりません。先生から案内された名前と一致しているか確認してください。",
+        noSchedule: "予約済みなし",
+        untimedNotice: "本日は時間未定の予定があります",
+        notExported: "未出力",
+        dataLoadError: "public-schedule-data.js が見つかりません。このデータファイルを availability.html と同じ階層に置き、GitHub に反映してください。",
+        emptyData: "読み込んだ public-schedule-data.js には、まだ予定データがありません。教師モードで「公開頁資料」を押し、ダウンロードした新しい public-schedule-data.js を同名ファイルに上書きしてから GitHub に反映してください。",
+        footnote: "このページには予約済みの時間のみ表示されます。その他の時間は先生に確認してください。",
+        calendarLabel: "予約済み時間カレンダー",
+        yearAria: "年を選択",
+        monthAria: "月を選択",
+        timezoneAria: "表示タイムゾーンを選択",
+        languageAria: "言語を選択",
+        prevMonthAria: "前の月",
+        nextMonthAria: "次の月"
+    },
+    en: {
+        pageTitle: (year, month) => `Booked times for ${getEnglishMonthName(month)} ${year}`,
+        timezonePrefix: "Time zone: ",
+        updatedPrefix: "Last updated: ",
+        announcementTitle: "Latest announcement:",
+        yearOption: year => `${year}`,
+        monthOption: month => getEnglishMonthName(month),
+        weekdays: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+        studentPlaceholder: "Enter student name",
+        login: "Log in",
+        logout: "Log out",
+        loggedIn: name => `Logged in: ${name}`,
+        studentNotFound: "Student name not found. Please check that it matches the name provided by the teacher.",
+        noSchedule: "No booked times",
+        untimedNotice: "There is an event with no fixed time on this day",
+        notExported: "Not exported yet",
+        dataLoadError: "public-schedule-data.js was not found. Make sure this data file is in the same folder as availability.html and has been pushed to GitHub.",
+        emptyData: "The loaded public-schedule-data.js does not contain schedule data yet. In teacher mode, click the public page data export button, replace the project file with the downloaded public-schedule-data.js, then push it to GitHub.",
+        footnote: "This page shows only booked times. Please confirm other time slots with the teacher.",
+        calendarLabel: "Booked times calendar",
+        yearAria: "Choose year",
+        monthAria: "Choose month",
+        timezoneAria: "Choose display time zone",
+        languageAria: "Choose language",
+        prevMonthAria: "Previous month",
+        nextMonthAria: "Next month"
+    }
+};
 const DEFAULT_STUDENTS = [
     { nameBase64: "6buD6Yi66Yie", keyBase64: "6buD6Yi66Yie" },
     { nameBase64: "5p6X5a2Q6Zm4", keyBase64: "5p6X5a2Q6Zm4" },
@@ -51,6 +136,40 @@ const DEFAULT_TIMEZONES = [
     { value: "UTC+13:00", label: "東加（GMT+13）" },
     { value: "UTC+14:00", label: "基里巴斯（GMT+14）" }
 ];
+const TIMEZONE_NAME_TRANSLATIONS = {
+    "台北": ["台北", "台北", "Taipei"],
+    "東京": ["東京", "東京", "Tokyo"],
+    "貝克島": ["貝克島", "ベーカー島", "Baker Island"],
+    "美屬薩摩亞": ["美屬薩摩亞", "米領サモア", "American Samoa"],
+    "夏威夷": ["夏威夷", "ハワイ", "Hawaii"],
+    "阿拉斯加": ["阿拉斯加", "アラスカ", "Alaska"],
+    "洛杉磯": ["洛杉磯", "ロサンゼルス", "Los Angeles"],
+    "溫哥華": ["溫哥華", "バンクーバー", "Vancouver"],
+    "丹佛": ["丹佛", "デンバー", "Denver"],
+    "芝加哥": ["芝加哥", "シカゴ", "Chicago"],
+    "多倫多": ["多倫多", "トロント", "Toronto"],
+    "紐約": ["紐約", "ニューヨーク", "New York"],
+    "聖地牙哥": ["聖地牙哥", "サンティアゴ", "Santiago"],
+    "布宜諾斯艾利斯": ["布宜諾斯艾利斯", "ブエノスアイレス", "Buenos Aires"],
+    "南喬治亞": ["南喬治亞", "サウスジョージア", "South Georgia"],
+    "亞速群島": ["亞速群島", "アゾレス諸島", "Azores"],
+    "倫敦": ["倫敦", "ロンドン", "London"],
+    "巴黎": ["巴黎", "パリ", "Paris"],
+    "雅典": ["雅典", "アテネ", "Athens"],
+    "伊斯坦堡": ["伊斯坦堡", "イスタンブール", "Istanbul"],
+    "杜拜": ["杜拜", "ドバイ", "Dubai"],
+    "塔什干": ["塔什干", "タシケント", "Tashkent"],
+    "達卡": ["達卡", "ダッカ", "Dhaka"],
+    "曼谷": ["曼谷", "バンコク", "Bangkok"],
+    "雪梨": ["雪梨", "シドニー", "Sydney"],
+    "阿德雷德": ["阿德雷德", "アデレード", "Adelaide"],
+    "布里斯本": ["布里斯本", "ブリスベン", "Brisbane"],
+    "伯斯": ["伯斯", "パース", "Perth"],
+    "索羅門群島": ["索羅門群島", "ソロモン諸島", "Solomon Islands"],
+    "奧克蘭": ["奧克蘭", "オークランド", "Auckland"],
+    "東加": ["東加", "トンガ", "Tonga"],
+    "基里巴斯": ["基里巴斯", "キリバス", "Kiribati"]
+};
 
 const $ = id => document.getElementById(id);
 const now = new Date();
@@ -58,16 +177,24 @@ const state = {
     year: now.getFullYear(),
     month: now.getMonth(),
     displayTimeZone: getDeviceTimeZoneValue(),
-    displayTimeZoneLabel: ""
+    displayTimeZoneLabel: "",
+    language: getSavedLanguage()
 };
 
 function init() {
+    populateLanguageSelect();
     populateYearSelect();
     populateMonthSelect();
     populateTimezones();
     bindControls();
     renderDataAlert();
     render();
+}
+
+function populateLanguageSelect() {
+    const select = $("languageSelect");
+    if (!select) return;
+    select.value = state.language;
 }
 
 function populateYearSelect() {
@@ -82,7 +209,7 @@ function populateYearSelect() {
     });
     $("yearSelect").innerHTML = "";
     Array.from(years).sort((a, b) => a - b).forEach(year => {
-        $("yearSelect").add(new Option(`${year} 年`, year));
+        $("yearSelect").add(new Option(tr("yearOption", year), year));
     });
     $("yearSelect").value = state.year;
 }
@@ -90,7 +217,7 @@ function populateYearSelect() {
 function populateMonthSelect() {
     $("monthSelect").innerHTML = "";
     for (let month = 0; month < 12; month++) {
-        $("monthSelect").add(new Option(`${month + 1} 月`, month));
+        $("monthSelect").add(new Option(tr("monthOption", month + 1), month));
     }
     $("monthSelect").value = state.month;
 }
@@ -109,6 +236,14 @@ function populateTimezones() {
 function bindControls() {
     $("prevMonthBtn").onclick = () => changeMonth(-1);
     $("nextMonthBtn").onclick = () => changeMonth(1);
+    $("languageSelect").onchange = () => {
+        state.language = LANGUAGES.includes($("languageSelect").value) ? $("languageSelect").value : "zh-TW";
+        localStorage.setItem(LANGUAGE_KEY, state.language);
+        populateYearSelect();
+        populateMonthSelect();
+        populateTimezones();
+        render();
+    };
     $("yearSelect").onchange = () => {
         state.year = Number($("yearSelect").value);
         render();
@@ -139,20 +274,42 @@ function changeMonth(offset) {
 
 function ensureYearOption(year) {
     if (Array.from($("yearSelect").options).some(option => Number(option.value) === year)) return;
-    $("yearSelect").add(new Option(`${year} 年`, year));
+    $("yearSelect").add(new Option(tr("yearOption", year), year));
     const sorted = Array.from($("yearSelect").options).sort((a, b) => Number(a.value) - Number(b.value));
     $("yearSelect").innerHTML = "";
     sorted.forEach(option => $("yearSelect").add(option));
 }
 
 function render() {
-    $("pageTitle").innerText = `${state.year} 年 ${state.month + 1} 月已排課的時間`;
-    $("timezoneLabel").innerText = `時區：${getTimezoneLabelByValue(state.displayTimeZone, state.displayTimeZoneLabel)}`;
-    $("updatedAt").innerText = `最後更新：${formatUpdatedAt(PUBLIC_DATA.updatedAt, state.displayTimeZone)}`;
+    renderStaticTexts();
+    $("pageTitle").innerText = tr("pageTitle", state.year, state.month + 1);
+    $("timezoneLabel").innerText = `${tr("timezonePrefix")}${getTimezoneLabelByValue(state.displayTimeZone, state.displayTimeZoneLabel)}`;
+    $("updatedAt").innerText = `${tr("updatedPrefix")}${formatUpdatedAt(PUBLIC_DATA.updatedAt, state.displayTimeZone)}`;
+    renderDataAlert();
     renderAnnouncement();
     renderStudentLogin();
     renderWeekdays();
     renderCalendar();
+}
+
+function renderStaticTexts() {
+    document.documentElement.lang = state.language;
+    document.title = tr("pageTitle", state.year, state.month + 1);
+    $("studentNameInput").placeholder = tr("studentPlaceholder");
+    $("studentLoginBtn").innerText = tr("login");
+    $("studentLogoutBtn").innerText = tr("logout");
+    $("prevMonthBtn").setAttribute("aria-label", tr("prevMonthAria"));
+    $("nextMonthBtn").setAttribute("aria-label", tr("nextMonthAria"));
+    $("yearSelect").setAttribute("aria-label", tr("yearAria"));
+    $("monthSelect").setAttribute("aria-label", tr("monthAria"));
+    $("timezoneSelect").setAttribute("aria-label", tr("timezoneAria"));
+    $("languageSelect").setAttribute("aria-label", tr("languageAria"));
+    document.querySelector(".calendar")?.setAttribute("aria-label", tr("calendarLabel"));
+    $("announcement")?.setAttribute("aria-label", tr("announcementTitle").replace(/[:：]$/, ""));
+    const footnote = document.querySelector(".footnote");
+    if (footnote) footnote.innerText = tr("footnote");
+    const announcementTitle = document.querySelector("#announcement h3");
+    if (announcementTitle) announcementTitle.innerText = tr("announcementTitle");
 }
 
 function renderAnnouncement() {
@@ -187,7 +344,7 @@ function renderCalendar() {
         html += `
             <div class="day ${date < today ? "past-day" : ""}">
                 <span class="day-num">${day}<span class="mobile-weekday">${getWeekdayLabel(date)}</span></span>
-                ${slots.length ? slots.map(renderSlot).join("") : '<div class="none">無排課</div>'}
+                ${slots.length ? slots.map(renderSlot).join("") : `<div class="none">${tr("noSchedule")}</div>`}
             </div>
         `;
     }
@@ -195,7 +352,7 @@ function renderCalendar() {
 }
 
 function renderSlot(item) {
-    const range = item.untimedNotice ? "本日有未定時間的行程" : getDisplayTimeRange(item);
+    const range = item.untimedNotice ? tr("untimedNotice") : getDisplayTimeRange(item);
     return `<div class="slot ${getSlotClass(item)} ${range.includes("/") ? "date-time" : ""}">${range}</div>`;
 }
 
@@ -213,14 +370,14 @@ function getDisplayTimeRange(eventItem) {
 }
 
 function renderWeekdays() {
-    $("weekdays").innerHTML = ["週日", "週一", "週二", "週三", "週四", "週五", "週六"]
+    $("weekdays").innerHTML = tr("weekdays")
         .map(day => `<div class="weekday">${day}</div>`)
         .join("");
 }
 
 function getWeekdayLabel(dateStr) {
     const [year, month, day] = dateStr.split("-").map(Number);
-    return ["週日", "週一", "週二", "週三", "週四", "週五", "週六"][new Date(year, month - 1, day).getDay()];
+    return tr("weekdays")[new Date(year, month - 1, day).getDay()];
 }
 
 function renderDataAlert() {
@@ -228,12 +385,12 @@ function renderDataAlert() {
     const eventCount = getPublicEvents().length;
     if (!alert) return;
     if (PUBLIC_DATA.loadError) {
-        alert.innerText = "找不到 public-schedule-data.js。請確認這個資料檔已放在 availability.html 同一層，並且已推送到 GitHub。";
+        alert.innerText = tr("dataLoadError");
         alert.classList.remove("hidden");
         return;
     }
     if (!PUBLIC_DATA.updatedAt || eventCount === 0) {
-        alert.innerText = "目前讀到的 public-schedule-data.js 還沒有課程資料。請在教師模式按「公開頁資料」，把下載的新 public-schedule-data.js 覆蓋專案內的同名檔案後，再推送到 GitHub。";
+        alert.innerText = tr("emptyData");
         alert.classList.remove("hidden");
         return;
     }
@@ -281,7 +438,7 @@ function handleStudentLogin(event) {
         return key === encodeBase64(normalized);
     });
     if (!student) {
-        error.innerText = "找不到這個學生姓名，請確認輸入是否和老師提供的名稱一致。";
+        error.innerText = tr("studentNotFound");
         error.classList.remove("hidden");
         return;
     }
@@ -304,7 +461,7 @@ function renderStudentLogin() {
     if (current) {
         form.classList.add("hidden");
         status.classList.remove("hidden");
-        text.innerText = `已登入：${current.name}`;
+        text.innerText = tr("loggedIn", current.name);
     } else {
         form.classList.remove("hidden");
         status.classList.add("hidden");
@@ -378,7 +535,7 @@ function getAllTimeZones() {
 function getDynamicTimezoneLabel(label, value) {
     const match = String(label).match(/^(.*?)（GMT[^）]+）$/);
     if (!match) return label;
-    return `${match[1]}（${getGmtLabelByValue(value)}）`;
+    return `${localizeTimezoneName(match[1])}（${getGmtLabelByValue(value)}）`;
 }
 
 function migrateDefaultTimeZoneValue(value, label) {
@@ -508,7 +665,7 @@ function formatExtendedTime(totalMinutes) {
 }
 
 function formatUpdatedAt(value, timeZone) {
-    if (!value) return "尚未匯出";
+    if (!value) return tr("notExported");
     const date = new Date(value);
     if (Number.isNaN(date.getTime())) return value;
     const parts = getZonedParts(date, timeZone);
@@ -544,6 +701,32 @@ function normalizeGmtLabel(value) {
     if (!match) return String(value).replace("UTC", "GMT");
     const minute = match[3] && match[3] !== "00" ? `:${match[3]}` : "";
     return `GMT${match[1]}${Number(match[2])}${minute}`;
+}
+
+function tr(key, ...args) {
+    const source = TEXT[state.language] || TEXT["zh-TW"];
+    const value = source[key] ?? TEXT["zh-TW"][key] ?? "";
+    return typeof value === "function" ? value(...args) : value;
+}
+
+function getSavedLanguage() {
+    const saved = localStorage.getItem(LANGUAGE_KEY);
+    return LANGUAGES.includes(saved) ? saved : "zh-TW";
+}
+
+function getLanguageIndex() {
+    return state.language === "ja" ? 1 : state.language === "en" ? 2 : 0;
+}
+
+function getEnglishMonthName(month) {
+    return [
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+    ][month - 1] || "";
+}
+
+function localizeTimezoneName(name) {
+    return TIMEZONE_NAME_TRANSLATIONS[name]?.[getLanguageIndex()] || name;
 }
 
 init();
