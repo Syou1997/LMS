@@ -717,9 +717,7 @@ function getDefaultLanguageForTimeZone(timeZone) {
     const value = String(timeZone || "");
     if (value === "UTC+09:00" || value === "Asia/Tokyo") return "ja";
     if (value === "UTC+08:00" || value === "Asia/Taipei") return "zh-TW";
-    if (value.startsWith("Australia/")) return "en";
-    if (value.startsWith("America/") || value.startsWith("Europe/") || value.startsWith("Atlantic/") || value === "Pacific/Auckland") return "en";
-    return "zh-TW";
+    return "en";
 }
 
 function getLanguageIndex() {
