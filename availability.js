@@ -173,12 +173,13 @@ const TIMEZONE_NAME_TRANSLATIONS = {
 
 const $ = id => document.getElementById(id);
 const now = new Date();
+const initialDisplayTimeZone = getDeviceTimeZoneValue();
 const state = {
     year: now.getFullYear(),
     month: now.getMonth(),
-    displayTimeZone: getDeviceTimeZoneValue(),
+    displayTimeZone: initialDisplayTimeZone,
     displayTimeZoneLabel: "",
-    language: getSavedLanguage()
+    language: getSavedLanguage(initialDisplayTimeZone)
 };
 
 function init() {
@@ -256,6 +257,13 @@ function bindControls() {
         const selectedTimeZone = readTimezoneSelection("timezoneSelect");
         state.displayTimeZone = selectedTimeZone.value;
         state.displayTimeZoneLabel = selectedTimeZone.label;
+        if (!hasSavedLanguage()) {
+            state.language = getDefaultLanguageForTimeZone(state.displayTimeZone);
+            populateLanguageSelect();
+            populateYearSelect();
+            populateMonthSelect();
+            populateTimezones();
+        }
         render();
     };
     $("studentLoginForm").onsubmit = handleStudentLogin;
@@ -709,9 +717,22 @@ function tr(key, ...args) {
     return typeof value === "function" ? value(...args) : value;
 }
 
-function getSavedLanguage() {
+function getSavedLanguage(timeZone) {
     const saved = localStorage.getItem(LANGUAGE_KEY);
-    return LANGUAGES.includes(saved) ? saved : "zh-TW";
+    return LANGUAGES.includes(saved) ? saved : getDefaultLanguageForTimeZone(timeZone);
+}
+
+function hasSavedLanguage() {
+    return LANGUAGES.includes(localStorage.getItem(LANGUAGE_KEY));
+}
+
+function getDefaultLanguageForTimeZone(timeZone) {
+    const value = String(timeZone || "");
+    if (value === "UTC+09:00" || value === "Asia/Tokyo") return "ja";
+    if (value === "UTC+08:00" || value === "Asia/Taipei") return "zh-TW";
+    if (value.startsWith("Australia/")) return "en";
+    if (value.startsWith("America/") || value.startsWith("Europe/") || value.startsWith("Atlantic/") || value === "Pacific/Auckland") return "en";
+    return "zh-TW";
 }
 
 function getLanguageIndex() {
