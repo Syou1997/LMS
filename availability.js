@@ -255,8 +255,6 @@ function bindControls() {
         const selectedTimeZone = readTimezoneSelection("timezoneSelect");
         state.displayTimeZone = selectedTimeZone.value;
         state.displayTimeZoneLabel = selectedTimeZone.label;
-        state.language = getDefaultLanguageForTimeZone(state.displayTimeZone);
-        populateLanguageSelect();
         populateYearSelect();
         populateMonthSelect();
         populateTimezones();
