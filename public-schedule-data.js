@@ -1,8 +1,8 @@
 window.TEACHER_PUBLIC_SCHEDULE = {
   "version": 3,
-  "updatedAt": "2026-09-29T10:00:08.088Z",
+  "updatedAt": "2026-09-29T10:46:26.142Z",
   "selectedYear": 2026,
-  "selectedMonth": 8,
+  "selectedMonth": 11,
   "settings": {
     "teacherName": "Syou",
     "announcement": "0.不用在意是否約的時間太晚，老師能接就代表能上，不用這麼客氣!\n\n1.跟老師預約上課時間時，如果沒有特別備註是日本還是台灣時間，那老師一律當成台灣時間。如果是住在澳洲或是英國的同學，預約的時候請一律用「日本時間」來跟老師預約。範例:老師我要約日本時間的8/19 18:00~19:30，一次兩堂課，謝謝。\n\n2.預約課程的時候，不一定只能約整點。範例:老師我要約8/19的 19:40 可以嗎? 像這樣也是可以的。",
@@ -4679,14 +4679,188 @@ window.TEACHER_PUBLIC_SCHEDULE = {
       "completed": false
     },
     {
-      "id": "179067599696969d3577acb6898",
+      "id": "1790678784342a43345991d42d8",
       "mode": "teacher",
-      "date": "2026-09-30",
-      "start": "20:50",
-      "end": "21:30",
-      "completed": false,
-      "studentNameBase64": "WkVZSQ==",
-      "studentKeyBase64": "emV5aQ=="
+      "date": "2026-12-01",
+      "start": "07:30",
+      "end": "18:00",
+      "completed": false
+    },
+    {
+      "id": "1790678784342fcf9fcb851981",
+      "mode": "teacher",
+      "date": "2026-12-02",
+      "start": "07:30",
+      "end": "18:00",
+      "completed": false
+    },
+    {
+      "id": "17906787843428a339e4f8e5f7",
+      "mode": "teacher",
+      "date": "2026-12-03",
+      "start": "07:30",
+      "end": "18:00",
+      "completed": false
+    },
+    {
+      "id": "17906787843422100a21b63d75",
+      "mode": "teacher",
+      "date": "2026-12-04",
+      "start": "07:30",
+      "end": "18:00",
+      "completed": false
+    },
+    {
+      "id": "17906787843426e93e512b5c42",
+      "mode": "teacher",
+      "date": "2026-12-07",
+      "start": "07:30",
+      "end": "18:00",
+      "completed": false
+    },
+    {
+      "id": "17906787843425f21e429934e48",
+      "mode": "teacher",
+      "date": "2026-12-08",
+      "start": "07:30",
+      "end": "18:00",
+      "completed": false
+    },
+    {
+      "id": "179067878434267af655de8203",
+      "mode": "teacher",
+      "date": "2026-12-09",
+      "start": "07:30",
+      "end": "18:00",
+      "completed": false
+    },
+    {
+      "id": "17906787843422344fbc980435",
+      "mode": "teacher",
+      "date": "2026-12-10",
+      "start": "07:30",
+      "end": "18:00",
+      "completed": false
+    },
+    {
+      "id": "17906787843424e899223d1e078",
+      "mode": "teacher",
+      "date": "2026-12-11",
+      "start": "07:30",
+      "end": "18:00",
+      "completed": false
+    },
+    {
+      "id": "1790678784342cf84b8c19b08a8",
+      "mode": "teacher",
+      "date": "2026-12-14",
+      "start": "07:30",
+      "end": "18:00",
+      "completed": false
+    },
+    {
+      "id": "1790678784342730a4884738478",
+      "mode": "teacher",
+      "date": "2026-12-15",
+      "start": "07:30",
+      "end": "18:00",
+      "completed": false
+    },
+    {
+      "id": "179067878434284b424c456b1b",
+      "mode": "teacher",
+      "date": "2026-12-16",
+      "start": "07:30",
+      "end": "18:00",
+      "completed": false
+    },
+    {
+      "id": "1790678784342d7a895005f9878",
+      "mode": "teacher",
+      "date": "2026-12-17",
+      "start": "07:30",
+      "end": "18:00",
+      "completed": false
+    },
+    {
+      "id": "1790678784342b1197c473b5af8",
+      "mode": "teacher",
+      "date": "2026-12-18",
+      "start": "07:30",
+      "end": "18:00",
+      "completed": false
+    },
+    {
+      "id": "1790678784342592045bef3c058",
+      "mode": "teacher",
+      "date": "2026-12-21",
+      "start": "07:30",
+      "end": "18:00",
+      "completed": false
+    },
+    {
+      "id": "1790678784342542a3855cd9958",
+      "mode": "teacher",
+      "date": "2026-12-22",
+      "start": "07:30",
+      "end": "18:00",
+      "completed": false
+    },
+    {
+      "id": "1790678784342dbbc08175c63b8",
+      "mode": "teacher",
+      "date": "2026-12-23",
+      "start": "07:30",
+      "end": "18:00",
+      "completed": false
+    },
+    {
+      "id": "179067878434232aa6f9db1cd98",
+      "mode": "teacher",
+      "date": "2026-12-24",
+      "start": "07:30",
+      "end": "18:00",
+      "completed": false
+    },
+    {
+      "id": "1790678784342532087ce6fd9f8",
+      "mode": "teacher",
+      "date": "2026-12-25",
+      "start": "07:30",
+      "end": "18:00",
+      "completed": false
+    },
+    {
+      "id": "1790678784342dbd677c7cd8e68",
+      "mode": "teacher",
+      "date": "2026-12-28",
+      "start": "07:30",
+      "end": "18:00",
+      "completed": false
+    },
+    {
+      "id": "179067878434269ed3bb6defa88",
+      "mode": "teacher",
+      "date": "2026-12-29",
+      "start": "07:30",
+      "end": "18:00",
+      "completed": false
+    },
+    {
+      "id": "1790678784342b213690aa1949",
+      "mode": "teacher",
+      "date": "2026-12-30",
+      "start": "07:30",
+      "end": "18:00",
+      "completed": false
+    },
+    {
+      "id": "179067878434253957932747c88",
+      "mode": "teacher",
+      "date": "2026-12-31",
+      "start": "07:30",
+      "end": "18:00",
+      "completed": false
     }
   ],
   "untimedGeneralDates": []
