@@ -1,6 +1,6 @@
 window.TEACHER_PUBLIC_SCHEDULE = {
   "version": 3,
-  "updatedAt": "2026-09-28T11:06:22.013Z",
+  "updatedAt": "2026-09-29T10:00:08.088Z",
   "selectedYear": 2026,
   "selectedMonth": 8,
   "settings": {
@@ -9,8 +9,8 @@ window.TEACHER_PUBLIC_SCHEDULE = {
     "showTeacherName": false,
     "baseTimeZone": "UTC+08:00",
     "baseTimeZoneLabel": "台北（GMT+8）",
-    "displayTimeZone": "UTC+08:00",
-    "displayTimeZoneLabel": "台北（GMT+8）",
+    "displayTimeZone": "UTC+09:00",
+    "displayTimeZoneLabel": "東京（GMT+9）",
     "customTimeZones": []
   },
   "students": [
@@ -4501,6 +4501,192 @@ window.TEACHER_PUBLIC_SCHEDULE = {
       "completed": false,
       "studentNameBase64": "6Kyd6YeH6Kut",
       "studentKeyBase64": "6Kyd6YeH6Kut"
+    },
+    {
+      "id": "179059602833283d02674eacc5",
+      "mode": "general",
+      "date": "2026-11-20",
+      "start": "18:00",
+      "end": "22:30",
+      "completed": false
+    },
+    {
+      "id": "17905961130861d0968516846f",
+      "mode": "teacher",
+      "date": "2026-11-02",
+      "start": "07:30",
+      "end": "18:00",
+      "completed": false
+    },
+    {
+      "id": "17905961130869eb05c697f131",
+      "mode": "teacher",
+      "date": "2026-11-03",
+      "start": "07:30",
+      "end": "18:00",
+      "completed": false
+    },
+    {
+      "id": "179059611308699d2d695115ac",
+      "mode": "teacher",
+      "date": "2026-11-04",
+      "start": "07:30",
+      "end": "18:00",
+      "completed": false
+    },
+    {
+      "id": "1790596113086cf00b935d17948",
+      "mode": "teacher",
+      "date": "2026-11-05",
+      "start": "07:30",
+      "end": "18:00",
+      "completed": false
+    },
+    {
+      "id": "17905961130866aa582e7fed3",
+      "mode": "teacher",
+      "date": "2026-11-06",
+      "start": "07:30",
+      "end": "18:00",
+      "completed": false
+    },
+    {
+      "id": "1790596113086267d2baf23ab18",
+      "mode": "teacher",
+      "date": "2026-11-09",
+      "start": "07:30",
+      "end": "18:00",
+      "completed": false
+    },
+    {
+      "id": "179059611308627f6629d807ac",
+      "mode": "teacher",
+      "date": "2026-11-10",
+      "start": "07:30",
+      "end": "18:00",
+      "completed": false
+    },
+    {
+      "id": "1790596113086ca0ab67cb3604",
+      "mode": "teacher",
+      "date": "2026-11-11",
+      "start": "07:30",
+      "end": "18:00",
+      "completed": false
+    },
+    {
+      "id": "1790596113086df547211b6882",
+      "mode": "teacher",
+      "date": "2026-11-12",
+      "start": "07:30",
+      "end": "18:00",
+      "completed": false
+    },
+    {
+      "id": "179059611308657232f9c7047c8",
+      "mode": "teacher",
+      "date": "2026-11-13",
+      "start": "07:30",
+      "end": "18:00",
+      "completed": false
+    },
+    {
+      "id": "17905961130867e89960d6ee87",
+      "mode": "teacher",
+      "date": "2026-11-16",
+      "start": "07:30",
+      "end": "18:00",
+      "completed": false
+    },
+    {
+      "id": "1790596113086593e4743e92c",
+      "mode": "teacher",
+      "date": "2026-11-17",
+      "start": "07:30",
+      "end": "18:00",
+      "completed": false
+    },
+    {
+      "id": "1790596113086e02e6f75c7f238",
+      "mode": "teacher",
+      "date": "2026-11-18",
+      "start": "07:30",
+      "end": "18:00",
+      "completed": false
+    },
+    {
+      "id": "1790596113086a5c4e712968a58",
+      "mode": "teacher",
+      "date": "2026-11-19",
+      "start": "07:30",
+      "end": "18:00",
+      "completed": false
+    },
+    {
+      "id": "1790596113086803a0bb74646c8",
+      "mode": "teacher",
+      "date": "2026-11-20",
+      "start": "07:30",
+      "end": "18:00",
+      "completed": false
+    },
+    {
+      "id": "179059611308651c1ba16d012d8",
+      "mode": "teacher",
+      "date": "2026-11-23",
+      "start": "07:30",
+      "end": "18:00",
+      "completed": false
+    },
+    {
+      "id": "1790596113086956c3aacd76478",
+      "mode": "teacher",
+      "date": "2026-11-24",
+      "start": "07:30",
+      "end": "18:00",
+      "completed": false
+    },
+    {
+      "id": "17905961130865030c5b2646688",
+      "mode": "teacher",
+      "date": "2026-11-25",
+      "start": "07:30",
+      "end": "18:00",
+      "completed": false
+    },
+    {
+      "id": "179059611308644383ef74fca68",
+      "mode": "teacher",
+      "date": "2026-11-26",
+      "start": "07:30",
+      "end": "18:00",
+      "completed": false
+    },
+    {
+      "id": "17905961130861365e67528114",
+      "mode": "teacher",
+      "date": "2026-11-27",
+      "start": "07:30",
+      "end": "18:00",
+      "completed": false
+    },
+    {
+      "id": "179059611308652c5acaa42ab",
+      "mode": "teacher",
+      "date": "2026-11-30",
+      "start": "07:30",
+      "end": "18:00",
+      "completed": false
+    },
+    {
+      "id": "179067599696969d3577acb6898",
+      "mode": "teacher",
+      "date": "2026-09-30",
+      "start": "20:50",
+      "end": "21:30",
+      "completed": false,
+      "studentNameBase64": "WkVZSQ==",
+      "studentKeyBase64": "emV5aQ=="
     }
   ],
   "untimedGeneralDates": []
