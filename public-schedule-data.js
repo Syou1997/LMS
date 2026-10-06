@@ -1,16 +1,16 @@
 window.TEACHER_PUBLIC_SCHEDULE = {
   "version": 3,
-  "updatedAt": "2026-10-06T11:41:51.418Z",
+  "updatedAt": "2026-10-06T22:54:01.747Z",
   "selectedYear": 2026,
-  "selectedMonth": 10,
+  "selectedMonth": 9,
   "settings": {
     "teacherName": "Syou",
     "announcement": "0.不用在意是否約的時間太晚，老師能接就代表能上，不用這麼客氣!\n\n1.跟老師預約上課時間時，如果沒有特別備註是日本還是台灣時間，那老師一律當成台灣時間。如果是住在澳洲或是英國的同學，預約的時候請一律用「日本時間」來跟老師預約。範例:老師我要約日本時間的8/19 18:00~19:30，一次兩堂課，謝謝。\n\n2.預約課程的時候，不一定只能約整點。範例:老師我要約8/19的 19:40 可以嗎? 像這樣也是可以的。",
     "showTeacherName": false,
     "baseTimeZone": "UTC+08:00",
     "baseTimeZoneLabel": "台北（GMT+8）",
-    "displayTimeZone": "UTC+08:00",
-    "displayTimeZoneLabel": "台北（GMT+8）",
+    "displayTimeZone": "UTC+09:00",
+    "displayTimeZoneLabel": "東京（GMT+9）",
     "customTimeZones": []
   },
   "students": [
@@ -5073,9 +5073,9 @@ window.TEACHER_PUBLIC_SCHEDULE = {
     {
       "id": "179123919581049f32900a59a2",
       "mode": "teacher",
-      "date": "2026-10-06",
-      "start": "20:00",
-      "end": "20:30",
+      "date": "2026-10-07",
+      "start": "21:00",
+      "end": "21:30",
       "completed": false,
       "studentNameBase64": "TWljbw==",
       "studentKeyBase64": "bWljbw=="
@@ -5169,6 +5169,16 @@ window.TEACHER_PUBLIC_SCHEDULE = {
       "completed": false,
       "studentNameBase64": "5p6X5a2Q6Zm4",
       "studentKeyBase64": "5p6X5a2Q6Zm4"
+    },
+    {
+      "id": "1791327237308e967e1349ff908",
+      "mode": "teacher",
+      "date": "2026-10-10",
+      "start": "17:30",
+      "end": "19:00",
+      "completed": false,
+      "studentNameBase64": "SGF6ZWwgQ2hlZQ==",
+      "studentKeyBase64": "aGF6ZWwgY2hlZQ=="
     }
   ],
   "untimedGeneralDates": []
