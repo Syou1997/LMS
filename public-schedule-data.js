@@ -1,6 +1,6 @@
 window.TEACHER_PUBLIC_SCHEDULE = {
   "version": 3,
-  "updatedAt": "2026-10-07T10:00:27.391Z",
+  "updatedAt": "2026-10-08T13:10:06.477Z",
   "selectedYear": 2026,
   "selectedMonth": 9,
   "settings": {
@@ -9,8 +9,8 @@ window.TEACHER_PUBLIC_SCHEDULE = {
     "showTeacherName": false,
     "baseTimeZone": "UTC+08:00",
     "baseTimeZoneLabel": "台北（GMT+8）",
-    "displayTimeZone": "UTC+09:00",
-    "displayTimeZoneLabel": "東京（GMT+9）",
+    "displayTimeZone": "UTC+08:00",
+    "displayTimeZoneLabel": "台北（GMT+8）",
     "customTimeZones": []
   },
   "students": [
@@ -4099,7 +4099,7 @@ window.TEACHER_PUBLIC_SCHEDULE = {
       "mode": "teacher",
       "date": "2026-10-08",
       "start": "18:00",
-      "end": "19:00",
+      "end": "18:30",
       "completed": false,
       "studentNameBase64": "6LO05aed6KiA",
       "studentKeyBase64": "6LO05aed6KiA"
@@ -5189,6 +5189,26 @@ window.TEACHER_PUBLIC_SCHEDULE = {
       "completed": false,
       "studentNameBase64": "SXZ5",
       "studentKeyBase64": "aXZ5"
+    },
+    {
+      "id": "1791452948564056340c43300e8",
+      "mode": "teacher",
+      "date": "2026-10-08",
+      "start": "20:00",
+      "end": "20:30",
+      "completed": false,
+      "studentNameBase64": "546L6K295rez",
+      "studentKeyBase64": "546L6K295rez"
+    },
+    {
+      "id": "179146500484535ac016fcb38a",
+      "mode": "teacher",
+      "date": "2026-10-12",
+      "start": "17:00",
+      "end": "17:30",
+      "completed": false,
+      "studentNameBase64": "5rSq546J54+K",
+      "studentKeyBase64": "5rSq546J54+K"
     }
   ],
   "untimedGeneralDates": []
