@@ -1,6 +1,6 @@
 window.TEACHER_PUBLIC_SCHEDULE = {
   "version": 3,
-  "updatedAt": "2026-10-10T01:56:30.630Z",
+  "updatedAt": "2026-10-10T06:08:02.367Z",
   "selectedYear": 2026,
   "selectedMonth": 9,
   "settings": {
@@ -4519,14 +4519,6 @@ window.TEACHER_PUBLIC_SCHEDULE = {
       "completed": false
     },
     {
-      "id": "17905961130869eb05c697f131",
-      "mode": "teacher",
-      "date": "2026-11-03",
-      "start": "07:30",
-      "end": "18:00",
-      "completed": false
-    },
-    {
       "id": "179059611308699d2d695115ac",
       "mode": "teacher",
       "date": "2026-11-04",
@@ -4626,14 +4618,6 @@ window.TEACHER_PUBLIC_SCHEDULE = {
       "id": "1790596113086803a0bb74646c8",
       "mode": "teacher",
       "date": "2026-11-20",
-      "start": "07:30",
-      "end": "18:00",
-      "completed": false
-    },
-    {
-      "id": "179059611308651c1ba16d012d8",
-      "mode": "teacher",
-      "date": "2026-11-23",
       "start": "07:30",
       "end": "18:00",
       "completed": false
@@ -4933,14 +4917,6 @@ window.TEACHER_PUBLIC_SCHEDULE = {
       "studentKeyBase64": "6JSh5a6c5L+u"
     },
     {
-      "id": "17910308845519fccd35fcdd35",
-      "mode": "general",
-      "date": "2026-12-19",
-      "start": "16:00",
-      "end": "20:30",
-      "completed": false
-    },
-    {
       "id": "1791078558066d7df6400ca48b8",
       "mode": "teacher",
       "date": "2026-11-03",
@@ -5035,7 +5011,7 @@ window.TEACHER_PUBLIC_SCHEDULE = {
       "mode": "teacher",
       "date": "2026-10-18",
       "start": "15:00",
-      "end": "15:40",
+      "end": "15:30",
       "completed": false,
       "studentNameBase64": "6JSh5L2z6Iqu",
       "studentKeyBase64": "6JSh5L2z6Iqu"
@@ -5247,6 +5223,14 @@ window.TEACHER_PUBLIC_SCHEDULE = {
       "completed": false,
       "studentNameBase64": "546L6K295rez",
       "studentKeyBase64": "546L6K295rez"
+    },
+    {
+      "id": "17916124721992199fbc006d758",
+      "mode": "general",
+      "date": "2026-10-11",
+      "start": "10:30",
+      "end": "13:00",
+      "completed": false
     }
   ],
   "untimedGeneralDates": []
