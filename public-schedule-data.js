@@ -1,6 +1,6 @@
 window.TEACHER_PUBLIC_SCHEDULE = {
   "version": 3,
-  "updatedAt": "2026-10-10T06:08:02.367Z",
+  "updatedAt": "2026-10-11T12:43:57.018Z",
   "selectedYear": 2026,
   "selectedMonth": 9,
   "settings": {
@@ -9,8 +9,8 @@ window.TEACHER_PUBLIC_SCHEDULE = {
     "showTeacherName": false,
     "baseTimeZone": "UTC+08:00",
     "baseTimeZoneLabel": "台北（GMT+8）",
-    "displayTimeZone": "UTC+09:00",
-    "displayTimeZoneLabel": "東京（GMT+9）",
+    "displayTimeZone": "UTC+08:00",
+    "displayTimeZoneLabel": "台北（GMT+8）",
     "customTimeZones": []
   },
   "students": [
@@ -65,6 +65,10 @@ window.TEACHER_PUBLIC_SCHEDULE = {
     {
       "nameBase64": "RXRoYW4=",
       "keyBase64": "ZXRoYW4="
+    },
+    {
+      "nameBase64": "546L6K295rez",
+      "keyBase64": "546L6K295rez"
     }
   ],
   "events": [
@@ -4431,14 +4435,6 @@ window.TEACHER_PUBLIC_SCHEDULE = {
       "completed": false
     },
     {
-      "id": "1789360733654088fe61d9659f8",
-      "mode": "general",
-      "date": "2026-10-31",
-      "start": "17:00",
-      "end": "22:30",
-      "completed": false
-    },
-    {
       "id": "1790145795409dfdeb43defae4",
       "mode": "teacher",
       "date": "2026-09-24",
@@ -5225,12 +5221,24 @@ window.TEACHER_PUBLIC_SCHEDULE = {
       "studentKeyBase64": "546L6K295rez"
     },
     {
-      "id": "17916124721992199fbc006d758",
-      "mode": "general",
-      "date": "2026-10-11",
-      "start": "10:30",
-      "end": "13:00",
-      "completed": false
+      "id": "1791636283950c69e855e197938",
+      "mode": "teacher",
+      "date": "2026-10-12",
+      "start": "16:30",
+      "end": "17:00",
+      "completed": false,
+      "studentNameBase64": "5by15YKR",
+      "studentKeyBase64": "5by15YKR"
+    },
+    {
+      "id": "17917226318436397f678cd6bf",
+      "mode": "teacher",
+      "date": "2026-10-12",
+      "start": "12:00",
+      "end": "12:40",
+      "completed": false,
+      "studentNameBase64": "WkVZSQ==",
+      "studentKeyBase64": "emV5aQ=="
     }
   ],
   "untimedGeneralDates": []
