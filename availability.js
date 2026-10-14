@@ -99,7 +99,9 @@ const DEFAULT_STUDENTS = [
     { nameBase64: "TW9uaWNh", keyBase64: "bW9uaWNh" },
     { nameBase64: "YW11cm8=", keyBase64: "YW11cm8=" },
     { nameBase64: "RXRoYW4=", keyBase64: "ZXRoYW4=" },
-    { nameBase64: "546L6K295rez", keyBase64: "546L6K295rez" }
+    { nameBase64: "546L6K295rez", keyBase64: "546L6K295rez" },
+    { nameBase64: "UmViZWNjYSBMaXU=", keyBase64: "cmViZWNjYSBsaXU=" },
+    { nameBase64: "6buD57+K6Iq4", keyBase64: "6buD57+K6Iq4" }
 ];
 
 const DEFAULT_TIMEZONES = [
