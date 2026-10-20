@@ -1,8 +1,8 @@
 window.TEACHER_PUBLIC_SCHEDULE = {
   "version": 3,
-  "updatedAt": "2026-10-20T10:08:11.331Z",
+  "updatedAt": "2026-10-20T10:21:05.080Z",
   "selectedYear": 2026,
-  "selectedMonth": 9,
+  "selectedMonth": 10,
   "settings": {
     "teacherName": "Syou",
     "announcement": "0.不用在意是否約的時間太晚，老師能接就代表能上，不用這麼客氣!\n\n1.跟老師預約上課時間時，如果沒有特別備註是日本還是台灣時間，那老師一律當成台灣時間。如果是住在澳洲或是英國的同學，預約的時候請一律用「日本時間」來跟老師預約。範例:老師我要約日本時間的8/19 18:00~19:30，一次兩堂課，謝謝。\n\n2.預約課程的時候，不一定只能約整點。範例:老師我要約8/19的 19:40 可以嗎? 像這樣也是可以的。",
@@ -5329,6 +5329,102 @@ window.TEACHER_PUBLIC_SCHEDULE = {
       "completed": false,
       "studentNameBase64": "5ZCz5a6c6Ie7",
       "studentKeyBase64": "5ZCz5a6c6Ie7"
+    },
+    {
+      "id": "1792491624307adbcdf5d6c79e",
+      "mode": "teacher",
+      "date": "2026-11-01",
+      "start": "18:00",
+      "end": "22:00",
+      "completed": false
+    },
+    {
+      "id": "1792491624307f879a968b57ea",
+      "mode": "teacher",
+      "date": "2026-11-02",
+      "start": "18:00",
+      "end": "22:00",
+      "completed": false
+    },
+    {
+      "id": "1792491624307ed73027ba5cec",
+      "mode": "teacher",
+      "date": "2026-11-09",
+      "start": "18:00",
+      "end": "22:00",
+      "completed": false
+    },
+    {
+      "id": "1792491624307a164fef21be558",
+      "mode": "teacher",
+      "date": "2026-11-13",
+      "start": "18:00",
+      "end": "22:00",
+      "completed": false
+    },
+    {
+      "id": "179249162430771e55ca17568a",
+      "mode": "teacher",
+      "date": "2026-11-16",
+      "start": "18:00",
+      "end": "22:00",
+      "completed": false
+    },
+    {
+      "id": "1792491624307477e097751b928",
+      "mode": "teacher",
+      "date": "2026-11-23",
+      "start": "18:00",
+      "end": "22:00",
+      "completed": false
+    },
+    {
+      "id": "1792491624307a5f227c3e4dae8",
+      "mode": "teacher",
+      "date": "2026-11-27",
+      "start": "18:00",
+      "end": "22:00",
+      "completed": false
+    },
+    {
+      "id": "17924916243071acb0c014cc15",
+      "mode": "teacher",
+      "date": "2026-11-30",
+      "start": "18:00",
+      "end": "22:00",
+      "completed": false
+    },
+    {
+      "id": "179249166124696cebc9bf6f998",
+      "mode": "teacher",
+      "date": "2026-11-08",
+      "start": "14:00",
+      "end": "22:00",
+      "completed": false
+    },
+    {
+      "id": "17924916612467cbe153c301f2",
+      "mode": "teacher",
+      "date": "2026-11-14",
+      "start": "14:00",
+      "end": "22:00",
+      "completed": false
+    },
+    {
+      "id": "179249166124697e7c63878741",
+      "mode": "teacher",
+      "date": "2026-11-22",
+      "start": "14:00",
+      "end": "22:00",
+      "completed": false
+    },
+    {
+      "id": "17924916612463d21f4b705cd28",
+      "mode": "teacher",
+      "date": "2026-11-28",
+      "start": "14:00",
+      "end": "22:00",
+      "completed": false
     }
   ],
   "untimedGeneralDates": []
