@@ -1547,7 +1547,8 @@ function getPublicStudentRecords() {
         { nameBase64: "RXRoYW4=", keyBase64: "ZXRoYW4=" },
         { nameBase64: "546L6K295rez", keyBase64: "546L6K295rez" },
         { nameBase64: "UmViZWNjYSBMaXU=", keyBase64: "cmViZWNjYSBsaXU=" },
-        { nameBase64: "6buD57+K6Iq4", keyBase64: "6buD57+K6Iq4" }
+        { nameBase64: "6buD57+K6Iq4", keyBase64: "6buD57+K6Iq4" },
+        { nameBase64: "6JSh5L2z6Iqu", keyBase64: "6JSh5L2z6Iqu" }
     ];
 }
 
