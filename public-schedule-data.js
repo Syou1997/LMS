@@ -1,8 +1,8 @@
 window.TEACHER_PUBLIC_SCHEDULE = {
   "version": 3,
-  "updatedAt": "2026-11-01T00:33:01.338Z",
+  "updatedAt": "2026-11-01T07:59:22.254Z",
   "selectedYear": 2026,
-  "selectedMonth": 9,
+  "selectedMonth": 10,
   "settings": {
     "teacherName": "Syou",
     "announcement": "0.不用在意是否約的時間太晚，老師能接就代表能上，不用這麼客氣!\n\n1.跟老師預約上課時間時，如果沒有特別備註是日本還是台灣時間，那老師一律當成台灣時間。如果是住在澳洲或是英國的同學，預約的時候請一律用「日本時間」來跟老師預約。範例:老師我要約日本時間的8/19 18:00~19:30，一次兩堂課，謝謝。\n\n2.預約課程的時候，不一定只能約整點。範例:老師我要約8/19的 19:40 可以嗎? 像這樣也是可以的。",
@@ -4719,16 +4719,6 @@ window.TEACHER_PUBLIC_SCHEDULE = {
       "completed": false
     },
     {
-      "id": "1791088992129b62a284c99734",
-      "mode": "teacher",
-      "date": "2026-11-02",
-      "start": "22:00",
-      "end": "22:40",
-      "completed": false,
-      "studentNameBase64": "6auY5YGJ6Kqg",
-      "studentKeyBase64": "6auY5YGJ6Kqg"
-    },
-    {
       "id": "1791078558066d7df6400ca48b8",
       "mode": "teacher",
       "date": "2026-11-03",
@@ -4789,16 +4779,6 @@ window.TEACHER_PUBLIC_SCHEDULE = {
       "start": "07:30",
       "end": "18:00",
       "completed": false
-    },
-    {
-      "id": "179108899212915b49c9a5a2f1",
-      "mode": "teacher",
-      "date": "2026-11-09",
-      "start": "22:00",
-      "end": "22:40",
-      "completed": false,
-      "studentNameBase64": "6auY5YGJ6Kqg",
-      "studentKeyBase64": "6auY5YGJ6Kqg"
     },
     {
       "id": "179059611308627f6629d807ac",
@@ -4871,16 +4851,6 @@ window.TEACHER_PUBLIC_SCHEDULE = {
       "completed": false
     },
     {
-      "id": "179108899212965cfa284cc5b98",
-      "mode": "teacher",
-      "date": "2026-11-16",
-      "start": "22:00",
-      "end": "22:40",
-      "completed": false,
-      "studentNameBase64": "6auY5YGJ6Kqg",
-      "studentKeyBase64": "6auY5YGJ6Kqg"
-    },
-    {
       "id": "1790596113086593e4743e92c",
       "mode": "teacher",
       "date": "2026-11-17",
@@ -4941,16 +4911,6 @@ window.TEACHER_PUBLIC_SCHEDULE = {
       "completed": false
     },
     {
-      "id": "17910889921291f2cb1746bf1c",
-      "mode": "teacher",
-      "date": "2026-11-23",
-      "start": "22:00",
-      "end": "22:40",
-      "completed": false,
-      "studentNameBase64": "6auY5YGJ6Kqg",
-      "studentKeyBase64": "6auY5YGJ6Kqg"
-    },
-    {
       "id": "1790596113086956c3aacd76478",
       "mode": "teacher",
       "date": "2026-11-24",
@@ -5009,16 +4969,6 @@ window.TEACHER_PUBLIC_SCHEDULE = {
       "start": "07:30",
       "end": "18:00",
       "completed": false
-    },
-    {
-      "id": "17910889921297af3630704e09",
-      "mode": "teacher",
-      "date": "2026-11-30",
-      "start": "22:00",
-      "end": "22:40",
-      "completed": false,
-      "studentNameBase64": "6auY5YGJ6Kqg",
-      "studentKeyBase64": "6auY5YGJ6Kqg"
     },
     {
       "id": "1790678784342a43345991d42d8",
