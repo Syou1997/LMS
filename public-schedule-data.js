@@ -1,6 +1,6 @@
 window.TEACHER_PUBLIC_SCHEDULE = {
   "version": 3,
-  "updatedAt": "2026-11-08T08:44:47.625Z",
+  "updatedAt": "2026-11-09T09:31:41.614Z",
   "selectedYear": 2026,
   "selectedMonth": 10,
   "settings": {
@@ -5791,7 +5791,7 @@ window.TEACHER_PUBLIC_SCHEDULE = {
     {
       "id": "1793671653141450f538db07968",
       "mode": "teacher",
-      "date": "2026-11-11",
+      "date": "2026-11-12",
       "start": "21:00",
       "end": "21:30",
       "completed": false,
@@ -6083,31 +6083,39 @@ window.TEACHER_PUBLIC_SCHEDULE = {
       "studentKeyBase64": "6Kix5a2f5qi6"
     },
     {
-      "id": "179395950426693cc06ae4c9aa",
-      "mode": "teacher",
-      "date": "2026-11-10",
-      "start": "19:00",
-      "end": "19:40",
-      "completed": false,
-      "studentNameBase64": "6Kix5a2f5qi6",
-      "studentKeyBase64": "6Kix5a2f5qi6"
-    },
-    {
-      "id": "1793959504266fc96a24dca4b2",
-      "mode": "teacher",
-      "date": "2026-11-12",
-      "start": "19:00",
-      "end": "19:40",
-      "completed": false,
-      "studentNameBase64": "6Kix5a2f5qi6",
-      "studentKeyBase64": "6Kix5a2f5qi6"
-    },
-    {
       "id": "1793960597579108046ea6b417",
       "mode": "general",
       "date": "2026-11-15",
       "start": "09:00",
       "end": "09:50",
+      "completed": false
+    },
+    {
+      "id": "17941758487344f754ea657f3d8",
+      "mode": "teacher",
+      "date": "2026-11-17",
+      "start": "20:00",
+      "end": "20:30",
+      "completed": false,
+      "studentNameBase64": "5rSq6Yi65am3",
+      "studentKeyBase64": "5rSq6Yi65am3"
+    },
+    {
+      "id": "179421505990131b6d7d01eae4",
+      "mode": "teacher",
+      "date": "2026-12-27",
+      "start": "20:00",
+      "end": "20:40",
+      "completed": false,
+      "studentNameBase64": "5rKI6YOB6Zuv",
+      "studentKeyBase64": "5rKI6YOB6Zuv"
+    },
+    {
+      "id": "179421524841613059eeae52c5",
+      "mode": "general",
+      "date": "2026-11-22",
+      "start": "09:00",
+      "end": "14:00",
       "completed": false
     }
   ],
