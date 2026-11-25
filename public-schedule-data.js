@@ -1,8 +1,8 @@
 window.TEACHER_PUBLIC_SCHEDULE = {
   "version": 3,
-  "updatedAt": "2026-11-23T16:28:48.196Z",
+  "updatedAt": "2026-11-25T22:26:57.846Z",
   "selectedYear": 2026,
-  "selectedMonth": 10,
+  "selectedMonth": 11,
   "settings": {
     "teacherName": "Syou",
     "announcement": "0.不用在意是否約的時間太晚，老師能接就代表能上，不用這麼客氣!\n\n1.跟老師預約上課時間時，如果沒有特別備註是日本還是台灣時間，那老師一律當成台灣時間。如果是住在澳洲或是英國的同學，預約的時候請一律用「日本時間」來跟老師預約。範例:老師我要約日本時間的8/19 18:00~19:30，一次兩堂課，謝謝。\n\n2.預約課程的時候，不一定只能約整點。範例:老師我要約8/19的 19:40 可以嗎? 像這樣也是可以的。",
@@ -5773,9 +5773,9 @@ window.TEACHER_PUBLIC_SCHEDULE = {
     {
       "id": "1794316316041d13b36bd58099",
       "mode": "teacher",
-      "date": "2026-12-08",
-      "start": "20:30",
-      "end": "22:00",
+      "date": "2026-12-07",
+      "start": "18:30",
+      "end": "20:00",
       "completed": false,
       "studentNameBase64": "Tmljb2xl",
       "studentKeyBase64": "bmljb2xl"
@@ -6335,6 +6335,46 @@ window.TEACHER_PUBLIC_SCHEDULE = {
       "completed": false,
       "studentNameBase64": "SGF6ZWwgQ2hlZQ==",
       "studentKeyBase64": "aGF6ZWwgY2hlZQ=="
+    },
+    {
+      "id": "179560510370122baa5ebe0f1e",
+      "mode": "teacher",
+      "date": "2026-12-20",
+      "start": "10:30",
+      "end": "11:10",
+      "completed": false,
+      "studentNameBase64": "5b6Q562x5aaC",
+      "studentKeyBase64": "5b6Q562x5aaC"
+    },
+    {
+      "id": "1795645613546f6cc1bced6add8",
+      "mode": "teacher",
+      "date": "2026-12-04",
+      "start": "20:00",
+      "end": "20:40",
+      "completed": false,
+      "studentNameBase64": "5by15bqt5oCh",
+      "studentKeyBase64": "5by15bqt5oCh"
+    },
+    {
+      "id": "1795645613546ea0937124c1d6",
+      "mode": "teacher",
+      "date": "2026-12-14",
+      "start": "20:00",
+      "end": "20:40",
+      "completed": false,
+      "studentNameBase64": "5by15bqt5oCh",
+      "studentKeyBase64": "5by15bqt5oCh"
+    },
+    {
+      "id": "1795645613546dba1692022a5c8",
+      "mode": "teacher",
+      "date": "2026-12-28",
+      "start": "20:00",
+      "end": "20:40",
+      "completed": false,
+      "studentNameBase64": "5by15bqt5oCh",
+      "studentKeyBase64": "5by15bqt5oCh"
     }
   ],
   "untimedGeneralDates": []
